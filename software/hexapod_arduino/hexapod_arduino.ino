@@ -9,12 +9,12 @@ Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
 #define SERVOMID 350  // Middle value, 90 deg
 #define SERVOMAX 575  // Maximum value, 180 deg
 
-int left_legs[3][3] = {{0, 1, 3}, {5, 7, 10}, {12, 14, 15}};
-int right_legs[3][3] = {{0, 1, 2}, {5, 8, 9}, {12, 14, 15}};
+int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
+int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
-int right_offset_ticks[3][3] = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+int left_offset_ticks[3][3] = {{-5, -15, 10}, {-15, 20, 10}, {20, 10, 0}};
+int right_offset_ticks[3][3] = {{20, 16, 0}, {-15, 20, -15}, {-10, -10, 10}};
 
 int left_flip[3][3] = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
 int right_flip[3][3] = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
