@@ -2,6 +2,9 @@
 #include <ESP32Servo.h>
 #include <Wire.h>
 
+#include "posture.h"
+#include "motion.h"
+
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
 
@@ -13,8 +16,8 @@ int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
 int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{-5, -15, 10}, {-15, 20, 10}, {20, 10, 0}};
-int right_offset_ticks[3][3] = {{20, 16, 0}, {-15, 20, -15}, {-10, -10, 10}};
+int left_offset_ticks[3][3] = {{-5, -18, 6}, {-15, 10, 14}, {20, 6, 0}};
+int right_offset_ticks[3][3] = {{20, 16, 0}, {-15, 20, -15}, {-10, -8, 10}};
 
 int left_flip[3][3] = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
 int right_flip[3][3] = {{1, 1, 1}, {1, 1, 1}, {1, 1, 1}};
@@ -35,7 +38,9 @@ void setup() {
 void loop() {
   // pulselength = map(90, 0, 180, SERVOMIN, SERVOMAX);
 
-  posture_calibration();
+//  posture_calibration();
+  posture_standby();
+//  motion_walk();
 }
 
 void posture_calibration() {
@@ -46,5 +51,30 @@ void posture_calibration() {
       left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                       SERVOMID + left_offset_ticks[leg_idx][joint_idx]);
     }
+  }
+}
+
+void posture_standby(){
+  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+      right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
+                       pos_standby[leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+      left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
+                      pos_standby[leg_idx+3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
+    }
+  }
+}
+
+void motion_walk(){
+  for (int p_idx=0; p_idx< path_walk_length; p_idx++){
+    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+        right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
+                         path_walk[p_idx][leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+        left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
+                        path_walk[p_idx][leg_idx+3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
+      }
+    }
+    delay(10);
   }
 }

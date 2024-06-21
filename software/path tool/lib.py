@@ -141,6 +141,7 @@ def inverse_kinematics(dest, config):
     mount_position = np.zeros((6, 3))
     mount_position[:, 0] = mount_x
     mount_position[:, 1] = mount_y
+    leg_scale = np.array(config['legScale'])
 
     temp_dest = dest-mount_position
     local_dest = np.zeros_like(dest)
@@ -168,8 +169,8 @@ def inverse_kinematics(dest, config):
     a2 = np.arccos((lr2 - j2_j3*j2_j3 +
                     j3_tip*j3_tip)/(2*j3_tip*lr))
 
-    angles[:, 1] = 90-((ar + a1) * 180 / np.pi)
-    angles[:, 2] = (90 - ((a1 + a2) * 180 / np.pi))+90
+    angles[:, 1] = 90-((ar + a1) * 180 / np.pi)*leg_scale[:,1]
+    angles[:, 2] = (90 - ((a1 + a2) * 180 / np.pi))*leg_scale[:,1]+90
 
     return angles
 

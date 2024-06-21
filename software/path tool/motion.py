@@ -46,8 +46,7 @@ def gen_walk_path(standby_coordinate,
     path[:, [0, 2, 4], :] = np.tile(semi_circle[:, np.newaxis, :], (1, 3, 1))
     path[:, [1, 3, 5], :] = np.tile(mir_path[:, np.newaxis, :], (1, 3, 1))
 
-    return {'coord': path+np.tile(standby_coordinate, (g_steps, 1, 1)),
-            'type': 'motion'}
+    return path+np.tile(standby_coordinate, (g_steps, 1, 1))
 
 
 def gen_fastwalk_path(standby_coordinate,
