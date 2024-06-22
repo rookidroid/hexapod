@@ -176,4 +176,4 @@ static int path_walk[28][6][3] = {{{350, 551, 460},
                                    {362, 547, 458},
                                    {344, 428, 395}}};
 
-#endif  // MOTION_H
+#endif // MOTION_H
