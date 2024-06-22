@@ -2,8 +2,23 @@
 #include <ESP32Servo.h>
 #include <Wire.h>
 
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
 #include "posture.h"
 #include "motion.h"
+
+#ifndef APSSID
+#define APSSID "hexapod"
+#define APPSK "hexapod_1234"
+#endif
+const char *ssid = APSSID;
+const char *password = APPSK;
+
+char packetBuffer[4096 + 1];   // buffer to hold incoming packet
+unsigned int localPort = 1234; // local port to listen on
+
+WiFiUDP Udp;
 
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
@@ -27,19 +42,93 @@ int pulselength;
 void setup() {
   Serial.begin(115200);
 
+  WiFi.mode(WIFI_AP);
+
+  WiFi.softAP(ssid, password);
+
+  IPAddress myIP = WiFi.softAPIP();
+  Serial.print("AP IP address: ");
+  Serial.println(myIP);
+
+  Udp.begin(localPort);
+
   // Initialize the PCA9685 library
   left_pwm.begin();
   left_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
   right_pwm.begin();
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
+
+  posture_standby();
 }
 
 void loop() {
+//  int packetSize = Udp.parsePacket();
+//  if (packetSize)
+//  {
+//    rover = false;
+//    // read the packet into packetBufffer
+//    int n = Udp.read(packetBuffer, 4096);
+//    packetBuffer[n] = 0;
+//
+//    for (str_idx = 0; str_idx < n; str_idx++)
+//    {
+//      char inChar = packetBuffer[str_idx];
+//      //      Serial.print(inChar);
+//      //      Serial.print("\n");
+//
+//      if (inChar != '\n' && inChar != ':')
+//      {
+//        // add it to the inputString:
+//        inputString += inChar;
+//      }
+//      else if (inChar == ':')
+//      {
+//        if (inputString[0] == 'X')
+//        {
+//          int sLength = inputString.length();
+//          String tempStr = inputString.substring(1, sLength);
+//          x_val = tempStr.toInt();
+//          Serial.print('X');
+//          Serial.print(x_val);
+//          Serial.print("\n");
+//          rover = true;
+//        }
+//        else if (inputString[0] == 'Y')
+//        {
+//          int sLength = inputString.length();
+//          String tempStr = inputString.substring(1, sLength);
+//          y_val = tempStr.toInt();
+//          Serial.print('Y');
+//          Serial.print(y_val);
+//          Serial.print("\n");
+//          rover = true;
+//        }
+//        else if (inputString[0] == 'L')
+//        {
+//          int sLength = inputString.length();
+//          String tempStr = inputString.substring(1, sLength);
+//          left_speed = tempStr.toInt();
+//          set_left_motor(left_speed);
+//          // rover = true;
+//        }
+//        else if (inputString[0] == 'R')
+//        {
+//          int sLength = inputString.length();
+//          String tempStr = inputString.substring(1, sLength);
+//          right_speed = tempStr.toInt();
+//          set_right_motor(right_speed);
+//          // rover = true;
+//        }
+//
+//        inputString = "";
+//      }
+//    }
+//  }
   // pulselength = map(90, 0, 180, SERVOMIN, SERVOMAX);
 
 //  posture_calibration();
-  posture_standby();
+//  posture_standby();
 //  motion_walk();
 }
 
