@@ -42,5 +42,5 @@
     "legRootToJoint1": 20.75,
     "legJoint1ToJoint2": 30.0,
     "legJoint2ToJoint3": 42.6,
-    "legJoint3ToTip": 89.07
+    "legJoint3ToTip": 84.0
 }
