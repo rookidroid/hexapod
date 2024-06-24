@@ -71,8 +71,7 @@ def gen_fastwalk_path(standby_coordinate,
     path[:, [3, 5], :] = np.tile(
         np.roll(semi_circle_l[:, np.newaxis, :], halfsteps, axis=0), (1, 2, 1))
 
-    return {'coord': path+np.tile(standby_coordinate, (g_steps, 1, 1)),
-            'type': 'motion'}
+    return path+np.tile(standby_coordinate, (g_steps, 1, 1))
 
 
 def gen_turn_path(standby_coordinate,
@@ -91,19 +90,18 @@ def gen_turn_path(standby_coordinate,
         path[:, 0, :] = path_rotate_z(semi_circle, 45)
         path[:, 1, :] = path_rotate_z(mir_path, 0)
         path[:, 2, :] = path_rotate_z(semi_circle, 315)
-        path[:, 3, :] = path_rotate_z(mir_path, 225)
+        path[:, 5, :] = path_rotate_z(mir_path, 225)
         path[:, 4, :] = path_rotate_z(semi_circle, 180)
-        path[:, 5, :] = path_rotate_z(mir_path, 135)
+        path[:, 3, :] = path_rotate_z(mir_path, 135)
     elif direction == 'right':
         path[:, 0, :] = path_rotate_z(semi_circle, 45+180)
         path[:, 1, :] = path_rotate_z(mir_path, 0+180)
         path[:, 2, :] = path_rotate_z(semi_circle, 315+180)
-        path[:, 3, :] = path_rotate_z(mir_path, 225+180)
+        path[:, 5, :] = path_rotate_z(mir_path, 225+180)
         path[:, 4, :] = path_rotate_z(semi_circle, 180+180)
-        path[:, 5, :] = path_rotate_z(mir_path, 135+180)
+        path[:, 3, :] = path_rotate_z(mir_path, 135+180)
 
-    return {'coord': path+np.tile(standby_coordinate, (g_steps, 1, 1)),
-            'type': 'motion'}
+    return path+np.tile(standby_coordinate, (g_steps, 1, 1))
 
 
 def gen_climb_path(standby_coordinate,
@@ -135,8 +133,7 @@ def gen_climb_path(standby_coordinate,
     path[:, 4, :] = lpath
     path[:, 5, :] = mir_lpath
 
-    return {'coord': path+np.tile(standby_coordinate, (g_steps, 1, 1)),
-            'type': 'motion'}
+    return path+np.tile(standby_coordinate, (g_steps, 1, 1))
 
 
 def gen_rotatex_path(standby_coordinate,
@@ -177,8 +174,7 @@ def gen_rotatex_path(standby_coordinate,
 
         path[i+quarter*3, :, :] = ((np.matmul(m, scx.T)).T)[:, :-1]
 
-    return {'coord': path,
-            'type': 'motion'}
+    return path
 
 
 def gen_rotatey_path(standby_coordinate,
@@ -219,8 +215,7 @@ def gen_rotatey_path(standby_coordinate,
 
         path[i+quarter*3, :, :] = ((np.matmul(m, scx.T)).T)[:, :-1]
 
-    return {'coord': path,
-            'type': 'motion'}
+    return path
 
 
 def gen_rotatez_path(standby_coordinate,
@@ -243,8 +238,7 @@ def gen_rotatez_path(standby_coordinate,
 
         path[i, :, :] = ((np.matmul(m, scx.T)).T)[:, :-1]
 
-    return {'coord': path,
-            'type': 'motion'}
+    return path
 
 
 def gen_twist_path(standby_coordinate,
@@ -287,5 +281,4 @@ def gen_twist_path(standby_coordinate,
 
         path[i+quarter*3, :, :] = ((np.matmul(temp, scx.T)).T)[:, :-1]
 
-    return {'coord': path,
-            'type': 'motion'}
+    return path
