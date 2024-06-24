@@ -1,5 +1,5 @@
 #include <Adafruit_PWMServoDriver.h>
-//#include <ESP32Servo.h>
+// #include <ESP32Servo.h>
 #include <WiFi.h>
 #include <Wire.h>
 
@@ -33,8 +33,8 @@ int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
 int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{ -5, -18, 6}, { -15, 10, 14}, {20, 6, 0}};
-int right_offset_ticks[3][3] = {{20, 16, 0}, { -15, 20, -15}, { -10, -8, 10}};
+int left_offset_ticks[3][3] = {{-5, -18, 6}, {-15, 10, 14}, {20, 6, 0}};
+int right_offset_ticks[3][3] = {{20, 16, 0}, {-15, 20, -15}, {-10, -8, 10}};
 
 enum MotionMode {
   Mode_Standby,
@@ -90,7 +90,7 @@ void setup() {
       Serial.print("UDP Packet Type: ");
       Serial.print(packet.isBroadcast()   ? "Broadcast"
                    : packet.isMulticast() ? "Multicast"
-                   : "Unicast");
+                                          : "Unicast");
       Serial.print(", From: ");
       Serial.print(packet.remoteIP());
       Serial.print(":");
@@ -222,10 +222,10 @@ void posture_standby() {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                        pos_standby[leg_idx][joint_idx] +
-                       right_offset_ticks[leg_idx][joint_idx]);
+                           right_offset_ticks[leg_idx][joint_idx]);
       left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                       pos_standby[leg_idx + 3][joint_idx] +
-                      left_offset_ticks[leg_idx][joint_idx]);
+                          left_offset_ticks[leg_idx][joint_idx]);
     }
   }
 }
@@ -237,18 +237,111 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          lut[lut_idx][leg_idx][joint_idx] +
-                         right_offset_ticks[leg_idx][joint_idx]);
+                             right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         lut[lut_idx][leg_idx + 3][joint_idx] +
-                        left_offset_ticks[leg_idx][joint_idx]);
+                            left_offset_ticks[leg_idx][joint_idx]);
       }
     }
-    if (current_mode != motion_mode)
-    {
+    if (current_mode != motion_mode) {
       posture_standby();
       delay(10);
       break;
     }
     delay(10);
+  }
+}
+
+void rest_to_standby(int current_pos[6][3], int standby_pos[6][3]) {
+  int max_step = 0;
+  int sign[6];
+  // rest join 1
+  for (int idx = 0; idx < 6; idx++) {
+    int diff = standby_pos[idx][0] - current_pos[idx][0];
+    if (diff < 0) {
+      sign[idx] = -1;
+    } else {
+      sign[idx] = 1;
+    }
+    max_step = max(max_step, abs(diff));
+  }
+  for (int step_idx = 0; step_idx < max_step; step_idx++) {
+    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+      if (current_pos[leg_idx][0] != standby_pos[leg_idx][0]) {
+        current_pos[leg_idx][0] = current_pos[leg_idx][0] + sign[leg_idx];
+      }
+
+      if (current_pos[leg_idx + 3][0] != standby_pos[leg_idx + 3][0]) {
+        current_pos[leg_idx + 3][0] =
+            current_pos[leg_idx + 3][0] + sign[leg_idx + 3];
+      }
+
+      right_pwm.setPWM(
+          right_legs[leg_idx][0], 0,
+          current_pos[leg_idx][0] + right_offset_ticks[leg_idx][0]);
+      left_pwm.setPWM(
+          left_legs[leg_idx][0], 0,
+          current_pos[leg_idx + 3][0] + left_offset_ticks[leg_idx][0])
+    }
+  }
+
+  // rest join 3
+  for (int idx = 0; idx < 6; idx++) {
+    int diff = standby_pos[idx][2] - current_pos[idx][2];
+    if (diff < 0) {
+      sign[idx] = -1;
+    } else {
+      sign[idx] = 1;
+    }
+    max_step = max(max_step, abs(diff));
+  }
+  for (int step_idx = 0; step_idx < max_step; step_idx++) {
+    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+      if (current_pos[leg_idx][2] != standby_pos[leg_idx][2]) {
+        current_pos[leg_idx][2] = current_pos[leg_idx][2] + sign[leg_idx];
+      }
+
+      if (current_pos[leg_idx + 3][2] != standby_pos[leg_idx + 3][2]) {
+        current_pos[leg_idx + 3][2] =
+            current_pos[leg_idx + 3][2] + sign[leg_idx + 3];
+      }
+
+      right_pwm.setPWM(
+          right_legs[leg_idx][2], 0,
+          current_pos[leg_idx][2] + right_offset_ticks[leg_idx][2]);
+      left_pwm.setPWM(
+          left_legs[leg_idx][2], 0,
+          current_pos[leg_idx + 3][2] + left_offset_ticks[leg_idx][2])
+    }
+  }
+
+  // rest join 2
+  for (int idx = 0; idx < 6; idx++) {
+    int diff = standby_pos[idx][1] - current_pos[idx][1];
+    if (diff < 0) {
+      sign[idx] = -1;
+    } else {
+      sign[idx] = 1;
+    }
+    max_step = max(max_step, abs(diff));
+  }
+  for (int step_idx = 0; step_idx < max_step; step_idx++) {
+    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+      if (current_pos[leg_idx][1] != standby_pos[leg_idx][1]) {
+        current_pos[leg_idx][1] = current_pos[leg_idx][1] + sign[leg_idx];
+      }
+
+      if (current_pos[leg_idx + 3][1] != standby_pos[leg_idx + 3][1]) {
+        current_pos[leg_idx + 3][1] =
+            current_pos[leg_idx + 3][1] + sign[leg_idx + 3];
+      }
+
+      right_pwm.setPWM(
+          right_legs[leg_idx][1], 0,
+          current_pos[leg_idx][1] + right_offset_ticks[leg_idx][1]);
+      left_pwm.setPWM(
+          left_legs[leg_idx][1], 0,
+          current_pos[leg_idx + 3][1] + left_offset_ticks[leg_idx][1])
+    }
   }
 }
