@@ -245,6 +245,8 @@ void exec_motion(int lut_size, int lut[][6][3]) {
     }
     if (current_mode != motion_mode)
     {
+      posture_standby();
+      delay(10);
       break;
     }
     delay(10);
