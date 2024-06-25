@@ -82,9 +82,6 @@ void setup() {
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
   posture_standby();
-  //  delay(1000);
-  //
-  //  exec_motion(7, lut_walk_0);
 
   if (Udp.listen(localPort)) {
     Serial.print("UDP Listening on IP: ");
@@ -279,6 +276,7 @@ void rest_to_standby(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]
       max_step = max(max_step, abs(diff));
     }
   }
+  max_step = ceil(max_step/p_count);
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
