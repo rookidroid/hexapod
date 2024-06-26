@@ -244,11 +244,21 @@ void exec_motion(int lut_size, int lut[][6][3]) {
                         left_offset_ticks[leg_idx][joint_idx]);
       }
     }
-    if (lut_idx % 14 == 0 && current_mode != motion_mode) {
-      //      posture_standby();
-      rest_to_standby(lut, lut_idx, pos_standby);
-      delay(15);
-      break;
+
+    if (current_mode == MotionMode::Mode_Fast_Forward || current_mode == MotionMode::Mode_Fast_Backward) {
+      if (lut_idx % 28 == 0 && current_mode != motion_mode) {
+        //      posture_standby();
+        rest_to_standby(lut, lut_idx, pos_standby);
+        delay(15);
+        break;
+      }
+    } else {
+      if (lut_idx % 14 == 0 && current_mode != motion_mode) {
+        //      posture_standby();
+        rest_to_standby(lut, lut_idx, pos_standby);
+        delay(15);
+        break;
+      }
     }
     delay(15);
   }
@@ -276,7 +286,7 @@ void rest_to_standby(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]
       max_step = max(max_step, abs(diff));
     }
   }
-  max_step = ceil(max_step/p_count);
+  max_step = ceil(max_step / p_count);
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
