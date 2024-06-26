@@ -160,15 +160,28 @@ void loop()
     {
       if (js_up == 0)
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf(":walk0:");
-        udp.endPacket();
+        if (bt_up == 0)
+        {
+          udp.beginPacket(udpAddress, udpPort);
+          udp.printf(":fastforward:");
+          udp.endPacket();
+        } else {
+          udp.beginPacket(udpAddress, udpPort);
+          udp.printf(":walk0:");
+          udp.endPacket();
+        }
       }
       else if (js_down == 0)
       {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf(":walk180:");
-        udp.endPacket();
+        if (bt_down == 0) {
+          udp.beginPacket(udpAddress, udpPort);
+          udp.printf(":fastbackward:");
+          udp.endPacket();
+        } else {
+          udp.beginPacket(udpAddress, udpPort);
+          udp.printf(":walk180:");
+          udp.endPacket();
+        }
       }
       else if (js_left == 0)
       {
@@ -186,72 +199,60 @@ void loop()
   }
   else if ((bt_up + bt_down + bt_left + bt_right + bt_special) != 5)
   {
-    if ((bt_up + bt_down + bt_left + bt_right) == 2)
-    {
-      if (bt_up == 0 && bt_left == 0)
-      {
+    if (bt_special == 0) {
+      if (bt_up == 0) {
         udp.beginPacket(udpAddress, udpPort);
-        udp.printf("L-128:R-255:");
+        udp.printf(":rotatex:");
         udp.endPacket();
-      }
-      else if (bt_up == 0 && bt_right == 0)
-      {
+      } else if (bt_left == 0) {
         udp.beginPacket(udpAddress, udpPort);
-        udp.printf("L-255:R-128:");
+        udp.printf(":rotatey:");
         udp.endPacket();
-      }
-      else if (bt_down == 0 && bt_left == 0)
-      {
+      } else if (bt_right == 0) {
         udp.beginPacket(udpAddress, udpPort);
-        udp.printf("L128:R255:");
+        udp.printf(":rotatez:");
         udp.endPacket();
-      }
-      else if (bt_down == 0 && bt_right == 0)
-      {
+      } else if (bt_down == 0) {
         udp.beginPacket(udpAddress, udpPort);
-        udp.printf("L255:R128:");
-        udp.endPacket();
-      }
-      else
-      {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf("L0:R0:");
+        udp.printf(":twist:");
         udp.endPacket();
       }
     }
-    else
+    else if (bt_up == 0)
     {
-      if (bt_up == 0)
-      {
+      if (js_up == 0) {
+        udp.beginPacket(udpAddress, udpPort);
+        udp.printf(":fastforward:");
+        udp.endPacket();
+      } else {
         udp.beginPacket(udpAddress, udpPort);
         udp.printf(":walk0:");
         udp.endPacket();
       }
-      else if (bt_down == 0)
-      {
+    }
+    else if (bt_down == 0)
+    {
+      if (js_down == 0) {
+        udp.beginPacket(udpAddress, udpPort);
+        udp.printf(":fastbackward:");
+        udp.endPacket();
+      } else {
         udp.beginPacket(udpAddress, udpPort);
         udp.printf(":walk180:");
         udp.endPacket();
       }
-      else if (bt_left == 0)
-      {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf(":turnleft:");
-        udp.endPacket();
-      }
-      else if (bt_right == 0)
-      {
-        udp.beginPacket(udpAddress, udpPort);
-        udp.printf(":turnright:");
-        udp.endPacket();
-      }
-      else if (bt_special == 0)
-      {
-        //        Serial.print("SPECIAL");
-        //        udp.beginPacket(udpAddress, udpPort);
-        //        udp.printf("L-255:R255:");
-        //        udp.endPacket();
-      }
+    }
+    else if (bt_left == 0)
+    {
+      udp.beginPacket(udpAddress, udpPort);
+      udp.printf(":turnleft:");
+      udp.endPacket();
+    }
+    else if (bt_right == 0)
+    {
+      udp.beginPacket(udpAddress, udpPort);
+      udp.printf(":turnright:");
+      udp.endPacket();
     }
   }
   else
