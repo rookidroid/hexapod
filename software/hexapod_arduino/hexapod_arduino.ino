@@ -154,6 +154,7 @@ void setup() {
           // add it to the inputString:
           inputString += inChar;
         } else if (inChar == ':') {
+          MotionMode current_mode = motion_mode;
           if (inputString == String("standby")) {
             motion_mode = MotionMode::Mode_Standby;
           } else if (inputString == String("walk0")) {
@@ -194,6 +195,9 @@ void setup() {
             motion_mode = MotionMode::Mode_Twist;
           }
 
+          if (current_mode != motion_mode){
+            start_new_motion = 1;
+          }
           inputString = "";
         }
       }
@@ -267,6 +271,7 @@ void posture_standby() {
                       left_offset_ticks[leg_idx][joint_idx]);
     }
   }
+  start_new_motion = 1;
 }
 
 void exec_motion(int lut_size, int lut[][6][3]) {
@@ -293,7 +298,6 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       if (lut_idx % 28 == 0 && current_mode != motion_mode) {
         //      posture_standby();
         rest_to_standby(lut, lut_idx, pos_standby);
-        start_new_motion = 1;
         delay(15);
         break;
       }
@@ -301,7 +305,6 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       if (lut_idx % 14 == 0 && current_mode != motion_mode) {
         //      posture_standby();
         rest_to_standby(lut, lut_idx, pos_standby);
-        start_new_motion = 1;
         delay(15);
         break;
       }
