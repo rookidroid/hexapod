@@ -36,8 +36,8 @@ int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 int start_new_motion = 1;
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{ -5, -18, 6}, { -15, 10, 14}, {20, 6, 0}};
-int right_offset_ticks[3][3] = {{20, 16, 0}, { -15, 20, -15}, { -10, -8, 10}};
+int left_offset_ticks[3][3] = {{ -5, -20, 6}, { -15, 0, 14}, {20, 6, 0}};
+int right_offset_ticks[3][3] = {{20, 15, 0}, { -15, 20, -20}, { -10, -8, 10}};
 
 enum MotionMode {
   Mode_Standby,
@@ -120,6 +120,7 @@ void setup() {
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
   posture_standby();
+//  exec_motion(1, pos_laydown);
 
   if (Udp.listen(localPort)) {
     Serial.print("UDP Listening on IP: ");
@@ -195,7 +196,7 @@ void setup() {
             motion_mode = MotionMode::Mode_Twist;
           }
 
-          if (current_mode != motion_mode){
+          if (current_mode != motion_mode) {
             start_new_motion = 1;
           }
           inputString = "";
@@ -245,7 +246,6 @@ void loop() {
   } else {
     posture_standby();
   }
-  //  exec_motion(path_walk_length, path_walk);
   ArduinoOTA.handle();
 }
 
@@ -264,10 +264,10 @@ void posture_standby() {
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                       pos_standby[leg_idx][joint_idx] +
+                       pos_standby[0][leg_idx][joint_idx] +
                        right_offset_ticks[leg_idx][joint_idx]);
       left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                      pos_standby[leg_idx + 3][joint_idx] +
+                      pos_standby[0][leg_idx + 3][joint_idx] +
                       left_offset_ticks[leg_idx][joint_idx]);
     }
   }
@@ -279,7 +279,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   int lut_idx;
   if (start_new_motion) {
     start_new_motion = 0;
-    start_motion(lut, 0, pos_standby);
+    exec_transition(pos_standby, 0, lut, 0);
   }
 
   for (lut_idx = 0; lut_idx < lut_size; lut_idx++) {
@@ -297,14 +297,14 @@ void exec_motion(int lut_size, int lut[][6][3]) {
     if (current_mode == MotionMode::Mode_Fast_Forward || current_mode == MotionMode::Mode_Fast_Backward) {
       if (lut_idx % 28 == 0 && current_mode != motion_mode) {
         //      posture_standby();
-        rest_to_standby(lut, lut_idx, pos_standby);
+        exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
       }
     } else {
       if (lut_idx % 14 == 0 && current_mode != motion_mode) {
         //      posture_standby();
-        rest_to_standby(lut, lut_idx, pos_standby);
+        exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
       }
@@ -313,7 +313,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   }
 }
 
-void rest_to_standby(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]) {
+void exec_transition(int start_pos[][6][3], int start_pos_idx, int end_pos[][6][3], int end_pos_idx) {
   int max_step = 0;
   int sign[6][3];
 
@@ -325,8 +325,8 @@ void rest_to_standby(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]
   // rest join 1
   for (int l_idx = 0; l_idx < 6; l_idx++) {
     for (int j_idx = 0; j_idx < 3; j_idx++) {
-      diff = standby_pos[l_idx][j_idx] - current_pos[lut_idx][l_idx][j_idx];
-      temp_current[l_idx][j_idx] = current_pos[lut_idx][l_idx][j_idx];
+      diff = end_pos[end_pos_idx][l_idx][j_idx] - start_pos[start_pos_idx][l_idx][j_idx];
+      temp_current[l_idx][j_idx] = start_pos[start_pos_idx][l_idx][j_idx];
       if (diff < 0) {
         sign[l_idx][j_idx] = -p_count;
       } else {
@@ -339,68 +339,17 @@ void rest_to_standby(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        if (abs(temp_current[leg_idx][joint_idx] - standby_pos[leg_idx][joint_idx]) > p_count) {
+        if (abs(temp_current[leg_idx][joint_idx] - end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
           temp_current[leg_idx][joint_idx] = temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
         } else {
-          temp_current[leg_idx][joint_idx] = standby_pos[leg_idx][joint_idx];
+          temp_current[leg_idx][joint_idx] = end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
-        if (abs(temp_current[leg_idx + 3][joint_idx] - standby_pos[leg_idx + 3][joint_idx]) > p_count) {
+        if (abs(temp_current[leg_idx + 3][joint_idx] - end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
           temp_current[leg_idx + 3][joint_idx] =
             temp_current[leg_idx + 3][joint_idx] + sign[leg_idx + 3][joint_idx];
         } else {
-          temp_current[leg_idx + 3][joint_idx] = standby_pos[leg_idx + 3][joint_idx];
-        }
-
-        right_pwm.setPWM(
-          right_legs[leg_idx][joint_idx], 0,
-          temp_current[leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
-        left_pwm.setPWM(
-          left_legs[leg_idx][joint_idx], 0,
-          temp_current[leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
-      }
-    }
-    //    delay(10);
-  }
-}
-
-void start_motion(int current_pos[][6][3], int lut_idx, int standby_pos[6][3]) {
-  int max_step = 0;
-  int sign[6][3];
-
-  int temp_current[6][3];
-  int diff;
-
-  int p_count = 6;
-
-  // rest join 1
-  for (int l_idx = 0; l_idx < 6; l_idx++) {
-    for (int j_idx = 0; j_idx < 3; j_idx++) {
-      diff = current_pos[lut_idx][l_idx][j_idx] - standby_pos[l_idx][j_idx];
-      temp_current[l_idx][j_idx] = standby_pos[l_idx][j_idx];
-      if (diff < 0) {
-        sign[l_idx][j_idx] = -p_count;
-      } else {
-        sign[l_idx][j_idx] = p_count;
-      }
-      max_step = max(max_step, abs(diff));
-    }
-  }
-  max_step = ceil(max_step / p_count);
-  for (int step_idx = 0; step_idx < max_step; step_idx++) {
-    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        if (abs(current_pos[lut_idx][leg_idx][joint_idx] - temp_current[leg_idx][joint_idx]) > p_count) {
-          temp_current[leg_idx][joint_idx] = temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
-        } else {
-          temp_current[leg_idx][joint_idx] = current_pos[lut_idx][leg_idx][joint_idx];
-        }
-
-        if (abs(current_pos[lut_idx][leg_idx + 3][joint_idx] - temp_current[leg_idx + 3][joint_idx]) > p_count) {
-          temp_current[leg_idx + 3][joint_idx] =
-            temp_current[leg_idx + 3][joint_idx] + sign[leg_idx + 3][joint_idx];
-        } else {
-          temp_current[leg_idx + 3][joint_idx] = current_pos[lut_idx][leg_idx + 3][joint_idx];
+          temp_current[leg_idx + 3][joint_idx] = end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
         right_pwm.setPWM(
