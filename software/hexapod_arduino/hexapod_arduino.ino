@@ -119,8 +119,7 @@ void setup() {
   right_pwm.begin();
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
-  posture_standby();
-//  exec_motion(1, pos_laydown);
+  exec_motion(1, pos_standby);
 
   if (Udp.listen(localPort)) {
     Serial.print("UDP Listening on IP: ");
@@ -244,7 +243,8 @@ void loop() {
   } else if (motion_mode == MotionMode::Mode_Twist) {
     exec_motion(lut_twist_length, lut_twist);
   } else {
-    posture_standby();
+    exec_motion(1, pos_standby);
+    start_new_motion = 1;
   }
   ArduinoOTA.handle();
 }
@@ -258,20 +258,6 @@ void posture_calibration() {
                       SERVOMID + left_offset_ticks[leg_idx][joint_idx]);
     }
   }
-}
-
-void posture_standby() {
-  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-    for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-      right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                       pos_standby[0][leg_idx][joint_idx] +
-                       right_offset_ticks[leg_idx][joint_idx]);
-      left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                      pos_standby[0][leg_idx + 3][joint_idx] +
-                      left_offset_ticks[leg_idx][joint_idx]);
-    }
-  }
-  start_new_motion = 1;
 }
 
 void exec_motion(int lut_size, int lut[][6][3]) {
@@ -296,14 +282,12 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 
     if (current_mode == MotionMode::Mode_Fast_Forward || current_mode == MotionMode::Mode_Fast_Backward) {
       if (lut_idx % 28 == 0 && current_mode != motion_mode) {
-        //      posture_standby();
         exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
       }
     } else {
       if (lut_idx % 14 == 0 && current_mode != motion_mode) {
-        //      posture_standby();
         exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
