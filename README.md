@@ -1,6 +1,6 @@
 # <img src="./imgs/hexapod-logo.svg" alt="logo" width="64"/> Hexapod
 
-A Hexapod Robot using Raspberry Pi Zero W
+A 3D Printed Hexapod Robot
 
 ![banner](imgs/banner.jpg)
 
