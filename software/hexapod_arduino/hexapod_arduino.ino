@@ -120,11 +120,11 @@ void setup() {
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
   //  exec_motion(1, pos_standby);
-//  posture_laydown();
-//  delay(200);
-//  exec_motion(1, lut_standup);
+  //  posture_laydown();
+  //  delay(200);
+  //  exec_motion(1, lut_standup);
   //  delay(15);
-    exec_motion(lut_standup_length, lut_standup);
+  exec_motion(lut_standup_length, lut_standup);
 
   if (Udp.listen(localPort)) {
     Serial.print("UDP Listening on IP: ");
@@ -211,46 +211,46 @@ void setup() {
 }
 
 void loop() {
-    if (motion_mode == MotionMode::Mode_Walk_0) {
-      exec_motion(lut_walk_0_length, lut_walk_0);
-    } else if (motion_mode == MotionMode::Mode_Walk_180) {
-      exec_motion(lut_walk_180_length, lut_walk_180);
-    } else if (motion_mode == MotionMode::Mode_Walk_R45) {
-      exec_motion(lut_walk_r45_length, lut_walk_r45);
-    } else if (motion_mode == MotionMode::Mode_Walk_R90) {
-      exec_motion(lut_walk_r90_length, lut_walk_r90);
-    } else if (motion_mode == MotionMode::Mode_Walk_R135) {
-      exec_motion(lut_walk_r135_length, lut_walk_r135);
-    } else if (motion_mode == MotionMode::Mode_Walk_L45) {
-      exec_motion(lut_walk_l45_length, lut_walk_l45);
-    } else if (motion_mode == MotionMode::Mode_Walk_L90) {
-      exec_motion(lut_walk_l90_length, lut_walk_l90);
-    } else if (motion_mode == MotionMode::Mode_Walk_L135) {
-      exec_motion(lut_walk_l135_length, lut_walk_l135);
-    } else if (motion_mode == MotionMode::Mode_Fast_Forward) {
-      exec_motion(lut_fast_forward_length, lut_fast_forward);
-    } else if (motion_mode == MotionMode::Mode_Fast_Backward) {
-      exec_motion(lut_fast_backward_length, lut_fast_backward);
-    } else if (motion_mode == MotionMode::Mode_Turn_Left) {
-      exec_motion(lut_turn_left_length, lut_turn_left);
-    } else if (motion_mode == MotionMode::Mode_Turn_Right) {
-      exec_motion(lut_turn_right_length, lut_turn_right);
-    } else if (motion_mode == MotionMode::Mode_Climb_Forward) {
-      exec_motion(lut_climb_forward_length, lut_climb_forward);
-    } else if (motion_mode == MotionMode::Mode_Climb_Backward) {
-      exec_motion(lut_climb_backward_length, lut_climb_backward);
-    } else if (motion_mode == MotionMode::Mode_Rotate_X) {
-      exec_motion(lut_rotate_x_length, lut_rotate_x);
-    } else if (motion_mode == MotionMode::Mode_Rotate_Y) {
-      exec_motion(lut_rotate_y_length, lut_rotate_y);
-    } else if (motion_mode == MotionMode::Mode_Rotate_Z) {
-      exec_motion(lut_rotate_z_length, lut_rotate_z);
-    } else if (motion_mode == MotionMode::Mode_Twist) {
-      exec_motion(lut_twist_length, lut_twist);
-    } else {
-      exec_motion(1, pos_standby);
-      start_new_motion = 1;
-    }
+  if (motion_mode == MotionMode::Mode_Walk_0) {
+    exec_motion(lut_walk_0_length, lut_walk_0);
+  } else if (motion_mode == MotionMode::Mode_Walk_180) {
+    exec_motion(lut_walk_180_length, lut_walk_180);
+  } else if (motion_mode == MotionMode::Mode_Walk_R45) {
+    exec_motion(lut_walk_r45_length, lut_walk_r45);
+  } else if (motion_mode == MotionMode::Mode_Walk_R90) {
+    exec_motion(lut_walk_r90_length, lut_walk_r90);
+  } else if (motion_mode == MotionMode::Mode_Walk_R135) {
+    exec_motion(lut_walk_r135_length, lut_walk_r135);
+  } else if (motion_mode == MotionMode::Mode_Walk_L45) {
+    exec_motion(lut_walk_l45_length, lut_walk_l45);
+  } else if (motion_mode == MotionMode::Mode_Walk_L90) {
+    exec_motion(lut_walk_l90_length, lut_walk_l90);
+  } else if (motion_mode == MotionMode::Mode_Walk_L135) {
+    exec_motion(lut_walk_l135_length, lut_walk_l135);
+  } else if (motion_mode == MotionMode::Mode_Fast_Forward) {
+    exec_motion(lut_fast_forward_length, lut_fast_forward);
+  } else if (motion_mode == MotionMode::Mode_Fast_Backward) {
+    exec_motion(lut_fast_backward_length, lut_fast_backward);
+  } else if (motion_mode == MotionMode::Mode_Turn_Left) {
+    exec_motion(lut_turn_left_length, lut_turn_left);
+  } else if (motion_mode == MotionMode::Mode_Turn_Right) {
+    exec_motion(lut_turn_right_length, lut_turn_right);
+  } else if (motion_mode == MotionMode::Mode_Climb_Forward) {
+    exec_motion(lut_climb_forward_length, lut_climb_forward);
+  } else if (motion_mode == MotionMode::Mode_Climb_Backward) {
+    exec_motion(lut_climb_backward_length, lut_climb_backward);
+  } else if (motion_mode == MotionMode::Mode_Rotate_X) {
+    exec_motion(lut_rotate_x_length, lut_rotate_x);
+  } else if (motion_mode == MotionMode::Mode_Rotate_Y) {
+    exec_motion(lut_rotate_y_length, lut_rotate_y);
+  } else if (motion_mode == MotionMode::Mode_Rotate_Z) {
+    exec_motion(lut_rotate_z_length, lut_rotate_z);
+  } else if (motion_mode == MotionMode::Mode_Twist) {
+    exec_motion(lut_twist_length, lut_twist);
+  } else {
+    exec_motion(1, pos_standby);
+    start_new_motion = 1;
+  }
   ArduinoOTA.handle();
 }
 
