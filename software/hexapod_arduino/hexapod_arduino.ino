@@ -267,7 +267,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   int lut_idx;
   if (start_new_motion) {
     start_new_motion = 0;
-    exec_transition(pos_standby, 0, lut, 0);
+    exec_transition(lut_standby, 0, lut, 0);
   }
 
   for (lut_idx = 0; lut_idx < lut_size; lut_idx++) {
@@ -285,13 +285,13 @@ void exec_motion(int lut_size, int lut[][6][3]) {
     if (current_mode == MotionMode::Mode_Fast_Forward ||
         current_mode == MotionMode::Mode_Fast_Backward) {
       if (lut_idx % 28 == 0 && current_mode != next_motion) {
-        exec_transition(lut, lut_idx, pos_standby, 0);
+        exec_transition(lut, lut_idx, lut_standby, 0);
         delay(15);
         break;
       }
     } else {
       if (lut_idx % 14 == 0 && current_mode != next_motion) {
-        exec_transition(lut, lut_idx, pos_standby, 0);
+        exec_transition(lut, lut_idx, lut_standby, 0);
         delay(15);
         break;
       }
