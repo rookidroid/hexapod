@@ -1,22 +1,22 @@
-// WiFi
+/** WiFi */
 #include <AsyncUDP.h>
 #include <WiFi.h>
 
-// PWM
+/** PWM */
 #include <Adafruit_PWMServoDriver.h>
 
-// I2C
+/** I2C */
 #include <Wire.h>
 
-// OTA
+/** OTA */
 #include <ArduinoOTA.h>
 
-// Motion Path LUT
+/** Motion Path LUT */
 #include "motion.h"
 
+/** Motion Mode */
 enum MotionMode {
   Mode_Standby,
-  Mode_Laydown,
   Mode_Walk_0,
   Mode_Walk_180,
   Mode_Walk_R45,
@@ -37,6 +37,7 @@ enum MotionMode {
   Mode_Twist,
 };
 
+/** WiFi Configurations */
 #ifndef APSSID
 #define APSSID "hexapod"
 #define APPSK "hexapod_1234"
@@ -74,7 +75,6 @@ void setup() {
   Serial.begin(115200);
 
   WiFi.mode(WIFI_AP);
-
   WiFi.softAP(ssid, password);
 
   IPAddress myIP = WiFi.softAPIP();
@@ -311,7 +311,6 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
 
   int p_count = 6;
 
-  // rest join 1
   for (int l_idx = 0; l_idx < 6; l_idx++) {
     for (int j_idx = 0; j_idx < 3; j_idx++) {
       diff = end_pos[end_pos_idx][l_idx][j_idx] -
@@ -356,6 +355,5 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
                             left_offset_ticks[leg_idx][joint_idx]);
       }
     }
-    //    delay(10);
   }
 }
