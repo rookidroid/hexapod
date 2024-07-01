@@ -148,8 +148,6 @@ void setup() {
       packet_ptr = (char *)packet.data();
       for (str_idx = 0; str_idx < packet.length(); str_idx++) {
         char inChar = packet_ptr[str_idx];
-        //      Serial.print(inChar);
-        //      Serial.print("\n");
 
         if (inChar != '\n' && inChar != ':') {
           // add it to the inputString:
