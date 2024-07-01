@@ -52,14 +52,10 @@ enum MotionMode {
 const char *ssid = APSSID;
 const char *password = APPSK;
 
-char *packet_ptr;  // buffer to hold incoming packet
-
 AsyncUDP Udp;
 
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
-
-String inputString = "";
 
 int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
 int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
@@ -67,8 +63,8 @@ int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 int start_new_motion = 1;
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{-5, -20, 6}, {-15, 0, 14}, {20, 6, 0}};
-int right_offset_ticks[3][3] = {{20, 15, 0}, {-15, 20, -20}, {-10, -8, 10}};
+int left_offset_ticks[3][3] = {{ -5, -20, 6}, { -15, 0, 14}, {20, 6, 0}};
+int right_offset_ticks[3][3] = {{20, 15, 0}, { -15, 20, -20}, { -10, -8, 10}};
 
 MotionMode next_motion = MotionMode::Mode_Standby;
 
@@ -83,36 +79,38 @@ void setup() {
   Serial.println(myIP);
 
   ArduinoOTA
-      .onStart([]() {
-        String type;
-        if (ArduinoOTA.getCommand() == U_FLASH) {
-          type = "sketch";
-        } else {  // U_SPIFFS
-          type = "filesystem";
-        }
+  .onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH) {
+      type = "sketch";
+    } else {  // U_SPIFFS
+      type = "filesystem";
+    }
 
-        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
-        // using SPIFFS.end()
-        Serial.println("Start updating " + type);
-      })
-      .onEnd([]() { Serial.println("\nEnd"); })
-      .onProgress([](unsigned int progress, unsigned int total) {
-        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-      })
-      .onError([](ota_error_t error) {
-        Serial.printf("Error[%u]: ", error);
-        if (error == OTA_AUTH_ERROR) {
-          Serial.println("Auth Failed");
-        } else if (error == OTA_BEGIN_ERROR) {
-          Serial.println("Begin Failed");
-        } else if (error == OTA_CONNECT_ERROR) {
-          Serial.println("Connect Failed");
-        } else if (error == OTA_RECEIVE_ERROR) {
-          Serial.println("Receive Failed");
-        } else if (error == OTA_END_ERROR) {
-          Serial.println("End Failed");
-        }
-      });
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
+    // using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  })
+  .onEnd([]() {
+    Serial.println("\nEnd");
+  })
+  .onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  })
+  .onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) {
+      Serial.println("Auth Failed");
+    } else if (error == OTA_BEGIN_ERROR) {
+      Serial.println("Begin Failed");
+    } else if (error == OTA_CONNECT_ERROR) {
+      Serial.println("Connect Failed");
+    } else if (error == OTA_RECEIVE_ERROR) {
+      Serial.println("Receive Failed");
+    } else if (error == OTA_END_ERROR) {
+      Serial.println("End Failed");
+    }
+  });
 
   ArduinoOTA.begin();
 
@@ -130,7 +128,7 @@ void setup() {
       Serial.print("UDP Packet Type: ");
       Serial.print(packet.isBroadcast()   ? "Broadcast"
                    : packet.isMulticast() ? "Multicast"
-                                          : "Unicast");
+                   : "Unicast");
       Serial.print(", From: ");
       Serial.print(packet.remoteIP());
       Serial.print(":");
@@ -146,7 +144,8 @@ void setup() {
       Serial.println();
       // reply to the client
       packet.printf("Got %u bytes of data", packet.length());
-      packet_ptr = (char *)packet.data();
+      char *packet_ptr = (char *)packet.data();
+      String inputString = "";
       for (int str_idx = 0; str_idx < packet.length(); str_idx++) {
         char inChar = packet_ptr[str_idx];
 
@@ -275,10 +274,10 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          lut[lut_idx][leg_idx][joint_idx] +
-                             right_offset_ticks[leg_idx][joint_idx]);
+                         right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         lut[lut_idx][leg_idx + 3][joint_idx] +
-                            left_offset_ticks[leg_idx][joint_idx]);
+                        left_offset_ticks[leg_idx][joint_idx]);
       }
     }
 
@@ -330,28 +329,28 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
         if (abs(temp_current[leg_idx][joint_idx] -
                 end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
           temp_current[leg_idx][joint_idx] =
-              temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
+            temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
         } else {
           temp_current[leg_idx][joint_idx] =
-              end_pos[end_pos_idx][leg_idx][joint_idx];
+            end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
         if (abs(temp_current[leg_idx + 3][joint_idx] -
                 end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
           temp_current[leg_idx + 3][joint_idx] =
-              temp_current[leg_idx + 3][joint_idx] +
-              sign[leg_idx + 3][joint_idx];
+            temp_current[leg_idx + 3][joint_idx] +
+            sign[leg_idx + 3][joint_idx];
         } else {
           temp_current[leg_idx + 3][joint_idx] =
-              end_pos[end_pos_idx][leg_idx + 3][joint_idx];
+            end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          temp_current[leg_idx][joint_idx] +
-                             right_offset_ticks[leg_idx][joint_idx]);
+                         right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         temp_current[leg_idx + 3][joint_idx] +
-                            left_offset_ticks[leg_idx][joint_idx]);
+                        left_offset_ticks[leg_idx][joint_idx]);
       }
     }
   }
