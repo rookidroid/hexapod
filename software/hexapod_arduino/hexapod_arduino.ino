@@ -1,10 +1,41 @@
-#include <Adafruit_PWMServoDriver.h>
-#include <ArduinoOTA.h>
+// WiFi
+#include <AsyncUDP.h>
 #include <WiFi.h>
+
+// PWM
+#include <Adafruit_PWMServoDriver.h>
+
+// I2C
 #include <Wire.h>
 
-#include "AsyncUDP.h"
+// OTA
+#include <ArduinoOTA.h>
+
+// Motion Path LUT
 #include "motion.h"
+
+enum MotionMode {
+  Mode_Standby,
+  Mode_Laydown,
+  Mode_Walk_0,
+  Mode_Walk_180,
+  Mode_Walk_R45,
+  Mode_Walk_R90,
+  Mode_Walk_R135,
+  Mode_Walk_L45,
+  Mode_Walk_L90,
+  Mode_Walk_L135,
+  Mode_Fast_Forward,
+  Mode_Fast_Backward,
+  Mode_Turn_Left,
+  Mode_Turn_Right,
+  Mode_Climb_Forward,
+  Mode_Climb_Backward,
+  Mode_Rotate_X,
+  Mode_Rotate_Y,
+  Mode_Rotate_Z,
+  Mode_Twist,
+};
 
 #ifndef APSSID
 #define APSSID "hexapod"
@@ -37,30 +68,7 @@ int start_new_motion = 1;
 int left_offset_ticks[3][3] = {{-5, -20, 6}, {-15, 0, 14}, {20, 6, 0}};
 int right_offset_ticks[3][3] = {{20, 15, 0}, {-15, 20, -20}, {-10, -8, 10}};
 
-enum MotionMode {
-  Mode_Standby,
-  Mode_Laydown,
-  Mode_Walk_0,
-  Mode_Walk_180,
-  Mode_Walk_R45,
-  Mode_Walk_R90,
-  Mode_Walk_R135,
-  Mode_Walk_L45,
-  Mode_Walk_L90,
-  Mode_Walk_L135,
-  Mode_Fast_Forward,
-  Mode_Fast_Backward,
-  Mode_Turn_Left,
-  Mode_Turn_Right,
-  Mode_Climb_Forward,
-  Mode_Climb_Backward,
-  Mode_Rotate_X,
-  Mode_Rotate_Y,
-  Mode_Rotate_Z,
-  Mode_Twist,
-};
-
-MotionMode motion_mode = MotionMode::Mode_Standby;
+MotionMode next_motion = MotionMode::Mode_Standby;
 
 void setup() {
   Serial.begin(115200);
@@ -147,48 +155,48 @@ void setup() {
           // add it to the inputString:
           inputString += inChar;
         } else if (inChar == ':') {
-          MotionMode current_mode = motion_mode;
+          MotionMode current_mode = next_motion;
           if (inputString == String("standby")) {
-            motion_mode = MotionMode::Mode_Standby;
+            next_motion = MotionMode::Mode_Standby;
           } else if (inputString == String("walk0")) {
-            motion_mode = MotionMode::Mode_Walk_0;
+            next_motion = MotionMode::Mode_Walk_0;
           } else if (inputString == String("walk180")) {
-            motion_mode = MotionMode::Mode_Walk_180;
+            next_motion = MotionMode::Mode_Walk_180;
           } else if (inputString == String("walkr45")) {
-            motion_mode = MotionMode::Mode_Walk_R45;
+            next_motion = MotionMode::Mode_Walk_R45;
           } else if (inputString == String("walkr90")) {
-            motion_mode = MotionMode::Mode_Walk_R90;
+            next_motion = MotionMode::Mode_Walk_R90;
           } else if (inputString == String("walkr135")) {
-            motion_mode = MotionMode::Mode_Walk_R135;
+            next_motion = MotionMode::Mode_Walk_R135;
           } else if (inputString == String("walkl45")) {
-            motion_mode = MotionMode::Mode_Walk_L45;
+            next_motion = MotionMode::Mode_Walk_L45;
           } else if (inputString == String("walkl90")) {
-            motion_mode = MotionMode::Mode_Walk_L90;
+            next_motion = MotionMode::Mode_Walk_L90;
           } else if (inputString == String("walkl135")) {
-            motion_mode = MotionMode::Mode_Walk_L135;
+            next_motion = MotionMode::Mode_Walk_L135;
           } else if (inputString == String("fastforward")) {
-            motion_mode = MotionMode::Mode_Fast_Forward;
+            next_motion = MotionMode::Mode_Fast_Forward;
           } else if (inputString == String("fastbackward")) {
-            motion_mode = MotionMode::Mode_Fast_Backward;
+            next_motion = MotionMode::Mode_Fast_Backward;
           } else if (inputString == String("turnleft")) {
-            motion_mode = MotionMode::Mode_Turn_Left;
+            next_motion = MotionMode::Mode_Turn_Left;
           } else if (inputString == String("turnright")) {
-            motion_mode = MotionMode::Mode_Turn_Right;
+            next_motion = MotionMode::Mode_Turn_Right;
           } else if (inputString == String("climbforward")) {
-            motion_mode = MotionMode::Mode_Climb_Forward;
+            next_motion = MotionMode::Mode_Climb_Forward;
           } else if (inputString == String("climbbackward")) {
-            motion_mode = MotionMode::Mode_Climb_Backward;
+            next_motion = MotionMode::Mode_Climb_Backward;
           } else if (inputString == String("rotatex")) {
-            motion_mode = MotionMode::Mode_Rotate_X;
+            next_motion = MotionMode::Mode_Rotate_X;
           } else if (inputString == String("rotatey")) {
-            motion_mode = MotionMode::Mode_Rotate_Y;
+            next_motion = MotionMode::Mode_Rotate_Y;
           } else if (inputString == String("rotatez")) {
-            motion_mode = MotionMode::Mode_Rotate_Z;
+            next_motion = MotionMode::Mode_Rotate_Z;
           } else if (inputString == String("twist")) {
-            motion_mode = MotionMode::Mode_Twist;
+            next_motion = MotionMode::Mode_Twist;
           }
 
-          if (current_mode != motion_mode) {
+          if (current_mode != next_motion) {
             start_new_motion = 1;
           }
           inputString = "";
@@ -201,41 +209,41 @@ void setup() {
 }
 
 void loop() {
-  if (motion_mode == MotionMode::Mode_Walk_0) {
+  if (next_motion == MotionMode::Mode_Walk_0) {
     exec_motion(lut_walk_0_length, lut_walk_0);
-  } else if (motion_mode == MotionMode::Mode_Walk_180) {
+  } else if (next_motion == MotionMode::Mode_Walk_180) {
     exec_motion(lut_walk_180_length, lut_walk_180);
-  } else if (motion_mode == MotionMode::Mode_Walk_R45) {
+  } else if (next_motion == MotionMode::Mode_Walk_R45) {
     exec_motion(lut_walk_r45_length, lut_walk_r45);
-  } else if (motion_mode == MotionMode::Mode_Walk_R90) {
+  } else if (next_motion == MotionMode::Mode_Walk_R90) {
     exec_motion(lut_walk_r90_length, lut_walk_r90);
-  } else if (motion_mode == MotionMode::Mode_Walk_R135) {
+  } else if (next_motion == MotionMode::Mode_Walk_R135) {
     exec_motion(lut_walk_r135_length, lut_walk_r135);
-  } else if (motion_mode == MotionMode::Mode_Walk_L45) {
+  } else if (next_motion == MotionMode::Mode_Walk_L45) {
     exec_motion(lut_walk_l45_length, lut_walk_l45);
-  } else if (motion_mode == MotionMode::Mode_Walk_L90) {
+  } else if (next_motion == MotionMode::Mode_Walk_L90) {
     exec_motion(lut_walk_l90_length, lut_walk_l90);
-  } else if (motion_mode == MotionMode::Mode_Walk_L135) {
+  } else if (next_motion == MotionMode::Mode_Walk_L135) {
     exec_motion(lut_walk_l135_length, lut_walk_l135);
-  } else if (motion_mode == MotionMode::Mode_Fast_Forward) {
+  } else if (next_motion == MotionMode::Mode_Fast_Forward) {
     exec_motion(lut_fast_forward_length, lut_fast_forward);
-  } else if (motion_mode == MotionMode::Mode_Fast_Backward) {
+  } else if (next_motion == MotionMode::Mode_Fast_Backward) {
     exec_motion(lut_fast_backward_length, lut_fast_backward);
-  } else if (motion_mode == MotionMode::Mode_Turn_Left) {
+  } else if (next_motion == MotionMode::Mode_Turn_Left) {
     exec_motion(lut_turn_left_length, lut_turn_left);
-  } else if (motion_mode == MotionMode::Mode_Turn_Right) {
+  } else if (next_motion == MotionMode::Mode_Turn_Right) {
     exec_motion(lut_turn_right_length, lut_turn_right);
-  } else if (motion_mode == MotionMode::Mode_Climb_Forward) {
+  } else if (next_motion == MotionMode::Mode_Climb_Forward) {
     exec_motion(lut_climb_forward_length, lut_climb_forward);
-  } else if (motion_mode == MotionMode::Mode_Climb_Backward) {
+  } else if (next_motion == MotionMode::Mode_Climb_Backward) {
     exec_motion(lut_climb_backward_length, lut_climb_backward);
-  } else if (motion_mode == MotionMode::Mode_Rotate_X) {
+  } else if (next_motion == MotionMode::Mode_Rotate_X) {
     exec_motion(lut_rotate_x_length, lut_rotate_x);
-  } else if (motion_mode == MotionMode::Mode_Rotate_Y) {
+  } else if (next_motion == MotionMode::Mode_Rotate_Y) {
     exec_motion(lut_rotate_y_length, lut_rotate_y);
-  } else if (motion_mode == MotionMode::Mode_Rotate_Z) {
+  } else if (next_motion == MotionMode::Mode_Rotate_Z) {
     exec_motion(lut_rotate_z_length, lut_rotate_z);
-  } else if (motion_mode == MotionMode::Mode_Twist) {
+  } else if (next_motion == MotionMode::Mode_Twist) {
     exec_motion(lut_twist_length, lut_twist);
   } else {
     exec_motion(lut_standby_length, lut_standby);
@@ -256,7 +264,7 @@ void posture_calibration() {
 }
 
 void exec_motion(int lut_size, int lut[][6][3]) {
-  MotionMode current_mode = motion_mode;
+  MotionMode current_mode = next_motion;
   int lut_idx;
   if (start_new_motion) {
     start_new_motion = 0;
@@ -277,13 +285,13 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 
     if (current_mode == MotionMode::Mode_Fast_Forward ||
         current_mode == MotionMode::Mode_Fast_Backward) {
-      if (lut_idx % 28 == 0 && current_mode != motion_mode) {
+      if (lut_idx % 28 == 0 && current_mode != next_motion) {
         exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
       }
     } else {
-      if (lut_idx % 14 == 0 && current_mode != motion_mode) {
+      if (lut_idx % 14 == 0 && current_mode != next_motion) {
         exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
         break;
