@@ -6,6 +6,14 @@
 #ifndef MOTION_H
 #define MOTION_H
 
+static int lut_standby_length = 1;
+static int lut_standby[1][6][3] = {{{350, 425, 388},
+                                   {350, 275, 312},
+                                   {350, 275, 312},
+                                   {350, 275, 312},
+                                   {350, 425, 388},
+                                   {350, 425, 388}}};
+
 static int lut_walk_0_length = 28;
 static int lut_walk_0[28][6][3] = {{{350, 549, 456},
                                    {350, 275, 312},

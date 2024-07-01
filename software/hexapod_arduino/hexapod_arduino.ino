@@ -1,12 +1,10 @@
 #include <Adafruit_PWMServoDriver.h>
-// #include <ESP32Servo.h>
+#include <ArduinoOTA.h>
 #include <WiFi.h>
 #include <Wire.h>
-#include <ArduinoOTA.h>
 
 #include "AsyncUDP.h"
 #include "motion.h"
-#include "posture.h"
 
 #ifndef APSSID
 #define APSSID "hexapod"
@@ -36,8 +34,8 @@ int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 int start_new_motion = 1;
 
 // Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{ -5, -20, 6}, { -15, 0, 14}, {20, 6, 0}};
-int right_offset_ticks[3][3] = {{20, 15, 0}, { -15, 20, -20}, { -10, -8, 10}};
+int left_offset_ticks[3][3] = {{-5, -20, 6}, {-15, 0, 14}, {20, 6, 0}};
+int right_offset_ticks[3][3] = {{20, 15, 0}, {-15, 20, -20}, {-10, -8, 10}};
 
 enum MotionMode {
   Mode_Standby,
@@ -76,41 +74,38 @@ void setup() {
   Serial.println(myIP);
 
   ArduinoOTA
-  .onStart([]() {
-    String type;
-    if (ArduinoOTA.getCommand() == U_FLASH) {
-      type = "sketch";
-    } else {  // U_SPIFFS
-      type = "filesystem";
-    }
+      .onStart([]() {
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH) {
+          type = "sketch";
+        } else {  // U_SPIFFS
+          type = "filesystem";
+        }
 
-    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-    Serial.println("Start updating " + type);
-  })
-  .onEnd([]() {
-    Serial.println("\nEnd");
-  })
-  .onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-  })
-  .onError([](ota_error_t error) {
-    Serial.printf("Error[%u]: ", error);
-    if (error == OTA_AUTH_ERROR) {
-      Serial.println("Auth Failed");
-    } else if (error == OTA_BEGIN_ERROR) {
-      Serial.println("Begin Failed");
-    } else if (error == OTA_CONNECT_ERROR) {
-      Serial.println("Connect Failed");
-    } else if (error == OTA_RECEIVE_ERROR) {
-      Serial.println("Receive Failed");
-    } else if (error == OTA_END_ERROR) {
-      Serial.println("End Failed");
-    }
-  });
+        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
+        // using SPIFFS.end()
+        Serial.println("Start updating " + type);
+      })
+      .onEnd([]() { Serial.println("\nEnd"); })
+      .onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+      })
+      .onError([](ota_error_t error) {
+        Serial.printf("Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) {
+          Serial.println("Auth Failed");
+        } else if (error == OTA_BEGIN_ERROR) {
+          Serial.println("Begin Failed");
+        } else if (error == OTA_CONNECT_ERROR) {
+          Serial.println("Connect Failed");
+        } else if (error == OTA_RECEIVE_ERROR) {
+          Serial.println("Receive Failed");
+        } else if (error == OTA_END_ERROR) {
+          Serial.println("End Failed");
+        }
+      });
 
   ArduinoOTA.begin();
-
-  //  Udp.begin(localPort);
 
   // Initialize the PCA9685 library
   left_pwm.begin();
@@ -119,13 +114,6 @@ void setup() {
   right_pwm.begin();
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
-  //  exec_motion(1, pos_standby);
-  //  posture_laydown();
-  //  delay(200);
-  //  exec_motion(1, lut_standup);
-  //  delay(15);
-  exec_motion(lut_standup_length, lut_standup);
-
   if (Udp.listen(localPort)) {
     Serial.print("UDP Listening on IP: ");
     Serial.println(myIP);
@@ -133,7 +121,7 @@ void setup() {
       Serial.print("UDP Packet Type: ");
       Serial.print(packet.isBroadcast()   ? "Broadcast"
                    : packet.isMulticast() ? "Multicast"
-                   : "Unicast");
+                                          : "Unicast");
       Serial.print(", From: ");
       Serial.print(packet.remoteIP());
       Serial.print(":");
@@ -208,6 +196,8 @@ void setup() {
       }
     });
   }
+
+  exec_motion(lut_standup_length, lut_standup);
 }
 
 void loop() {
@@ -248,7 +238,7 @@ void loop() {
   } else if (motion_mode == MotionMode::Mode_Twist) {
     exec_motion(lut_twist_length, lut_twist);
   } else {
-    exec_motion(1, pos_standby);
+    exec_motion(lut_standby_length, lut_standby);
     start_new_motion = 1;
   }
   ArduinoOTA.handle();
@@ -265,39 +255,6 @@ void posture_calibration() {
   }
 }
 
-
-void posture_laydown() {
-  int lift_j3[6] = {200, 500, 500, 500, 200, 200};
-
-  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-    right_pwm.setPWM(right_legs[leg_idx][2], 0,
-                     lift_j3[leg_idx] + right_offset_ticks[leg_idx][2]);
-    left_pwm.setPWM(left_legs[leg_idx][2], 0,
-                    lift_j3[leg_idx + 3] + left_offset_ticks[leg_idx][2]);
-
-  }
-
-  delay(200);
-
-  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-    right_pwm.setPWM(right_legs[leg_idx][1], 0,
-                     lut_standup[0][leg_idx][1] + right_offset_ticks[leg_idx][1]);
-    left_pwm.setPWM(left_legs[leg_idx][1], 0,
-                    lut_standup[0][leg_idx + 3][1] + left_offset_ticks[leg_idx][1]);
-
-  }
-
-  delay(200);
-
-  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-    right_pwm.setPWM(right_legs[leg_idx][2], 0,
-                     lut_standup[0][leg_idx][2] + right_offset_ticks[leg_idx][2]);
-    left_pwm.setPWM(left_legs[leg_idx][2], 0,
-                    lut_standup[0][leg_idx + 3][2] + left_offset_ticks[leg_idx][2]);
-
-  }
-}
-
 void exec_motion(int lut_size, int lut[][6][3]) {
   MotionMode current_mode = motion_mode;
   int lut_idx;
@@ -311,14 +268,15 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          lut[lut_idx][leg_idx][joint_idx] +
-                         right_offset_ticks[leg_idx][joint_idx]);
+                             right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         lut[lut_idx][leg_idx + 3][joint_idx] +
-                        left_offset_ticks[leg_idx][joint_idx]);
+                            left_offset_ticks[leg_idx][joint_idx]);
       }
     }
 
-    if (current_mode == MotionMode::Mode_Fast_Forward || current_mode == MotionMode::Mode_Fast_Backward) {
+    if (current_mode == MotionMode::Mode_Fast_Forward ||
+        current_mode == MotionMode::Mode_Fast_Backward) {
       if (lut_idx % 28 == 0 && current_mode != motion_mode) {
         exec_transition(lut, lut_idx, pos_standby, 0);
         delay(15);
@@ -335,7 +293,8 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   }
 }
 
-void exec_transition(int start_pos[][6][3], int start_pos_idx, int end_pos[][6][3], int end_pos_idx) {
+void exec_transition(int start_pos[][6][3], int start_pos_idx,
+                     int end_pos[][6][3], int end_pos_idx) {
   int max_step = 0;
   int sign[6][3];
 
@@ -347,7 +306,8 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx, int end_pos[][6][
   // rest join 1
   for (int l_idx = 0; l_idx < 6; l_idx++) {
     for (int j_idx = 0; j_idx < 3; j_idx++) {
-      diff = end_pos[end_pos_idx][l_idx][j_idx] - start_pos[start_pos_idx][l_idx][j_idx];
+      diff = end_pos[end_pos_idx][l_idx][j_idx] -
+             start_pos[start_pos_idx][l_idx][j_idx];
       temp_current[l_idx][j_idx] = start_pos[start_pos_idx][l_idx][j_idx];
       if (diff < 0) {
         sign[l_idx][j_idx] = -p_count;
@@ -361,25 +321,31 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx, int end_pos[][6][
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        if (abs(temp_current[leg_idx][joint_idx] - end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
-          temp_current[leg_idx][joint_idx] = temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
+        if (abs(temp_current[leg_idx][joint_idx] -
+                end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
+          temp_current[leg_idx][joint_idx] =
+              temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
         } else {
-          temp_current[leg_idx][joint_idx] = end_pos[end_pos_idx][leg_idx][joint_idx];
+          temp_current[leg_idx][joint_idx] =
+              end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
-        if (abs(temp_current[leg_idx + 3][joint_idx] - end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
+        if (abs(temp_current[leg_idx + 3][joint_idx] -
+                end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
           temp_current[leg_idx + 3][joint_idx] =
-            temp_current[leg_idx + 3][joint_idx] + sign[leg_idx + 3][joint_idx];
+              temp_current[leg_idx + 3][joint_idx] +
+              sign[leg_idx + 3][joint_idx];
         } else {
-          temp_current[leg_idx + 3][joint_idx] = end_pos[end_pos_idx][leg_idx + 3][joint_idx];
+          temp_current[leg_idx + 3][joint_idx] =
+              end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
-        right_pwm.setPWM(
-          right_legs[leg_idx][joint_idx], 0,
-          temp_current[leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
-        left_pwm.setPWM(
-          left_legs[leg_idx][joint_idx], 0,
-          temp_current[leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
+        right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
+                         temp_current[leg_idx][joint_idx] +
+                             right_offset_ticks[leg_idx][joint_idx]);
+        left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
+                        temp_current[leg_idx + 3][joint_idx] +
+                            left_offset_ticks[leg_idx][joint_idx]);
       }
     }
     //    delay(10);
