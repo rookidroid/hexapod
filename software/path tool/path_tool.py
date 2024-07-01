@@ -164,6 +164,27 @@ def gen_climb_path(
     z_shift=-30,
     reverse=False,
 ):
+    """Generates a climbing path for the hexapod.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        y_radius (int, optional): The radius of the walking circle in the y-axis. Defaults to 20.
+        z_radius (int, optional): The radius of the walking circle in the z-axis. Defaults to 80.
+        x_radius (int, optional): The radius of the walking circle in the x-axis. Defaults to 30.
+        z_shift (int, optional): The z-axis shift for the climbing path. Defaults to -30.
+        reverse (bool, optional): Whether to reverse the climbing direction. Defaults to False.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the climbing path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
     halfsteps = int(g_steps / 2)
 
@@ -191,7 +212,7 @@ def gen_climb_path(
     return path + np.tile(standby_coordinate, (g_steps, 1, 1))
 
 
-def gen_rotatex_path(standby_coordinate, g_steps=20, swing_angle=15, y_radius=15):
+def gen_rotatex_path(standby_coordinate, g_steps=28, swing_angle=15, y_radius=15):
     assert (g_steps % 4) == 0
     quarter = int(g_steps / 4)
 
@@ -229,7 +250,7 @@ def gen_rotatex_path(standby_coordinate, g_steps=20, swing_angle=15, y_radius=15
     return path
 
 
-def gen_rotatey_path(standby_coordinate, g_steps=20, swing_angle=15, x_radius=15):
+def gen_rotatey_path(standby_coordinate, g_steps=28, swing_angle=15, x_radius=15):
     assert (g_steps % 4) == 0
     quarter = int(g_steps / 4)
 
@@ -267,7 +288,7 @@ def gen_rotatey_path(standby_coordinate, g_steps=20, swing_angle=15, x_radius=15
     return path
 
 
-def gen_rotatez_path(standby_coordinate, g_steps=20, z_lift=4.5, xy_radius=1):
+def gen_rotatez_path(standby_coordinate, g_steps=28, z_lift=4.5, xy_radius=1):
     assert (g_steps % 4) == 0
 
     path = np.zeros((g_steps, 6, 3))
@@ -289,7 +310,7 @@ def gen_rotatez_path(standby_coordinate, g_steps=20, z_lift=4.5, xy_radius=1):
 
 
 def gen_twist_path(
-    standby_coordinate, g_steps=20, raise_angle=3, twist_x_angle=20, twise_y_angle=12
+    standby_coordinate, g_steps=28, raise_angle=3, twist_x_angle=20, twise_y_angle=12
 ):
     assert (g_steps % 4) == 0
 
@@ -410,6 +431,27 @@ def gen_standup_path(standby_coordinate, laydown_coordinate, steps=28):
 
 
 def gen_posture(j2_angle, j3_angle, config):
+    """Generates a posture for the hexapod based on joint angles.
+
+    Args:
+        j2_angle (float): The angle of joint 2 in degrees.
+        j3_angle (float): The angle of joint 3 in degrees.
+        config (dict): A dictionary containing the hexapod's configuration parameters.
+            The dictionary should contain the following keys:
+                - "legMountX": A list of x-coordinates for the leg mounts.
+                - "legMountY": A list of y-coordinates for the leg mounts.
+                - "legRootToJoint1": The distance from the leg root to joint 1.
+                - "legJoint1ToJoint2": The distance from joint 1 to joint 2.
+                - "legJoint2ToJoint3": The distance from joint 2 to joint 3.
+                - "legJoint3ToTip": The distance from joint 3 to the leg tip.
+                - "legMountAngle": A list of angles for the leg mounts in degrees.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the hexapod's posture.
+        The shape of the array is (6, 3), where:
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+    """
     mount_x = np.array(config["legMountX"])
     mount_y = np.array(config["legMountY"])
     root_j1 = config["legRootToJoint1"]
