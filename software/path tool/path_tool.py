@@ -213,6 +213,24 @@ def gen_climb_path(
 
 
 def gen_rotatex_path(standby_coordinate, g_steps=28, swing_angle=15, y_radius=15):
+    """Generates a path for the hexapod to rotate around the x-axis.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        swing_angle (int, optional): The angle of the swing in degrees. Defaults to 15.
+        y_radius (int, optional): The radius of the rotation in the y-axis. Defaults to 15.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the rotation path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
     quarter = int(g_steps / 4)
 
@@ -251,6 +269,24 @@ def gen_rotatex_path(standby_coordinate, g_steps=28, swing_angle=15, y_radius=15
 
 
 def gen_rotatey_path(standby_coordinate, g_steps=28, swing_angle=15, x_radius=15):
+    """Generates a path for the hexapod to rotate around the y-axis.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        swing_angle (int, optional): The angle of the swing in degrees. Defaults to 15.
+        x_radius (int, optional): The radius of the rotation in the x-axis. Defaults to 15.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the rotation path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
     quarter = int(g_steps / 4)
 
@@ -289,6 +325,24 @@ def gen_rotatey_path(standby_coordinate, g_steps=28, swing_angle=15, x_radius=15
 
 
 def gen_rotatez_path(standby_coordinate, g_steps=28, z_lift=4.5, xy_radius=1):
+    """Generates a path for the hexapod to rotate around the z-axis.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        z_lift (float, optional): The height of the rotation in the z-axis. Defaults to 4.5.
+        xy_radius (int, optional): The radius of the rotation in the xy-plane. Defaults to 1.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the rotation path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
 
     path = np.zeros((g_steps, 6, 3))
@@ -312,6 +366,25 @@ def gen_rotatez_path(standby_coordinate, g_steps=28, z_lift=4.5, xy_radius=1):
 def gen_twist_path(
     standby_coordinate, g_steps=28, raise_angle=3, twist_x_angle=20, twise_y_angle=12
 ):
+    """Generates a path for the hexapod to twist around the z-axis.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        raise_angle (int, optional): The angle of the raise in degrees. Defaults to 3.
+        twist_x_angle (int, optional): The angle of the twist around the x-axis in degrees. Defaults to 20.
+        twise_y_angle (int, optional): The angle of the twist around the y-axis in degrees. Defaults to 12.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the twist path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
 
     quarter = int(g_steps / 4)
@@ -363,6 +436,20 @@ def gen_twist_path(
 
 
 def gen_standup_path(standby_coordinate, laydown_coordinate, steps=28):
+    """Generates a path for the hexapod to stand up from a lying down position.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        laydown_coordinate (numpy.ndarray): The coordinate of the hexapod when lying down.
+        steps (int, optional): The number of steps in the path. Defaults to 28.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the standup path.
+        The shape of the array is (steps, 6, 3), where:
+            - steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+    """
     standing_up_lut_size = steps
 
     lift_up_size = 10
