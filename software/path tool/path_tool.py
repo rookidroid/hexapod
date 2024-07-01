@@ -1,4 +1,3 @@
-#!python
 #
 # 2021  Zhengyu Peng
 # Website: https://zpeng.me
@@ -24,13 +23,32 @@
 #           :##:
 #            .+:
 
+import numpy as np
+
 from path_lib import semicircle_generator, semicircle2_generator
 from path_lib import path_rotate_z
 from path_lib import get_rotate_x_matrix, get_rotate_y_matrix, get_rotate_z_matrix
-import numpy as np
 
 
 def gen_walk_path(standby_coordinate, g_steps=28, g_radius=35, direction=0):
+    """Generates a walking path for the hexapod.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        g_radius (int, optional): The radius of the walking circle. Defaults to 35.
+        direction (int, optional): The direction of the walking path. Defaults to 0.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the walking path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
     halfsteps = int(g_steps / 2)
 
@@ -49,6 +67,26 @@ def gen_walk_path(standby_coordinate, g_steps=28, g_radius=35, direction=0):
 def gen_fastwalk_path(
     standby_coordinate, g_steps=20, y_radius=50, z_radius=30, x_radius=10, reverse=False
 ):
+    """Generates a fast walking path for the hexapod.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 20.
+        y_radius (int, optional): The radius of the walking circle in the y-axis. Defaults to 50.
+        z_radius (int, optional): The radius of the walking circle in the z-axis. Defaults to 30.
+        x_radius (int, optional): The radius of the walking circle in the x-axis. Defaults to 10.
+        reverse (bool, optional): Whether to reverse the walking direction. Defaults to False.
+
+    Returns:
+        numpy.ndarray: A 3D array representing the fast walking path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 2.
+    """
     assert (g_steps % 2) == 0
 
     halfsteps = int(g_steps / 2)
@@ -72,6 +110,25 @@ def gen_fastwalk_path(
 
 
 def gen_turn_path(standby_coordinate, g_steps=28, g_radius=35, direction="left"):
+    """Generates a turning path for the hexapod.
+
+    Args:
+        standby_coordinate (numpy.ndarray): The standby coordinate of the hexapod.
+        g_steps (int, optional): The number of steps in the path. Defaults to 28.
+        g_radius (int, optional): The radius of the turning circle. Defaults to 35.
+        direction (str, optional): The direction of the turning path, either "left" or "right".
+            Defaults to "left".
+
+    Returns:
+        numpy.ndarray: A 3D array representing the turning path.
+        The shape of the array is (g_steps, 6, 3), where:
+            - g_steps is the number of steps in the path.
+            - 6 is the number of legs.
+            - 3 is the number of coordinates (x, y, z).
+
+    Raises:
+        AssertionError: If g_steps is not divisible by 4.
+    """
     assert (g_steps % 4) == 0
     halfsteps = int(g_steps / 2)
 
