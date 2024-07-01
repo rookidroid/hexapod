@@ -42,23 +42,24 @@ enum MotionMode {
 #define APSSID "hexapod"
 #define APPSK "hexapod_1234"
 #endif
+
+#define UDP_PORT 1234  // local port to listen on
+
+#define SERVOMIN 125  // Minimum value, 0 deg
+#define SERVOMID 350  // Middle value, 90 deg
+#define SERVOMAX 575  // Maximum value, 180 deg
+
 const char *ssid = APSSID;
 const char *password = APPSK;
 
-char *packet_ptr;               // buffer to hold incoming packet
-unsigned int localPort = 1234;  // local port to listen on
+char *packet_ptr;  // buffer to hold incoming packet
 
 AsyncUDP Udp;
 
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
 
-int str_idx;
 String inputString = "";
-
-#define SERVOMIN 125  // Minimum value, 0 deg
-#define SERVOMID 350  // Middle value, 90 deg
-#define SERVOMAX 575  // Maximum value, 180 deg
 
 int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
 int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
@@ -122,7 +123,7 @@ void setup() {
   right_pwm.begin();
   right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
 
-  if (Udp.listen(localPort)) {
+  if (Udp.listen(UDP_PORT)) {
     Serial.print("UDP Listening on IP: ");
     Serial.println(myIP);
     Udp.onPacket([](AsyncUDPPacket packet) {
@@ -146,7 +147,7 @@ void setup() {
       // reply to the client
       packet.printf("Got %u bytes of data", packet.length());
       packet_ptr = (char *)packet.data();
-      for (str_idx = 0; str_idx < packet.length(); str_idx++) {
+      for (int str_idx = 0; str_idx < packet.length(); str_idx++) {
         char inChar = packet_ptr[str_idx];
 
         if (inChar != '\n' && inChar != ':') {
