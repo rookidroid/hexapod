@@ -45,10 +45,11 @@
 /** OTA */
 #include <ArduinoOTA.h>
 
+/** Robot Configuration */
+#include "config.h"
+
 /** Motion Path LUT */
 #include "motion.h"
-
-#include "config.h"
 
 /** WiFi Configurations */
 #ifndef APSSID
