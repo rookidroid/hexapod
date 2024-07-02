@@ -48,28 +48,7 @@
 /** Motion Path LUT */
 #include "motion.h"
 
-/** Motion Mode */
-enum MotionMode {
-  Mode_Standby,
-  Mode_Walk_0,
-  Mode_Walk_180,
-  Mode_Walk_R45,
-  Mode_Walk_R90,
-  Mode_Walk_R135,
-  Mode_Walk_L45,
-  Mode_Walk_L90,
-  Mode_Walk_L135,
-  Mode_Fast_Forward,
-  Mode_Fast_Backward,
-  Mode_Turn_Left,
-  Mode_Turn_Right,
-  Mode_Climb_Forward,
-  Mode_Climb_Backward,
-  Mode_Rotate_X,
-  Mode_Rotate_Y,
-  Mode_Rotate_Z,
-  Mode_Twist,
-};
+#include "config.h"
 
 /** WiFi Configurations */
 #ifndef APSSID
@@ -79,10 +58,6 @@ enum MotionMode {
 
 #define UDP_PORT 1234  // local port to listen on
 
-#define SERVOMIN 125  // Minimum value, 0 deg
-#define SERVOMID 350  // Middle value, 90 deg
-#define SERVOMAX 575  // Maximum value, 180 deg
-
 const char *ssid = APSSID;
 const char *password = APPSK;
 
@@ -91,14 +66,7 @@ AsyncUDP Udp;
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
 
-int left_legs[3][3] = {{0, 3, 1}, {7, 5, 10}, {15, 12, 14}};
-int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
-
 int start_new_motion = 1;
-
-// Offset to correct the installation error. Offset value is the number of ticks
-int left_offset_ticks[3][3] = {{ -5, -20, 6}, { -15, 0, 14}, {20, 6, 0}};
-int right_offset_ticks[3][3] = {{20, 15, 0}, { -15, 20, -20}, { -10, -8, 10}};
 
 MotionMode next_motion = MotionMode::Mode_Standby;
 
