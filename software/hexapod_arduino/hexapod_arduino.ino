@@ -338,7 +338,7 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
   int max_step = 0;
   int sign[6][3];
 
-  int temp_current[6][3];
+  int current_pos[6][3];
   int diff;
 
   int p_count = 6;
@@ -347,7 +347,7 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       diff = end_pos[end_pos_idx][leg_idx][joint_idx] -
              start_pos[start_pos_idx][leg_idx][joint_idx];
-      temp_current[leg_idx][joint_idx] =
+      current_pos[leg_idx][joint_idx] =
           start_pos[start_pos_idx][leg_idx][joint_idx];
       if (diff < 0) {
         sign[leg_idx][joint_idx] = -p_count;
@@ -361,30 +361,30 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        if (abs(temp_current[leg_idx][joint_idx] -
+        if (abs(current_pos[leg_idx][joint_idx] -
                 end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
-          temp_current[leg_idx][joint_idx] =
-              temp_current[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
+          current_pos[leg_idx][joint_idx] =
+              current_pos[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
         } else {
-          temp_current[leg_idx][joint_idx] =
+          current_pos[leg_idx][joint_idx] =
               end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
-        if (abs(temp_current[leg_idx + 3][joint_idx] -
+        if (abs(current_pos[leg_idx + 3][joint_idx] -
                 end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
-          temp_current[leg_idx + 3][joint_idx] =
-              temp_current[leg_idx + 3][joint_idx] +
+          current_pos[leg_idx + 3][joint_idx] =
+              current_pos[leg_idx + 3][joint_idx] +
               sign[leg_idx + 3][joint_idx];
         } else {
-          temp_current[leg_idx + 3][joint_idx] =
+          current_pos[leg_idx + 3][joint_idx] =
               end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                         temp_current[leg_idx][joint_idx] +
+                         current_pos[leg_idx][joint_idx] +
                              right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                        temp_current[leg_idx + 3][joint_idx] +
+                        current_pos[leg_idx + 3][joint_idx] +
                             left_offset_ticks[leg_idx][joint_idx]);
       }
     }
