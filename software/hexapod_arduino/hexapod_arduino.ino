@@ -343,15 +343,16 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
 
   int p_count = 6;
 
-  for (int l_idx = 0; l_idx < 6; l_idx++) {
-    for (int j_idx = 0; j_idx < 3; j_idx++) {
-      diff = end_pos[end_pos_idx][l_idx][j_idx] -
-             start_pos[start_pos_idx][l_idx][j_idx];
-      temp_current[l_idx][j_idx] = start_pos[start_pos_idx][l_idx][j_idx];
+  for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+      diff = end_pos[end_pos_idx][leg_idx][joint_idx] -
+             start_pos[start_pos_idx][leg_idx][joint_idx];
+      temp_current[leg_idx][joint_idx] =
+          start_pos[start_pos_idx][leg_idx][joint_idx];
       if (diff < 0) {
-        sign[l_idx][j_idx] = -p_count;
+        sign[leg_idx][joint_idx] = -p_count;
       } else {
-        sign[l_idx][j_idx] = p_count;
+        sign[leg_idx][joint_idx] = p_count;
       }
       max_step = max(max_step, abs(diff));
     }
