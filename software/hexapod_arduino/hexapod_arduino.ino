@@ -304,17 +304,17 @@ void exec_motion(int lut_size, int lut[][6][3]) {
         current_motion == MotionMode::Mode_Fast_Backward) {
       if (lut_idx % 28 == 0 && current_motion != next_motion) {
         exec_transition(lut, lut_idx, lut_standby, 0);
-        delay(15);
+        delay(DELAY_MS);
         break;
       }
     } else {
       if (lut_idx % 14 == 0 && current_motion != next_motion) {
         exec_transition(lut, lut_idx, lut_standby, 0);
-        delay(15);
+        delay(DELAY_MS);
         break;
       }
     }
-    delay(15);
+    delay(DELAY_MS);
   }
 }
 

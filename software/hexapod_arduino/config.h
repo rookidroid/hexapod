@@ -39,6 +39,8 @@
 #define SERVOMID 350  // Middle value, 90 deg
 #define SERVOMAX 575  // Maximum value, 180 deg
 
+#define DELAY_MS 15   // Servo delay
+
 /** Motion Mode */
 enum MotionMode {
   Mode_Standby,
