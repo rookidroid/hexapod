@@ -2,7 +2,7 @@
 
 A 3D Printed Hexapod Robot
 
-![banner](imgs/banner.jpg)
+![banner](imgs/banner.gif)
 
 [<img alt="google_play" width="200" src="./imgs/google_play.svg" />](https://play.google.com/store/apps/details?id=com.rookiedev.hexapod)
 [<img alt="windows" width="200" src="./imgs/windows_app.svg" />](https://github.com/rookiepeng/hexapod/releases)
