@@ -60,8 +60,6 @@ AsyncUDP Udp;
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
 
-int start_new_motion = 1;
-
 MotionMode current_motion = MotionMode::Mode_Standby;
 MotionMode next_motion = MotionMode::Mode_Standby;
 
@@ -198,9 +196,6 @@ void setup() {
             next_motion = MotionMode::Mode_Twist;
           }
 
-          if (current_mode != next_motion) {
-            start_new_motion = 1;
-          }
           inputString = "";
         }
       }
@@ -256,7 +251,6 @@ void loop() {
     exec_motion(lut_twist_length, lut_twist);
   } else {
     exec_motion(lut_standby_length, lut_standby);
-    start_new_motion = 1;
   }
   ArduinoOTA.handle();
 }
@@ -289,14 +283,12 @@ void posture_calibration() {
  * @param lut The LUT containing the PWM values for each joint at each step of the motion.
  */
 void exec_motion(int lut_size, int lut[][6][3]) {
-  MotionMode current_mode = next_motion;
-  int lut_idx;
-  if (start_new_motion) {
-    start_new_motion = 0;
+  if (current_motion == MotionMode::Mode_Standby) {
     exec_transition(lut_standby, 0, lut, 0);
   }
+  current_motion = next_motion;
 
-  for (lut_idx = 0; lut_idx < lut_size; lut_idx++) {
+  for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
@@ -308,15 +300,15 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       }
     }
 
-    if (current_mode == MotionMode::Mode_Fast_Forward ||
-        current_mode == MotionMode::Mode_Fast_Backward) {
-      if (lut_idx % 28 == 0 && current_mode != next_motion) {
+    if (current_motion == MotionMode::Mode_Fast_Forward ||
+        current_motion == MotionMode::Mode_Fast_Backward) {
+      if (lut_idx % 28 == 0 && current_motion != next_motion) {
         exec_transition(lut, lut_idx, lut_standby, 0);
         delay(15);
         break;
       }
     } else {
-      if (lut_idx % 14 == 0 && current_mode != next_motion) {
+      if (lut_idx % 14 == 0 && current_motion != next_motion) {
         exec_transition(lut, lut_idx, lut_standby, 0);
         delay(15);
         break;
