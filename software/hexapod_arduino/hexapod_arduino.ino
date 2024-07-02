@@ -362,8 +362,8 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         if (abs(current_pos[leg_idx][joint_idx] -
                 end_pos[end_pos_idx][leg_idx][joint_idx]) > tick_step) {
-          current_pos[leg_idx][joint_idx] =
-              current_pos[leg_idx][joint_idx] + signed_ticks[leg_idx][joint_idx];
+          current_pos[leg_idx][joint_idx] = current_pos[leg_idx][joint_idx] +
+                                            signed_ticks[leg_idx][joint_idx];
         } else {
           current_pos[leg_idx][joint_idx] =
               end_pos[end_pos_idx][leg_idx][joint_idx];
