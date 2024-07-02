@@ -1,5 +1,5 @@
 /**
- * This is an automatically generated motion path LUT
+ * This is an automatically generated header, which includes motion path LUTs
  * 
  * - Copyright (C) 2024 - PRESENT  rookidroid.com
  * - E-mail: info@rookidroid.com
