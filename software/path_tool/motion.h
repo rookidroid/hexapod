@@ -1,6 +1,9 @@
-/*
- * This is an automatically generated code
- *
+/**
+ * This is an automatically generated motion path LUT
+ * 
+ * - Copyright (C) 2024 - PRESENT  rookidroid.com
+ * - E-mail: info@rookidroid.com
+ * - Website: https://rookidroid.com/
  */
 
 #ifndef MOTION_H
