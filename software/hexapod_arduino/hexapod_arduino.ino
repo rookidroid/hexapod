@@ -335,13 +335,12 @@ void exec_motion(int lut_size, int lut[][6][3]) {
  */
 void exec_transition(int start_pos[][6][3], int start_pos_idx,
                      int end_pos[][6][3], int end_pos_idx) {
+  int tick_step = 6;
   int max_step = 0;
-  int sign[6][3];
+  int signed_ticks[6][3];
 
   int current_pos[6][3];
   int diff;
-
-  int p_count = 6;
 
   for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
@@ -350,31 +349,31 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
       current_pos[leg_idx][joint_idx] =
           start_pos[start_pos_idx][leg_idx][joint_idx];
       if (diff < 0) {
-        sign[leg_idx][joint_idx] = -p_count;
+        signed_ticks[leg_idx][joint_idx] = -tick_step;
       } else {
-        sign[leg_idx][joint_idx] = p_count;
+        signed_ticks[leg_idx][joint_idx] = tick_step;
       }
       max_step = max(max_step, abs(diff));
     }
   }
-  max_step = ceil(max_step / p_count);
+  max_step = ceil(max_step / tick_step);
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         if (abs(current_pos[leg_idx][joint_idx] -
-                end_pos[end_pos_idx][leg_idx][joint_idx]) > p_count) {
+                end_pos[end_pos_idx][leg_idx][joint_idx]) > tick_step) {
           current_pos[leg_idx][joint_idx] =
-              current_pos[leg_idx][joint_idx] + sign[leg_idx][joint_idx];
+              current_pos[leg_idx][joint_idx] + signed_ticks[leg_idx][joint_idx];
         } else {
           current_pos[leg_idx][joint_idx] =
               end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
         if (abs(current_pos[leg_idx + 3][joint_idx] -
-                end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > p_count) {
+                end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > tick_step) {
           current_pos[leg_idx + 3][joint_idx] =
               current_pos[leg_idx + 3][joint_idx] +
-              sign[leg_idx + 3][joint_idx];
+              signed_ticks[leg_idx + 3][joint_idx];
         } else {
           current_pos[leg_idx + 3][joint_idx] =
               end_pos[end_pos_idx][leg_idx + 3][joint_idx];
