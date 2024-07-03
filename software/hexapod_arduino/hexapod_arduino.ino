@@ -62,12 +62,12 @@ const char *password = APPSK;
 AsyncUDP udp_socket;
 
 /**
- * @brief Sets up the hexapod robot system.
- *
- * This function initializes the serial communication, sets up the WiFi access
- * point, configures the Over-the-Air (OTA) update functionality, initializes
- * the PWM drivers for the servos, and starts listening for UDP packets.
- */
+   @brief Sets up the hexapod robot system.
+
+   This function initializes the serial communication, sets up the WiFi access
+   point, configures the Over-the-Air (OTA) update functionality, initializes
+   the PWM drivers for the servos, and starts listening for UDP packets.
+*/
 void setup() {
   Serial.begin(115200);
 
@@ -79,36 +79,38 @@ void setup() {
   Serial.println(myIP);
 
   ArduinoOTA
-      .onStart([]() {
-        String type;
-        if (ArduinoOTA.getCommand() == U_FLASH) {
-          type = "sketch";
-        } else {  // U_SPIFFS
-          type = "filesystem";
-        }
+  .onStart([]() {
+    String type;
+    if (ArduinoOTA.getCommand() == U_FLASH) {
+      type = "sketch";
+    } else {  // U_SPIFFS
+      type = "filesystem";
+    }
 
-        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
-        // using SPIFFS.end()
-        Serial.println("Start updating " + type);
-      })
-      .onEnd([]() { Serial.println("\nEnd"); })
-      .onProgress([](unsigned int progress, unsigned int total) {
-        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-      })
-      .onError([](ota_error_t error) {
-        Serial.printf("Error[%u]: ", error);
-        if (error == OTA_AUTH_ERROR) {
-          Serial.println("Auth Failed");
-        } else if (error == OTA_BEGIN_ERROR) {
-          Serial.println("Begin Failed");
-        } else if (error == OTA_CONNECT_ERROR) {
-          Serial.println("Connect Failed");
-        } else if (error == OTA_RECEIVE_ERROR) {
-          Serial.println("Receive Failed");
-        } else if (error == OTA_END_ERROR) {
-          Serial.println("End Failed");
-        }
-      });
+    // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS
+    // using SPIFFS.end()
+    Serial.println("Start updating " + type);
+  })
+  .onEnd([]() {
+    Serial.println("\nEnd");
+  })
+  .onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+  })
+  .onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) {
+      Serial.println("Auth Failed");
+    } else if (error == OTA_BEGIN_ERROR) {
+      Serial.println("Begin Failed");
+    } else if (error == OTA_CONNECT_ERROR) {
+      Serial.println("Connect Failed");
+    } else if (error == OTA_RECEIVE_ERROR) {
+      Serial.println("Receive Failed");
+    } else if (error == OTA_END_ERROR) {
+      Serial.println("End Failed");
+    }
+  });
 
   ArduinoOTA.begin();
 
@@ -126,7 +128,7 @@ void setup() {
       Serial.print("UDP Packet Type: ");
       Serial.print(packet.isBroadcast()   ? "Broadcast"
                    : packet.isMulticast() ? "Multicast"
-                                          : "Unicast");
+                   : "Unicast");
       Serial.print(", From: ");
       Serial.print(packet.remoteIP());
       Serial.print(":");
@@ -202,13 +204,13 @@ void setup() {
 }
 
 /**
- * @brief Main loop of the hexapod robot program.
- *
- * This function continuously checks the `next_motion` variable to determine the
- * desired motion mode. Based on the mode, it calls the `exec_motion` function
- * with the appropriate LUT and length. It also handles OTA updates using
- * `ArduinoOTA.handle()`.
- */
+   @brief Main loop of the hexapod robot program.
+
+   This function continuously checks the `next_motion` variable to determine the
+   desired motion mode. Based on the mode, it calls the `exec_motion` function
+   with the appropriate LUT and length. It also handles OTA updates using
+   `ArduinoOTA.handle()`.
+*/
 void loop() {
   if (next_motion == MotionMode::Mode_Walk_0) {
     exec_motion(lut_walk_0_length, lut_walk_0);
@@ -253,13 +255,13 @@ void loop() {
 }
 
 /**
- * @brief Calibrates the posture of the hexapod robot.
- *
- * This function sets the PWM values for each joint of the hexapod's legs to a
- * neutral position, defined by SERVOMID and the offset values stored in
- * right_offset_ticks and left_offset_ticks. This helps ensure that the robot
- * starts in a balanced and stable posture.
- */
+   @brief Calibrates the posture of the hexapod robot.
+
+   This function sets the PWM values for each joint of the hexapod's legs to a
+   neutral position, defined by SERVOMID and the offset values stored in
+   right_offset_ticks and left_offset_ticks. This helps ensure that the robot
+   starts in a balanced and stable posture.
+*/
 void posture_calibration() {
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
@@ -272,16 +274,16 @@ void posture_calibration() {
 }
 
 /**
- * @brief Executes a motion sequence defined by a lookup table (LUT).
- *
- * This function iterates through the provided LUT, setting the PWM values for
- * each joint of the hexapod's legs. It handles transitions between different
- * motion modes and ensures smooth movement.
- *
- * @param lut_size The size of the LUT.
- * @param lut The LUT containing the PWM values for each joint at each step of
- * the motion.
- */
+   @brief Executes a motion sequence defined by a lookup table (LUT).
+
+   This function iterates through the provided LUT, setting the PWM values for
+   each joint of the hexapod's legs. It handles transitions between different
+   motion modes and ensures smooth movement.
+
+   @param lut_size The size of the LUT.
+   @param lut The LUT containing the PWM values for each joint at each step of
+   the motion.
+*/
 void exec_motion(int lut_size, int lut[][6][3]) {
   if (current_motion == MotionMode::Mode_Standby) {
     exec_transition(lut_standby, 0, lut, 0);
@@ -293,10 +295,10 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          lut[lut_idx][leg_idx][joint_idx] +
-                             right_offset_ticks[leg_idx][joint_idx]);
+                         right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         lut[lut_idx][leg_idx + 3][joint_idx] +
-                            left_offset_ticks[leg_idx][joint_idx]);
+                        left_offset_ticks[leg_idx][joint_idx]);
       }
     }
 
@@ -319,20 +321,20 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 }
 
 /**
- * @brief Executes a smooth transition between two motion positions.
- *
- * This function takes two motion positions (start_pos and end_pos) and their
- * respective indices in their respective LUTs. It calculates the difference
- * between the start and end positions for each joint and determines the number
- * of steps required for a smooth transition. The function then iterates through
- * these steps, adjusting the PWM values for each joint to gradually move from
- * the start position to the end position.
- *
- * @param start_pos The starting position LUT.
- * @param start_pos_idx The index of the starting position in the start_pos LUT.
- * @param end_pos The ending position LUT.
- * @param end_pos_idx The index of the ending position in the end_pos LUT.
- */
+   @brief Executes a smooth transition between two motion positions.
+
+   This function takes two motion positions (start_pos and end_pos) and their
+   respective indices in their respective LUTs. It calculates the difference
+   between the start and end positions for each joint and determines the number
+   of steps required for a smooth transition. The function then iterates through
+   these steps, adjusting the PWM values for each joint to gradually move from
+   the start position to the end position.
+
+   @param start_pos The starting position LUT.
+   @param start_pos_idx The index of the starting position in the start_pos LUT.
+   @param end_pos The ending position LUT.
+   @param end_pos_idx The index of the ending position in the end_pos LUT.
+*/
 void exec_transition(int start_pos[][6][3], int start_pos_idx,
                      int end_pos[][6][3], int end_pos_idx) {
   int tick_step = 6;
@@ -347,7 +349,7 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
       diff = end_pos[end_pos_idx][leg_idx][joint_idx] -
              start_pos[start_pos_idx][leg_idx][joint_idx];
       current_pos[leg_idx][joint_idx] =
-          start_pos[start_pos_idx][leg_idx][joint_idx];
+        start_pos[start_pos_idx][leg_idx][joint_idx];
       if (diff < 0) {
         signed_ticks[leg_idx][joint_idx] = -tick_step;
       } else {
@@ -366,25 +368,25 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
                                             signed_ticks[leg_idx][joint_idx];
         } else {
           current_pos[leg_idx][joint_idx] =
-              end_pos[end_pos_idx][leg_idx][joint_idx];
+            end_pos[end_pos_idx][leg_idx][joint_idx];
         }
 
         if (abs(current_pos[leg_idx + 3][joint_idx] -
                 end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > tick_step) {
           current_pos[leg_idx + 3][joint_idx] =
-              current_pos[leg_idx + 3][joint_idx] +
-              signed_ticks[leg_idx + 3][joint_idx];
+            current_pos[leg_idx + 3][joint_idx] +
+            signed_ticks[leg_idx + 3][joint_idx];
         } else {
           current_pos[leg_idx + 3][joint_idx] =
-              end_pos[end_pos_idx][leg_idx + 3][joint_idx];
+            end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          current_pos[leg_idx][joint_idx] +
-                             right_offset_ticks[leg_idx][joint_idx]);
+                         right_offset_ticks[leg_idx][joint_idx]);
         left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                         current_pos[leg_idx + 3][joint_idx] +
-                            left_offset_ticks[leg_idx][joint_idx]);
+                        left_offset_ticks[leg_idx][joint_idx]);
       }
     }
   }
