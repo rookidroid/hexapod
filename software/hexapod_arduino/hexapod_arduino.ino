@@ -285,6 +285,7 @@ void posture_calibration() {
    the motion.
 */
 void exec_motion(int lut_size, int lut[][6][3]) {
+  int mid_step = (int)(lut_size / 2);
   if (current_motion == MotionMode::Mode_Standby) {
     exec_transition(lut_standby, 0, lut, 0);
   }
@@ -302,15 +303,8 @@ void exec_motion(int lut_size, int lut[][6][3]) {
       }
     }
 
-    if (current_motion == MotionMode::Mode_Fast_Forward ||
-        current_motion == MotionMode::Mode_Fast_Backward) {
-      if (lut_idx % 28 == 0 && current_motion != next_motion) {
-        exec_transition(lut, lut_idx, lut_standby, 0);
-        delay(DELAY_MS);
-        break;
-      }
-    } else {
-      if (lut_idx % 14 == 0 && current_motion != next_motion) {
+    if (mid_step > 0) {
+      if (lut_idx % mid_step == 0 && current_motion != next_motion) {
         exec_transition(lut, lut_idx, lut_standby, 0);
         delay(DELAY_MS);
         break;
