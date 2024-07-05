@@ -61,6 +61,8 @@ const char *ssid = APSSID;
 const char *password = APPSK;
 AsyncUDP udp_socket;
 
+bool ota_mode = true;
+
 /**
    @brief Sets up the hexapod robot system.
 
@@ -195,6 +197,7 @@ void setup() {
           }
 
           inputString = "";
+          ota_mode = false;
         }
       }
     });
@@ -251,7 +254,10 @@ void loop() {
   } else {
     exec_motion(lut_standby_length, lut_standby);
   }
-  ArduinoOTA.handle();
+
+  if (ota_mode) {
+    ArduinoOTA.handle();
+  }
 }
 
 /**
