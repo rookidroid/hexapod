@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_climb_backward.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_climb_forward.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_rotatex.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_rotatey.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_rotatez.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/control_left_twist.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.189" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_fastbackward.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_fastforward.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_standby.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_180.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_l135.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_l45.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_l90.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_r135.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/drawable/ic_control_circle_walk_r45.xml" value="0.2795" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/activity_control.xml" value="0.32472826086956524" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/activity_device_list.xml" value="0.2826086956521739" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/activity_main.xml" value="0.2717391304347826" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/device_list.xml" value="0.2826086956521739" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/device_name.xml" value="0.2826086956521739" />
+        <entry key="..\:/Users/rooki/Documents/GitHub/hexapod/software/android/app/src/main/res/layout/selected_device.xml" value="0.3333333333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

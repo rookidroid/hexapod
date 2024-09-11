@@ -1,0 +1,46 @@
+{
+    "legNames": [
+        "front_right",
+        "center_right",
+        "rear_right",
+        "front_left",
+        "center_left",
+        "rear_left"
+    ],
+    "legMountX": [
+        29.41,
+        36.87,
+        29.41,
+        -29.41,
+        -36.87,
+        -29.41
+    ],
+    "legMountY": [
+        55.41,
+        0,
+        -55.41,
+        55.41,
+        0,
+        -55.41
+    ],
+    "legMountAngle": [
+        45,
+        0,
+        -45,
+        -225,
+        -180,
+        -135
+    ],
+    "legScale": [
+        [1, -1, -1],
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, 1, 1],
+        [1, -1, -1],
+        [1, -1, -1]
+    ],
+    "legRootToJoint1": 20.75,
+    "legJoint1ToJoint2": 32.0,
+    "legJoint2ToJoint3": 42.6,
+    "legJoint3ToTip": 87.0
+}

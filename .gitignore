@@ -1,0 +1,6 @@
+.DS_Store
+*.pyc
+.vscode/
+*.blend1
+software/pc/config.json
+*.aab

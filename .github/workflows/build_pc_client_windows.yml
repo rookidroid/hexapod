@@ -1,0 +1,37 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Build PC Client on Windows
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PySide6 psutil pyinstaller
+    - name: PyInstaller
+      run: |
+        cd software\pc
+        pyinstaller hexapod.spec
+        copy mainwindow.ui .\dist\hexapod\
+    - name: Archive built module
+      uses: actions/upload-artifact@v2
+      if: success()
+      with:
+        name: hexapod_windows
+        path: .\software\pc\dist\hexapod
