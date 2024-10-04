@@ -38,15 +38,13 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ![diagram](./images/diagram.svg)
 
-## Mechanism
-
-### Bill of Materials (BOM)
-
-#### 3D-Printed Parts
+## Assembly
 
 ![whole_assembly](./images/assembly_whole.gif)
 
-##### Body x 1
+### 3D-Printed Parts
+
+#### Body x 1
 
 ![body_assembly](./images/assembly_body.gif)
 
@@ -61,7 +59,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 | body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="300"/> | 6        |
 | body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="300"/>     | 6        |
 
-##### Joint x 6
+#### Joint x 6
 
 ![joint_assembly](./images/assembly_joint.gif)
 
@@ -72,7 +70,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 | joint_top_mg90s | <img src="./images/joint_top_mg90s.jpg" alt="joint_top_mg90s" width="300"/> | 12       | For MG90S |
 | joint_top_mg92b | <img src="./images/joint_top_mg92b.jpg" alt="joint_top_mg92b" width="300"/> | 12       | For MG92B |
 
-##### Leg x 6
+#### Leg x 6
 
 ![leg_assembly](./images/assembly_leg.gif)
 
@@ -82,7 +80,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 | leg_side        | <img src="./images/leg_side.jpg" alt="leg_side" width="300"/>               | 12       |
 | leg_top         | <img src="./images/leg_top.jpg" alt="leg_top" width="300"/>                 | 6        |
 
-##### Foot x 6
+#### Foot x 6
 
 ![foot_assembly](./images/assembly_foot.gif)
 
@@ -94,14 +92,14 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 | foot_top_mg90s  | <img src="./images/foot_top_mg90s.jpg" alt="foot_top_mg90s" width="300"/>   | 6        | For MG90S |
 | foot_top_mg92b  | <img src="./images/foot_top_mg92b.jpg" alt="foot_top_mg92b" width="300"/>   | 6        | For MG92B |
 
-##### Accessory
+#### Accessory
 
 | Filename               | Thumbnail                                                                                 | Note             |
 | ---------------------- | ----------------------------------------------------------------------------------------- | ---------------- |
 | accessory_spacer_mg90s | <img src="./images/accessory_spacer_mg90s.jpg" alt="accessory_spacer_mg90s" width="300"/> | Spacer for MG90S |
 | accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="300"/> |                  |
 
-#### Others
+### Others
 
 | Name      | Spec    | Required |
 | --------- | ------- | -------- |
