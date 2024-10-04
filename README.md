@@ -126,3 +126,7 @@ Source code is under `./hexapod_arduino`.
 ### PC
 
 *Working in progress*
+
+## Calibration
+
+![calibration](./images/calibration.gif)
