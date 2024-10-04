@@ -44,11 +44,11 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 #### 3D-Printed Parts
 
-![whole_assembly](./images/assembly_whole.jpg)
+![whole_assembly](./images/assembly_whole.gif)
 
 ##### Body x 1
 
-![body_assembly](./images/assembly_body.jpg)
+![body_assembly](./images/assembly_body.gif)
 
 | Filename       | Thumbnail                                                               | Required |
 | -------------- | ----------------------------------------------------------------------- | -------- |
@@ -63,7 +63,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ##### Joint x 6
 
-![joint_assembly](./images/assembly_joint.jpg)
+![joint_assembly](./images/assembly_joint.gif)
 
 | Filename        | Thumbnail                                                                   | Required | Note      |
 | --------------- | --------------------------------------------------------------------------- | -------- | --------- |
@@ -74,7 +74,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ##### Leg x 6
 
-![leg_assembly](./images/assembly_leg.jpg)
+![leg_assembly](./images/assembly_leg.gif)
 
 | Filename        | Thumbnail                                                                   | Required |
 | --------------- | --------------------------------------------------------------------------- | -------- |
@@ -84,7 +84,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ##### Foot x 6
 
-![foot_assembly](./images/assembly_foot.jpg)
+![foot_assembly](./images/assembly_foot.gif)
 
 | Filename        | Thumbnail                                                                   | Required | Note      |
 | --------------- | --------------------------------------------------------------------------- | -------- | --------- |
