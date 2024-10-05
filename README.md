@@ -111,6 +111,8 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ## Software
 
+![hexapod_model_label](./images/hexapod_model_label.svg)
+
 ### ESP32-Arduino
 
 Source code is under `./hexapod_arduino`.
@@ -128,5 +130,14 @@ Source code is under `./hexapod_arduino`.
 *Working in progress*
 
 ## Calibration
+
+Check the following image for the initial positions of all the leg joints while all the servos are at 90 deg.
+
+Adjust the following two lines in in `config.h` to correct the installation offsets.
+
+```c
+static int left_offset_ticks[3][3] = {{-5, 10, 0}, {-15, 5, -20}, {20, -10, 10}};
+static int right_offset_ticks[3][3] = {{20, -10, 0}, {-15, 0, -5}, {-10, 0, -20}};
+```
 
 ![calibration](./images/calibration.gif)
