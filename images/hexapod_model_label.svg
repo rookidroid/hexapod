@@ -2,13 +2,13 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="444.7977mm"
-   height="279.63565mm"
-   viewBox="0 0 444.7977 279.63565"
+   width="492.87756mm"
+   height="315.01608mm"
+   viewBox="0 0 492.87756 315.01608"
    version="1.1"
    id="svg1"
    xml:space="preserve"
-   inkscape:export-filename="bitmap.jpg"
+   inkscape:export-filename="..\..\..\..\..\OneDrive\Desktop\label.png"
    inkscape:export-xdpi="105.07249"
    inkscape:export-ydpi="105.07249"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
@@ -28,8 +28,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      inkscape:zoom="1.1439496"
-     inkscape:cx="702.3911"
-     inkscape:cy="527.12114"
+     inkscape:cx="793.30418"
+     inkscape:cy="593.55762"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="-11"
@@ -88,7 +88,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(108.68971,-2.5671261)"><image
+     transform="translate(132.72964,15.12309)"><rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.7"
+       id="rect1"
+       width="492.87756"
+       height="315.01608"
+       x="-132.72964"
+       y="-15.12309" /><image
        width="324.55557"
        height="267.40555"
        preserveAspectRatio="none"
@@ -97,7 +103,7 @@
        x="-59.394455"
        y="14.797226" /><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="87.824333"
        y="12.104826"
        id="text1"><tspan
@@ -107,7 +113,7 @@
          x="87.824333"
          y="12.104826">Right Leg 1</tspan></text><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="209.03481"
        y="62.587795"
        id="text1-9"><tspan
@@ -117,7 +123,7 @@
          x="209.03481"
          y="62.587795">Right Leg 2</tspan></text><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="252.85944"
        y="151.92265"
        id="text1-6"><tspan
@@ -127,7 +133,7 @@
          x="252.85944"
          y="151.92265">Right Leg 3</tspan></text><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="-99.464943"
        y="64.02803"
        id="text1-1"><tspan
@@ -167,7 +173,7 @@
          x="-10.311339"
          y="78.10675">Joint 2</tspan></text><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="-109.85811"
        y="196.24155"
        id="text1-9-4"><tspan
@@ -177,7 +183,7 @@
          x="-109.85811"
          y="196.24155">Left Leg 2</tspan></text><text
        xml:space="preserve"
-       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;stroke-width:0.499999;fill-opacity:1"
+       style="font-weight:bold;font-size:12.7px;font-family:'IBM Plex Mono';-inkscape-font-specification:'IBM Plex Mono Bold';letter-spacing:0px;opacity:1;fill:#61615f;fill-opacity:1;stroke-width:0.499999"
        x="-16.176609"
        y="271.87784"
        id="text1-6-8"><tspan
