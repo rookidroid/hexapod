@@ -26,7 +26,7 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 | Name                       | Thumbnail                                                                | Required          | Note      |
 | -------------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
 | ESP32 Dev Module           | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
-| MG92B or MG90S (metal gear)| <img src="./images/mg92b.jpg" alt="mg92b" width="300"/>                  | 18                | Can be mixed |
+| MG92B or MG90S (metal gear)| <img src="./images/mg90s.png" alt="mg90s" width="300"/>                  | 18                | Can be mixed |
 | PCA9685 servo driver       | <img src="./images/PCA9685.jpg" alt="PCA9685" width="300"/>              | 2                 | Need to be configured as different I2C addresss |
 | XL4005 DC-DC step down     | <img src="./images/XL4005.jpg" alt="XL4005" width="300"/>                | 2                 | 6V output |
 | Mini 360 DC-DC step down   | <img src="./images/mini360.jpg" alt="mini360" width="300"/>              | 1                 | 5V output |
