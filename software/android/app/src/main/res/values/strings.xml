@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">Hexapod</string>
-    <string name="invalid_ip">Invalid IP address</string>
-    <string name="invalid_port">Port should be within 0 ~ 65535</string>
-
-    <string name="hexapod_github"><a href="https://github.com/rookiepeng/hexapod">Source files on GitHub</a></string>
-</resources>
