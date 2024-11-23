@@ -8,20 +8,20 @@
         "rear_left"
     ],
     "legMountX": [
-        29.41,
-        36.87,
-        29.41,
-        -29.41,
-        -36.87,
-        -29.41
+        44.82,
+        61.03,
+        44.82,
+        -44.82,
+        -61.03,
+        -44.82
     ],
     "legMountY": [
-        55.41,
+        74.82,
         0,
-        -55.41,
-        55.41,
+        -74.82,
+        74.82,
         0,
-        -55.41
+        -74.82
     ],
     "legMountAngle": [
         45,
@@ -39,8 +39,8 @@
         [1, -1, -1],
         [1, -1, -1]
     ],
-    "legRootToJoint1": 20.75,
-    "legJoint1ToJoint2": 32.0,
-    "legJoint2ToJoint3": 43.6,
-    "legJoint3ToTip": 87.0
+    "legRootToJoint1": 0,
+    "legJoint1ToJoint2": 38.0,
+    "legJoint2ToJoint3": 54.06,
+    "legJoint3ToTip": 97.0
 }

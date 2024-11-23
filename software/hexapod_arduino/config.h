@@ -35,9 +35,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define SERVOMIN 125  // Minimum value, 0 deg
-#define SERVOMID 350  // Middle value, 90 deg
-#define SERVOMAX 575  // Maximum value, 180 deg
+#define SERVOMIN 102  // Minimum value, 0 deg
+#define SERVOMID 307  // Middle value, 90 deg
+#define SERVOMAX 512  // Maximum value, 180 deg
 
 #define DELAY_MS 12  // Servo delay
 
@@ -73,9 +73,9 @@ static int right_legs[3][3] = {{15, 12, 14}, {8, 9, 5}, {0, 2, 1}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
 static int left_offset_ticks[3][3] = {
-    {-5, 10, 0}, {-15, 0, -20}, {20, -10, 10}};
+    {0, 10, -10}, {-12, 10, 15}, {-3, -10, 10}};
 static int right_offset_ticks[3][3] = {
-    {20, -10, 0}, {-15, -5, -20}, {-10, 10, -20}};
+    {-10, 5, 0}, {3, -5, -10}, {15, -10, -10}};
 
 /** WiFi Configurations */
 #ifndef APSSID

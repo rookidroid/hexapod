@@ -118,10 +118,10 @@ void setup() {
 
   // Initialize the PCA9685 library
   left_pwm.begin();
-  left_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
+  left_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
 
   right_pwm.begin();
-  right_pwm.setPWMFreq(60);  // Set the PWM frequency of the PCA9685
+  right_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
 
   if (udp_socket.listen(UDP_PORT)) {
     Serial.print("UDP Listening on IP: ");
@@ -207,7 +207,7 @@ void setup() {
 
   boot_up_motion(lut_standup_length, lut_standup);
 
-  //  posture_calibration();
+//    posture_calibration();
 }
 
 /**
