@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   viewBox="0 0 48 48"
+   viewBox="0 0 1282.0869 1282.0869"
    version="1.1"
    id="svg19"
    sodipodi:docname="hexapod-logo.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    inkscape:export-filename="hexapod-logo.png"
-   inkscape:export-xdpi="1024"
-   inkscape:export-ydpi="1024"
+   inkscape:export-xdpi="1371.4286"
+   inkscape:export-ydpi="1371.4286"
+   width="1282.0869"
+   height="1282.0869"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,9 +25,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="26.752207"
-     inkscape:cx="8.6161116"
-     inkscape:cy="21.829975"
+     inkscape:zoom="0.8360065"
+     inkscape:cx="658.4877"
+     inkscape:cy="314.59085"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="-11"
@@ -33,13 +35,6 @@
      inkscape:window-maximized="1"
      inkscape:current-layer="svg19" />
   <!-- Background -->
-  <circle
-     cx="24"
-     cy="24"
-     r="24"
-     fill="#2196F3"
-     id="circle1"
-     style="fill:#0f5fab;fill-opacity:1" />
   <!-- Robot Body Base Layer -->
   <!-- Body Details -->
   <!-- Technological Lines -->
@@ -51,203 +46,227 @@
   <!-- LED Indicators -->
   <!-- Additional Tech Details -->
   <g
-     id="g1"
-     transform="rotate(30,24,24)">
+     id="g4"
+     transform="scale(22.894409)">
     <rect
-       x="16"
-       y="12"
-       width="16"
-       height="24"
-       rx="2"
-       fill="#ffffff"
-       id="rect1"
-       ry="2" />
-    <rect
-       x="18"
-       y="14"
-       width="12"
-       height="20"
-       rx="1"
-       fill="#e3f2fd"
-       id="rect2"
-       ry="1" />
-    <rect
-       x="19"
-       y="15"
-       width="10"
-       height="18"
-       fill="#1976D2"
-       id="rect3"
-       style="fill:#9c27b0;fill-opacity:1" />
-    <line
-       x1="20"
-       y1="18"
-       x2="28"
-       y2="18"
-       stroke="#90caf9"
-       stroke-width="0.5"
-       id="line3" />
-    <line
-       x1="20"
-       y1="21"
-       x2="28"
-       y2="21"
-       stroke="#90caf9"
-       stroke-width="0.5"
-       id="line4" />
-    <line
-       x1="20"
-       y1="24"
-       x2="28"
-       y2="24"
-       stroke="#90caf9"
-       stroke-width="0.5"
-       id="line5" />
-    <line
-       x1="20"
-       y1="27"
-       x2="28"
-       y2="27"
-       stroke="#90caf9"
-       stroke-width="0.5"
-       id="line6" />
-    <line
-       x1="20"
-       y1="30"
-       x2="28"
-       y2="30"
-       stroke="#90caf9"
-       stroke-width="0.5"
-       id="line7" />
-    <circle
-       cx="16"
-       cy="12"
-       r="1"
-       fill="#1976D2"
-       id="circle7"
-       style="fill:#19b5ff;fill-opacity:1" />
-    <circle
-       cx="32"
-       cy="12"
-       r="1"
-       fill="#1976D2"
-       id="circle8"
-       style="fill:#19b5ff;fill-opacity:1" />
-    <circle
-       cx="16"
-       cy="36"
-       r="1"
-       fill="#1976D2"
-       id="circle9"
-       style="fill:#19b5ff;fill-opacity:1" />
-    <circle
-       cx="32"
-       cy="36"
-       r="1"
-       fill="#1976D2"
-       id="circle10"
-       style="fill:#19b5ff;fill-opacity:1" />
-    <path
-       d="m 32,16 c 2,0 4,-2 6,-4"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path10" />
-    <circle
-       cx="35"
-       cy="14"
-       r="1"
-       fill="#ffffff"
-       id="circle11" />
-    <path
-       d="m 32,24 c 3,0 5,0 8,0"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path11" />
-    <circle
-       cx="36"
-       cy="24"
-       r="1"
-       fill="#ffffff"
-       id="circle12" />
-    <path
-       d="m 32,32 c 2,0 4,2 6,4"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path12" />
-    <circle
-       cx="35"
-       cy="34"
-       r="1"
-       fill="#ffffff"
-       id="circle13" />
-    <path
-       d="m 16,16 c -2,0 -4,-2 -6,-4"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path13" />
-    <circle
-       cx="13"
-       cy="14"
-       r="1"
-       fill="#ffffff"
-       id="circle14" />
-    <path
-       d="m 16,24 c -3,0 -5,0 -8,0"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path14" />
-    <circle
-       cx="12"
-       cy="24"
-       r="1"
-       fill="#ffffff"
-       id="circle15" />
-    <path
-       d="m 16,32 c -2,0 -4,2 -6,4"
-       stroke="#ffffff"
-       stroke-width="2.5"
-       stroke-linecap="round"
-       id="path15" />
-    <circle
-       cx="13"
-       cy="34"
-       r="1"
-       fill="#ffffff"
-       id="circle16" />
-    <circle
-       cx="17.5"
-       cy="13"
-       r="0.5"
-       fill="#ff4081"
-       id="circle17" />
-    <circle
-       cx="30.5"
-       cy="13"
-       r="0.5"
-       fill="#69f0ae"
-       id="circle18" />
-    <rect
-       x="20"
-       y="32"
-       width="8"
-       height="2"
-       fill="#90caf9"
-       rx="0.5"
-       id="rect18"
-       ry="0.5" />
-    <rect
-       x="20"
-       y="14"
-       width="8"
-       height="2"
-       fill="#90caf9"
-       rx="0.5"
-       id="rect19"
-       ry="0.5" />
+       style="fill:#ffffff;fill-opacity:1;stroke-width:5.66929;stroke-linecap:round"
+       id="rect4"
+       width="56"
+       height="56"
+       x="0"
+       y="0"
+       rx="7.5590553"
+       ry="7.5590553" />
+    <g
+       id="g2"
+       transform="translate(4,4)">
+      <circle
+         cx="24"
+         cy="24"
+         r="24"
+         fill="#2196F3"
+         id="circle1"
+         style="fill:#0f5fab;fill-opacity:1" />
+      <g
+         id="g1"
+         transform="rotate(30,24,24)">
+        <rect
+           x="16"
+           y="12"
+           width="16"
+           height="24"
+           rx="2"
+           fill="#ffffff"
+           id="rect1"
+           ry="2" />
+        <rect
+           x="18"
+           y="14"
+           width="12"
+           height="20"
+           rx="1"
+           fill="#e3f2fd"
+           id="rect2"
+           ry="1" />
+        <rect
+           x="19"
+           y="15"
+           width="10"
+           height="18"
+           fill="#1976D2"
+           id="rect3"
+           style="fill:#9c27b0;fill-opacity:1" />
+        <line
+           x1="20"
+           y1="18"
+           x2="28"
+           y2="18"
+           stroke="#90caf9"
+           stroke-width="0.5"
+           id="line3" />
+        <line
+           x1="20"
+           y1="21"
+           x2="28"
+           y2="21"
+           stroke="#90caf9"
+           stroke-width="0.5"
+           id="line4" />
+        <line
+           x1="20"
+           y1="24"
+           x2="28"
+           y2="24"
+           stroke="#90caf9"
+           stroke-width="0.5"
+           id="line5" />
+        <line
+           x1="20"
+           y1="27"
+           x2="28"
+           y2="27"
+           stroke="#90caf9"
+           stroke-width="0.5"
+           id="line6" />
+        <line
+           x1="20"
+           y1="30"
+           x2="28"
+           y2="30"
+           stroke="#90caf9"
+           stroke-width="0.5"
+           id="line7" />
+        <circle
+           cx="16"
+           cy="12"
+           r="1"
+           fill="#1976D2"
+           id="circle7"
+           style="fill:#19b5ff;fill-opacity:1" />
+        <circle
+           cx="32"
+           cy="12"
+           r="1"
+           fill="#1976D2"
+           id="circle8"
+           style="fill:#19b5ff;fill-opacity:1" />
+        <circle
+           cx="16"
+           cy="36"
+           r="1"
+           fill="#1976D2"
+           id="circle9"
+           style="fill:#19b5ff;fill-opacity:1" />
+        <circle
+           cx="32"
+           cy="36"
+           r="1"
+           fill="#1976D2"
+           id="circle10"
+           style="fill:#19b5ff;fill-opacity:1" />
+        <path
+           d="m 32,16 c 2,0 4,-2 6,-4"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path10" />
+        <circle
+           cx="35"
+           cy="14"
+           r="1"
+           fill="#ffffff"
+           id="circle11" />
+        <path
+           d="m 32,24 c 3,0 5,0 8,0"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path11" />
+        <circle
+           cx="36"
+           cy="24"
+           r="1"
+           fill="#ffffff"
+           id="circle12" />
+        <path
+           d="m 32,32 c 2,0 4,2 6,4"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path12" />
+        <circle
+           cx="35"
+           cy="34"
+           r="1"
+           fill="#ffffff"
+           id="circle13" />
+        <path
+           d="m 16,16 c -2,0 -4,-2 -6,-4"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path13" />
+        <circle
+           cx="13"
+           cy="14"
+           r="1"
+           fill="#ffffff"
+           id="circle14" />
+        <path
+           d="m 16,24 c -3,0 -5,0 -8,0"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path14" />
+        <circle
+           cx="12"
+           cy="24"
+           r="1"
+           fill="#ffffff"
+           id="circle15" />
+        <path
+           d="m 16,32 c -2,0 -4,2 -6,4"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path15" />
+        <circle
+           cx="13"
+           cy="34"
+           r="1"
+           fill="#ffffff"
+           id="circle16" />
+        <circle
+           cx="17.5"
+           cy="13"
+           r="0.5"
+           fill="#ff4081"
+           id="circle17" />
+        <circle
+           cx="30.5"
+           cy="13"
+           r="0.5"
+           fill="#69f0ae"
+           id="circle18" />
+        <rect
+           x="20"
+           y="32"
+           width="8"
+           height="2"
+           fill="#90caf9"
+           rx="0.5"
+           id="rect18"
+           ry="0.5" />
+        <rect
+           x="20"
+           y="14"
+           width="8"
+           height="2"
+           fill="#90caf9"
+           rx="0.5"
+           id="rect19"
+           ry="0.5" />
+      </g>
+    </g>
   </g>
 </svg>
