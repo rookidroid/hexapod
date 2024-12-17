@@ -35,11 +35,9 @@
 /** WiFi */
 #include <AsyncUDP.h>
 #include <WiFi.h>
-#include <SimpleMDNS.h>
 
-#include "PicoPWM.h"
 /** PWM */
-// #include <Adafruit_PWMServoDriver.h>
+#include "PicoPWM.h"
 
 /** I2C */
 #include <Wire.h>
@@ -53,8 +51,8 @@
 /** Motion Path LUT */
 #include "motion.h"
 
-// Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
-// Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
+PicoPWM right_pwm[3][3];
+PicoPWM left_pwm[3][3];
 
 MotionMode current_motion = MotionMode::Mode_Standby;
 MotionMode next_motion = MotionMode::Mode_Standby;
@@ -64,8 +62,6 @@ const char *password = APPSK;
 AsyncUDP udp_socket;
 
 bool ota_mode = true;
-
-PicoPWM myservo[18];
 
 /**
    @brief Sets up the hexapod robot system.
@@ -117,12 +113,19 @@ void setup() {
   });
   ArduinoOTA.begin();
 
-  // Initialize the PCA9685 library
-  // left_pwm.begin();
-  // left_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
+  // Initialize the PWM pins
+  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+      left_pwm[leg_idx][joint_idx].begin(left_legs[leg_idx][joint_idx], 50);
+      right_pwm[leg_idx][joint_idx].begin(right_legs[leg_idx][joint_idx], 50);
 
-  // right_pwm.begin();
-  // right_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
+      left_pwm[leg_idx][joint_idx].setPWM(512);
+      right_pwm[leg_idx][joint_idx].setPWM(512);
+
+      // left_pwm[leg_idx][joint_idx].setDutyCycle(50);
+      // right_pwm[leg_idx][joint_idx].setDutyCycle(50);
+    }
+  }
 
   if (udp_socket.listen(UDP_PORT)) {
     Serial.print("UDP Listening on IP: ");
@@ -204,12 +207,7 @@ void setup() {
     });
   }
 
-  for (int idx = 0; idx < 18; idx++) {
-    myservo[idx].begin(idx, 50);
-    myservo[idx].setPWM(1024);  // 50% duty cycle
-  }
-
-  boot_up_motion(lut_standup_length, lut_standup);
+  // boot_up_motion(lut_standup_length, lut_standup);
 
   //    posture_calibration();
 }
@@ -279,10 +277,8 @@ void loop() {
 void posture_calibration() {
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-      // right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-      //                  SERVOMID + right_offset_ticks[leg_idx][joint_idx]);
-      // left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-      //                 SERVOMID + left_offset_ticks[leg_idx][joint_idx]);
+      right_pwm[leg_idx][joint_idx].setPWM(SERVOMID + right_offset_ticks[leg_idx][joint_idx]);
+      left_pwm[leg_idx][joint_idx].setPWM(SERVOMID + left_offset_ticks[leg_idx][joint_idx]);
     }
   }
 }
@@ -290,26 +286,18 @@ void posture_calibration() {
 void boot_up_motion(int lut_size, int lut[][6][3]) {
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-      // right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-      //                  lut[0][leg_idx][joint_idx] +
-      //                  right_offset_ticks[leg_idx][joint_idx]);
-      // delay(50);
-      // left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-      //                 lut[0][leg_idx + 3][joint_idx] +
-      //                 left_offset_ticks[leg_idx][joint_idx]);
-      // delay(50);
+      right_pwm[leg_idx][joint_idx].setPWM(lut[0][leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+      delay(50);
+      left_pwm[leg_idx][joint_idx].setPWM(lut[0][leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
+      delay(50);
     }
   }
 
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        // right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-        //                  lut[lut_idx][leg_idx][joint_idx] +
-        //                  right_offset_ticks[leg_idx][joint_idx]);
-        // left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-        //                 lut[lut_idx][leg_idx + 3][joint_idx] +
-        //                 left_offset_ticks[leg_idx][joint_idx]);
+        right_pwm[leg_idx][joint_idx].setPWM(lut[lut_idx][leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+        left_pwm[leg_idx][joint_idx].setPWM(lut[lut_idx][leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
       }
     }
     delay(DELAY_MS);
@@ -337,12 +325,8 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        // right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-        //                  lut[lut_idx][leg_idx][joint_idx] +
-        //                  right_offset_ticks[leg_idx][joint_idx]);
-        // left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-        //                 lut[lut_idx][leg_idx + 3][joint_idx] +
-        //                 left_offset_ticks[leg_idx][joint_idx]);
+        right_pwm[leg_idx][joint_idx].setPWM(lut[lut_idx][leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+        left_pwm[leg_idx][joint_idx].setPWM(lut[lut_idx][leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
       }
     }
 
@@ -413,12 +397,8 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
             end_pos[end_pos_idx][leg_idx + 3][joint_idx];
         }
 
-        // right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-        //                  current_pos[leg_idx][joint_idx] +
-        //                  right_offset_ticks[leg_idx][joint_idx]);
-        // left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-        //                 current_pos[leg_idx + 3][joint_idx] +
-        //                 left_offset_ticks[leg_idx][joint_idx]);
+        right_pwm[leg_idx][joint_idx].setPWM(current_pos[leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+        left_pwm[leg_idx][joint_idx].setPWM(current_pos[leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
       }
     }
   }

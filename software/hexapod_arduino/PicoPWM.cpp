@@ -33,12 +33,24 @@ bool PicoPWM::begin(uint8_t pin, uint32_t frequency) {
 }
 
 void PicoPWM::calculateWrap() {
-    // System clock is 125MHz
-    uint32_t clockDiv = 1;
-    _wrap = (125000000 / (_frequency * clockDiv)) - 1;
+    // For 50Hz servo signal:
+    // Want wrap value < 65535 (16-bit)
+    // 125MHz / (desired_freq * wrap) = div
+    // For 50Hz, using wrap = 10000:
+    // div = 125000000 / (50 * 10000) = 250
     
-    // Set clock divider
-    pwm_set_clkdiv(_slice, clockDiv);
+    if (_frequency <= 1000) {  // Lower frequencies (like servo)
+        // Use 10000 as wrap value for good resolution
+        _wrap = 10000;
+        float div = 125000000.0f / (_frequency * _wrap);
+        pwm_set_clkdiv(_slice, div);
+    } else {  // Higher frequencies
+        uint32_t clockDiv = 1;
+        _wrap = (125000000 / (_frequency * clockDiv)) - 1;
+        pwm_set_clkdiv(_slice, clockDiv);
+    }
+    
+    pwm_set_wrap(_slice, _wrap);
 }
 
 void PicoPWM::setDutyCycle(float dutyCycle) {
