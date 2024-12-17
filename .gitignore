@@ -4,3 +4,4 @@
 *.blend1
 software/pc/config.json
 *.aab
+/pcb/hexapod/hexapod-backups
