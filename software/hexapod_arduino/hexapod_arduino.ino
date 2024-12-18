@@ -57,6 +57,11 @@ PicoPWM left_pwm[3][3];
 MotionMode current_motion = MotionMode::Mode_Standby;
 MotionMode next_motion = MotionMode::Mode_Standby;
 
+// Define the static IP configuration
+IPAddress local_ip(192, 168, 4, 1);  // Static IP for AP
+IPAddress gateway(192, 168, 4, 1);   // Gateway (same as AP IP)
+IPAddress subnet(255, 255, 255, 0);  // Subnet mask
+
 const char *ssid = APSSID;
 const char *password = APPSK;
 AsyncUDP udp_socket;
@@ -73,8 +78,22 @@ bool ota_mode = true;
 void setup() {
   Serial.begin(115200);
 
+  // Add delay to allow AP to fully initialize
+  // delay(1000);
+
   WiFi.mode(WIFI_AP);
-  WiFi.softAP(ssid, password);
+
+  // Configure the static IP before starting the AP
+  if (!WiFi.softAPConfig(local_ip, gateway, subnet)) {
+    Serial.println("AP Static IP Configuration Failed!");
+    return;
+  }
+
+  // Start the AP
+  if (!WiFi.softAP(ssid, password)) {
+    Serial.println("AP Creation Failed!");
+    return;
+  }
 
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
@@ -256,7 +275,7 @@ void loop() {
   } else {
     exec_motion(lut_standby_length, lut_standby);
   }
-  
+
   if (ota_mode) {
     ArduinoOTA.handle();
   }
