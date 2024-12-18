@@ -16,6 +16,7 @@ public:
     uint32_t getFrequency() const;
     float getDutyCycle() const;
     void stop();
+    void setServoAngle(float angle);
 
 private:
     uint8_t _pin;

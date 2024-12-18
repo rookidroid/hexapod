@@ -118,12 +118,6 @@ void setup() {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       left_pwm[leg_idx][joint_idx].begin(left_legs[leg_idx][joint_idx], 50);
       right_pwm[leg_idx][joint_idx].begin(right_legs[leg_idx][joint_idx], 50);
-
-      left_pwm[leg_idx][joint_idx].setPWM(512);
-      right_pwm[leg_idx][joint_idx].setPWM(512);
-
-      // left_pwm[leg_idx][joint_idx].setDutyCycle(50);
-      // right_pwm[leg_idx][joint_idx].setDutyCycle(50);
     }
   }
 
@@ -207,7 +201,9 @@ void setup() {
     });
   }
 
-  // boot_up_motion(lut_standup_length, lut_standup);
+  boot_up_motion(lut_standup_length, lut_standup);
+
+  // next_motion = MotionMode::Mode_Walk_0;
 
   //    posture_calibration();
 }
@@ -260,7 +256,7 @@ void loop() {
   } else {
     exec_motion(lut_standby_length, lut_standby);
   }
-
+  
   if (ota_mode) {
     ArduinoOTA.handle();
   }

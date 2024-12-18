@@ -36,8 +36,8 @@
 #define CONFIG_H
 
 #define SERVOMIN 205  // Minimum value, 0 deg
-#define SERVOMID 615  // Middle value, 90 deg
-#define SERVOMAX 1024  // Maximum value, 180 deg
+#define SERVOMID 307  // Middle value, 90 deg
+#define SERVOMAX 512  // Maximum value, 180 deg
 
 #define DELAY_MS 12  // Servo delay
 
