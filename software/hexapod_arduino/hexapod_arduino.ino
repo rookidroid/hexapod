@@ -222,8 +222,6 @@ void setup() {
 
   boot_up_motion(lut_standup_length, lut_standup);
 
-  // next_motion = MotionMode::Mode_Walk_0;
-
   //    posture_calibration();
 }
 
