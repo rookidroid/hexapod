@@ -68,7 +68,7 @@ enum MotionMode {
 // {{leg1_join1, leg1_join2, leg1_join3},
 //  {leg2_join1, leg2_join2, leg2_join3},
 //  {leg3_join1, leg3_join2, leg3_join3}}
-static int left_legs[3][3] = {{7, 8, 9}, {10, 11, 12}, {13, 14, 15}};
+static int left_legs[3][3] = {{0, 1, 2}, {6, 7, 8}, {13, 14, 15}};
 static int right_legs[3][3] = {{27, 26, 22}, {21, 20, 19}, {18, 17, 16}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
