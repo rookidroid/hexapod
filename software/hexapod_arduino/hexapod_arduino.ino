@@ -135,8 +135,8 @@ void setup() {
   // Initialize the PWM pins
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-      left_pwm[leg_idx][joint_idx].begin(left_legs[leg_idx][joint_idx], 50);
-      right_pwm[leg_idx][joint_idx].begin(right_legs[leg_idx][joint_idx], 50);
+      left_pwm[leg_idx][joint_idx].begin(left_legs[leg_idx][joint_idx], 50, left_legs_use_sm[leg_idx][joint_idx]);
+      right_pwm[leg_idx][joint_idx].begin(right_legs[leg_idx][joint_idx], 50, right_legs_use_sm[leg_idx][joint_idx]);
     }
   }
 

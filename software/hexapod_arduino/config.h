@@ -39,7 +39,7 @@
 #define SERVOMID 307  // Middle value, 90 deg
 #define SERVOMAX 512  // Maximum value, 180 deg
 
-#define DELAY_MS 12  // Servo delay
+#define DELAY_MS 20  // Servo delay
 
 /** Motion Mode */
 enum MotionMode {
@@ -69,7 +69,10 @@ enum MotionMode {
 //  {leg2_join1, leg2_join2, leg2_join3},
 //  {leg3_join1, leg3_join2, leg3_join3}}
 static int left_legs[3][3] = {{0, 1, 2}, {6, 7, 8}, {13, 14, 15}};
+static bool left_legs_use_sm[3][3] = {{false, false, false}, {false, false, false}, {false, false, false}};
+
 static int right_legs[3][3] = {{27, 26, 22}, {21, 20, 19}, {18, 17, 16}};
+static bool right_legs_use_sm[3][3] = {{false, false, true}, {false, false, false}, {true, true, true}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
 static int left_offset_ticks[3][3] = {

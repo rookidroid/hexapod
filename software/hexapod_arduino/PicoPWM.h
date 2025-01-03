@@ -4,12 +4,15 @@
 #include "Arduino.h"
 #include <hardware/pwm.h>
 #include <hardware/clocks.h>
+#include <Servo.h>
+
 
 class PicoPWM {
 public:
     PicoPWM();
     
-    bool begin(uint8_t pin, uint32_t frequency = 1000);
+    // bool begin(uint8_t pin, uint32_t frequency = 1000);
+    bool begin(uint8_t pin, uint32_t frequency = 50, bool use_sm = false);
     void setDutyCycle(float dutyCycle);
     void setPWM(int dutyCycle);
     bool setFrequency(uint32_t frequency);
@@ -26,6 +29,8 @@ private:
     uint32_t _frequency;
     uint16_t _wrap;
     bool _isRunning;
+    bool _use_sm;
+    Servo _servo;
     
     void calculateWrap();
 };

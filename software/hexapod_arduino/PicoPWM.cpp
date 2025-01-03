@@ -1,119 +1,134 @@
 #include "PicoPWM.h"
+#include "config.h"
 
-PicoPWM::PicoPWM() : 
-    _pin(0), 
-    _slice(0), 
-    _channel(0), 
-    _dutyCycle(0.0f), 
-    _frequency(1000), 
+PicoPWM::PicoPWM()
+  : _pin(0),
+    _slice(0),
+    _channel(0),
+    _dutyCycle(0.0f),
+    _frequency(1000),
     _wrap(0),
+    _use_sm(false),
     _isRunning(false) {
 }
 
-bool PicoPWM::begin(uint8_t pin, uint32_t frequency) {
-    _pin = pin;
+bool PicoPWM::begin(uint8_t pin, uint32_t frequency, bool use_sm) {
+  _pin = pin;
+  _use_sm = use_sm;
+
+  if (!_use_sm) {
     _frequency = frequency;
-    
+
     // Get PWM slice and channel for the pin
     _slice = pwm_gpio_to_slice_num(_pin);
     _channel = pwm_gpio_to_channel(_pin);
-    
+
     // Set pin to PWM mode
     gpio_set_function(_pin, GPIO_FUNC_PWM);
-    
+
     calculateWrap();
-    
+
     // Configure PWM
     pwm_set_wrap(_slice, _wrap);
     pwm_set_chan_level(_slice, _channel, 0);
     pwm_set_enabled(_slice, true);
-    
-    _isRunning = true;
-    return true;
+  }
+
+  _isRunning = true;
+  return true;
 }
 
-void PicoPWM::calculateWrap() {
-    // For 50Hz servo signal:
-    // Want wrap value < 65535 (16-bit)
-    // 125MHz / (desired_freq * wrap) = div
-    // For 50Hz, using wrap = 10000:
-    // div = 125000000 / (50 * 10000) = 250
 
-    // Get system clock frequency
-    uint32_t system_clock = clock_get_hz(clk_sys);
-    
-    if (_frequency <= 1000) {  // Lower frequencies (like servo)
-        // Use 10000 as wrap value for good resolution
-        _wrap = 24000;
-        float div = system_clock / (_frequency * _wrap);
-        pwm_set_clkdiv(_slice, div);
-    } else {  // Higher frequencies
-        uint32_t clockDiv = 1;
-        _wrap = (system_clock / (_frequency * clockDiv)) - 1;
-        pwm_set_clkdiv(_slice, clockDiv);
-    }
-    
-    pwm_set_wrap(_slice, _wrap);
+void PicoPWM::calculateWrap() {
+  // For 50Hz servo signal:
+  // Want wrap value < 65535 (16-bit)
+  // 125MHz / (desired_freq * wrap) = div
+  // For 50Hz, using wrap = 10000:
+  // div = 125000000 / (50 * 10000) = 250
+
+  // Get system clock frequency
+  uint32_t system_clock = clock_get_hz(clk_sys);
+
+  if (_frequency <= 1000) {  // Lower frequencies (like servo)
+    // Use 10000 as wrap value for good resolution
+    _wrap = 24000;
+    float div = system_clock / (_frequency * _wrap);
+    pwm_set_clkdiv(_slice, div);
+  } else {  // Higher frequencies
+    uint32_t clockDiv = 1;
+    _wrap = (system_clock / (_frequency * clockDiv)) - 1;
+    pwm_set_clkdiv(_slice, clockDiv);
+  }
+
+  pwm_set_wrap(_slice, _wrap);
 }
 
 void PicoPWM::setDutyCycle(float dutyCycle) {
-    _dutyCycle = constrain(dutyCycle, 0.0f, 100.0f);
-    
-    if (_isRunning) {
-        uint16_t compareValue = (uint16_t)(_wrap * (_dutyCycle / 100.0f));
-        pwm_set_chan_level(_slice, _channel, compareValue);
-    }
+  _dutyCycle = constrain(dutyCycle, 0.0f, 100.0f);
+
+  if (_isRunning) {
+    uint16_t compareValue = (uint16_t)(_wrap * (_dutyCycle / 100.0f));
+    pwm_set_chan_level(_slice, _channel, compareValue);
+  }
 }
 
 void PicoPWM::setPWM(int dutyCycle) {
-    _dutyCycle = constrain(dutyCycle, 0, 1024);
-    
-    if (_isRunning) {
-        uint16_t compareValue = (uint16_t)(_wrap * (dutyCycle / 4096.0f));
-        // uint16_t pulse = 1200 + (uint16_t)(angle * 1200.0f / 1024.0f);
-        pwm_set_chan_level(_slice, _channel, compareValue);
+  if (_use_sm) {
+    if (_servo.attached()) {
+      _servo.writeMicroseconds(int(dutyCycle * 4.88));
+    } else {
+      _servo.attach(_pin, 500, 2500, int(dutyCycle * 4.88));
     }
+  } else {
+    _dutyCycle = constrain(dutyCycle, 0, 1024);
+
+    if (_isRunning) {
+      uint16_t compareValue = (uint16_t)(_wrap * (dutyCycle / 4096.0f));
+      // uint16_t pulse = 1200 + (uint16_t)(angle * 1200.0f / 1024.0f);
+      pwm_set_chan_level(_slice, _channel, compareValue);
+    }
+  }
 }
 
 void PicoPWM::setServoAngle(float angle) {
-    if (!_isRunning) return;
-    
-    angle = constrain(angle, 0.0f, 180.0f);
-    
-    // At 1.2MHz clock:
-    // 1ms = 1200 counts
-    // 2ms = 2400 counts
-    uint16_t pulse = 1200 + (uint16_t)(angle * 1200.0f / 180.0f);
-    pwm_set_chan_level(_slice, _channel, pulse);
+  if (!_isRunning) return;
+
+  angle = constrain(angle, 0.0f, 180.0f);
+
+  // At 1.2MHz clock:
+  // 1ms = 1200 counts
+  // 2ms = 2400 counts
+  uint16_t pulse = 1200 + (uint16_t)(angle * 1200.0f / 180.0f);
+  pwm_set_chan_level(_slice, _channel, pulse);
 }
 
 bool PicoPWM::setFrequency(uint32_t frequency) {
-    if (frequency < 1 || frequency > 62500000) {
-        return false;
-    }
-    
-    _frequency = frequency;
-    calculateWrap();
-    
-    if (_isRunning) {
-        pwm_set_wrap(_slice, _wrap);
-        setDutyCycle(_dutyCycle);
-    }
-    
-    return true;
+  if (frequency < 1 || frequency > 62500000) {
+    return false;
+  }
+
+  _frequency = frequency;
+  calculateWrap();
+
+  if (_isRunning) {
+    pwm_set_wrap(_slice, _wrap);
+    setDutyCycle(_dutyCycle);
+  }
+
+  return true;
 }
 
 uint32_t PicoPWM::getFrequency() const {
-    return _frequency;
+  return _frequency;
 }
 
 float PicoPWM::getDutyCycle() const {
-    return _dutyCycle;
+  return _dutyCycle;
 }
 
 void PicoPWM::stop() {
-    if (_isRunning) {
-        pwm_set_enabled(_slice, false);
-        _isRunning = false;
-    }
+  if (_isRunning) {
+    pwm_set_enabled(_slice, false);
+    _isRunning = false;
+  }
 }
