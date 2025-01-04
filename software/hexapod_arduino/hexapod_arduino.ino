@@ -414,5 +414,6 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
         left_pwm[leg_idx][joint_idx].setPWM(current_pos[leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
       }
     }
+    delay(DELAY_MS);
   }
 }
