@@ -6,7 +6,7 @@ PicoPWM::PicoPWM()
     _slice(0),
     _channel(0),
     _dutyCycle(0.0f),
-    _frequency(1000),
+    _frequency(50),
     _wrap(0),
     _use_sm(false),
     _isRunning(false) {
@@ -75,9 +75,9 @@ void PicoPWM::setDutyCycle(float dutyCycle) {
 void PicoPWM::setPWM(int dutyCycle) {
   if (_use_sm) {
     if (_servo.attached()) {
-      _servo.writeMicroseconds(int(dutyCycle * 4.88));
+      _servo.writeMicroseconds(int((float)dutyCycle * 4.88f));
     } else {
-      _servo.attach(_pin, 500, 2500, int(dutyCycle * 4.88));
+      _servo.attach(_pin, 500, 2500, int((float)dutyCycle * 4.88f));
     }
   } else {
     _dutyCycle = constrain(dutyCycle, 0, 1024);
