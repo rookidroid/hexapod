@@ -1,4 +1,4 @@
-24194516542924612
+24386914725225313
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -3166,6 +3166,20 @@ capacitor
 Capacitor_SMD
 C_1210_3225Metric_Pad1.33x2.70mm_HandSolder
 Capacitor SMD 1210 (3225 Metric), square (rectangular) end terminal, IPC_7351 nominal with elongated pad for handsoldering. (Body size source: IPC-SM-782 page 76, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator
+capacitor handsolder
+0
+2
+2
+Capacitor_SMD
+C_1808_4520Metric
+Capacitor SMD 1808 (4520 Metric), square (rectangular) end terminal, IPC-7351 nominal, (Body size source: datasheet page 3, https://product.tdk.com/system/files/dam/doc/product/capacitor/ceramic/mlcc/catalog/mlcc_commercial_soft_en.pdf), generated with kicad-footprint-generator
+capacitor
+0
+2
+2
+Capacitor_SMD
+C_1808_4520Metric_Pad1.72x2.30mm_HandSolder
+Capacitor SMD 1808 (4520 Metric), square (rectangular) end terminal, IPC-7351 nominal with elongated pad for handsoldering. (Body size source: datasheet page 3, https://product.tdk.com/system/files/dam/doc/product/capacitor/ceramic/mlcc/catalog/mlcc_commercial_soft_en.pdf), generated with kicad-footprint-generator
 capacitor handsolder
 0
 2
@@ -9240,6 +9254,13 @@ DSUB-9_Female_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 9
 9
 Connector_Dsub
+DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+9-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+9-pin D-Sub connector horizontal angled 90deg THT female pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 25mm mounting-hole-offset 4.94mm
+0
+11
+10
+Connector_Dsub
 DSUB-9_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 9-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 9-pin D-Sub connector horizontal angled 90deg THT female pitch 2.77x2.84mm pin-PCB-offset 4.9399999999999995mm mounting-holes-distance 25mm mounting-hole-offset 25mm
@@ -9310,6 +9331,13 @@ DSUB-9_Male_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 9
 9
 Connector_Dsub
+DSUB-9_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+9-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+9-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 25mm mounting-hole-offset 4.94mm
+0
+11
+10
+Connector_Dsub
 DSUB-9_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 9-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 9-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.9399999999999995mm mounting-holes-distance 25mm mounting-hole-offset 25mm
@@ -9366,6 +9394,13 @@ DSUB-9_Male_Vertical_P2.77x2.84mm_MountingHoles
 11
 10
 Connector_Dsub
+DSUB-15-HD_Female_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 25mm mounting-hole-offset 4.94mm
+0
+17
+16
+Connector_Dsub
 DSUB-15-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
 15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.98mm, pin-PCB-offset 3.0300000000000002mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 4.9399999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 15-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.98mm pin-PCB-offset 3.0300000000000002mm mounting-holes-distance 25mm mounting-hole-offset 25mm
@@ -9387,6 +9422,13 @@ DSUB-15-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 15
 15
 Connector_Dsub
+DSUB-15-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 25mm mounting-hole-offset 10.89mm
+0
+17
+16
+Connector_Dsub
 DSUB-15-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
 15-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 9.4mm
@@ -9397,6 +9439,13 @@ Connector_Dsub
 DSUB-15-HD_Female_Vertical_P2.29x1.98mm_MountingHoles
 15-pin D-Sub connector, straight/vertical, THT-mount, female, pitch 2.29x1.98mm, distance of mounting holes 25mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 15-pin D-Sub connector straight vertical THT female pitch 2.29x1.98mm mounting holes distance 25mm
+0
+17
+16
+Connector_Dsub
+DSUB-15-HD_Male_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 25mm mounting-hole-offset 4.94mm
 0
 17
 16
@@ -9421,6 +9470,13 @@ DSUB-15-HD_Male_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 0
 15
 15
+Connector_Dsub
+DSUB-15-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 25mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 25mm mounting-hole-offset 10.89mm
+0
+17
+16
 Connector_Dsub
 DSUB-15-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
@@ -9449,6 +9505,13 @@ DSUB-15_Female_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 0
 15
 15
+Connector_Dsub
+DSUB-15_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT female pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 33.3mm mounting-hole-offset 4.94mm
+0
+17
+16
 Connector_Dsub
 DSUB-15_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
@@ -9520,6 +9583,13 @@ DSUB-15_Male_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 15
 15
 Connector_Dsub
+DSUB-15_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+15-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 33.3mm mounting-hole-offset 4.94mm
+0
+17
+16
+Connector_Dsub
 DSUB-15_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 15-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 15-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.9399999999999995mm mounting-holes-distance 33.3mm mounting-hole-offset 33.3mm
@@ -9589,6 +9659,13 @@ DSUB-25_Female_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 0
 25
 25
+Connector_Dsub
+DSUB-25_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+25-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+25-pin D-Sub connector horizontal angled 90deg THT female pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 47.1mm mounting-hole-offset 4.94mm
+0
+27
+26
 Connector_Dsub
 DSUB-25_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 25-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
@@ -9660,6 +9737,13 @@ DSUB-25_Male_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 25
 25
 Connector_Dsub
+DSUB-25_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+25-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+25-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 47.1mm mounting-hole-offset 4.94mm
+0
+27
+26
+Connector_Dsub
 DSUB-25_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 25-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 25-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.9399999999999995mm mounting-holes-distance 47.1mm mounting-hole-offset 47.1mm
@@ -9716,6 +9800,13 @@ DSUB-25_Male_Vertical_P2.77x2.84mm_MountingHoles
 27
 26
 Connector_Dsub
+DSUB-26-HD_Female_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+26-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 33.3mm mounting-hole-offset 4.94mm
+0
+28
+27
+Connector_Dsub
 DSUB-26-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
 26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.98mm, pin-PCB-offset 3.0300000000000002mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 4.9399999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 26-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.98mm pin-PCB-offset 3.0300000000000002mm mounting-holes-distance 33.3mm mounting-hole-offset 33.3mm
@@ -9737,6 +9828,13 @@ DSUB-26-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 26
 26
 Connector_Dsub
+DSUB-26-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+26-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 33.3mm mounting-hole-offset 10.89mm
+0
+28
+27
+Connector_Dsub
 DSUB-26-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
 26-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 9.4mm
@@ -9747,6 +9845,13 @@ Connector_Dsub
 DSUB-26-HD_Female_Vertical_P2.29x1.98mm_MountingHoles
 26-pin D-Sub connector, straight/vertical, THT-mount, female, pitch 2.29x1.98mm, distance of mounting holes 33.3mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 26-pin D-Sub connector straight vertical THT female pitch 2.29x1.98mm mounting holes distance 33.3mm
+0
+28
+27
+Connector_Dsub
+DSUB-26-HD_Male_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+26-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 33.3mm mounting-hole-offset 4.94mm
 0
 28
 27
@@ -9771,6 +9876,13 @@ DSUB-26-HD_Male_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 0
 26
 26
+Connector_Dsub
+DSUB-26-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 33.3mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+26-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 33.3mm mounting-hole-offset 10.89mm
+0
+28
+27
 Connector_Dsub
 DSUB-26-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 26-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
@@ -9799,6 +9911,13 @@ DSUB-37_Female_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 0
 37
 37
+Connector_Dsub
+DSUB-37_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+37-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+37-pin D-Sub connector horizontal angled 90deg THT female pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 63.5mm mounting-hole-offset 4.94mm
+0
+39
+38
 Connector_Dsub
 DSUB-37_Female_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 37-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
@@ -9870,6 +9989,13 @@ DSUB-37_Male_Horizontal_P2.77x2.54mm_EdgePinOffset9.40mm
 37
 37
 Connector_Dsub
+DSUB-37_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset4.94mm
+37-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.94mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+37-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.94mm mounting-holes-distance 63.5mm mounting-hole-offset 4.94mm
+0
+39
+38
+Connector_Dsub
 DSUB-37_Male_Horizontal_P2.77x2.84mm_EdgePinOffset4.94mm_Housed_MountingHolesOffset7.48mm
 37-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.77x2.84mm, pin-PCB-offset 4.9399999999999995mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 7.4799999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 37-pin D-Sub connector horizontal angled 90deg THT male pitch 2.77x2.84mm pin-PCB-offset 4.9399999999999995mm mounting-holes-distance 63.5mm mounting-hole-offset 63.5mm
@@ -9926,6 +10052,13 @@ DSUB-37_Male_Vertical_P2.77x2.84mm_MountingHoles
 39
 38
 Connector_Dsub
+DSUB-44-HD_Female_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+44-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 47.1mm mounting-hole-offset 4.94mm
+0
+46
+45
+Connector_Dsub
 DSUB-44-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
 44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x1.98mm, pin-PCB-offset 3.0300000000000002mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 4.9399999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 44-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x1.98mm pin-PCB-offset 3.0300000000000002mm mounting-holes-distance 47.1mm mounting-hole-offset 47.1mm
@@ -9947,6 +10080,13 @@ DSUB-44-HD_Female_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 44
 44
 Connector_Dsub
+DSUB-44-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+44-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 47.1mm mounting-hole-offset 10.89mm
+0
+46
+45
+Connector_Dsub
 DSUB-44-HD_Female_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
 44-pin D-Sub connector horizontal angled 90deg THT female pitch 2.29x2.54mm pin-PCB-offset 9.4mm
@@ -9957,6 +10097,13 @@ Connector_Dsub
 DSUB-44-HD_Female_Vertical_P2.29x1.98mm_MountingHoles
 44-pin D-Sub connector, straight/vertical, THT-mount, female, pitch 2.29x1.98mm, distance of mounting holes 47.1mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 44-pin D-Sub connector straight vertical THT female pitch 2.29x1.98mm mounting holes distance 47.1mm
+0
+46
+45
+Connector_Dsub
+DSUB-44-HD_Male_Horizontal_P2.29x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+44-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 47.1mm mounting-hole-offset 4.94mm
 0
 46
 45
@@ -9982,6 +10129,13 @@ DSUB-44-HD_Male_Horizontal_P2.29x1.98mm_EdgePinOffset9.40mm
 44
 44
 Connector_Dsub
+DSUB-44-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 47.1mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+44-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 47.1mm mounting-hole-offset 10.89mm
+0
+46
+45
+Connector_Dsub
 DSUB-44-HD_Male_Horizontal_P2.29x2.54mm_EdgePinOffset9.40mm
 44-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.29x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
 44-pin D-Sub connector horizontal angled 90deg THT male pitch 2.29x2.54mm pin-PCB-offset 9.4mm
@@ -9995,6 +10149,13 @@ DSUB-44-HD_Male_Vertical_P2.29x1.98mm_MountingHoles
 0
 46
 45
+Connector_Dsub
+DSUB-62-HD_Female_Horizontal_P2.41x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.41x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+62-pin D-Sub connector horizontal angled 90deg THT female pitch 2.41x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 63.5mm mounting-hole-offset 4.94mm
+0
+64
+63
 Connector_Dsub
 DSUB-62-HD_Female_Horizontal_P2.41x1.98mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
 62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.41x1.98mm, pin-PCB-offset 3.0300000000000002mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 4.9399999999999995mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
@@ -10017,6 +10178,13 @@ DSUB-62-HD_Female_Horizontal_P2.41x1.98mm_EdgePinOffset9.40mm
 62
 62
 Connector_Dsub
+DSUB-62-HD_Female_Horizontal_P2.41x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.41x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+62-pin D-Sub connector horizontal angled 90deg THT female pitch 2.41x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 63.5mm mounting-hole-offset 10.89mm
+0
+64
+63
+Connector_Dsub
 DSUB-62-HD_Female_Horizontal_P2.41x2.54mm_EdgePinOffset9.40mm
 62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, female, pitch 2.41x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
 62-pin D-Sub connector horizontal angled 90deg THT female pitch 2.41x2.54mm pin-PCB-offset 9.4mm
@@ -10027,6 +10195,13 @@ Connector_Dsub
 DSUB-62-HD_Female_Vertical_P2.41x1.98mm_MountingHoles
 62-pin D-Sub connector, straight/vertical, THT-mount, female, pitch 2.41x1.98mm, distance of mounting holes 63.5mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
 62-pin D-Sub connector straight vertical THT female pitch 2.41x1.98mm mounting holes distance 63.5mm
+0
+64
+63
+Connector_Dsub
+DSUB-62-HD_Male_Horizontal_P2.41x1.90mm_EdgePinOffset3.03mm_Housed_MountingHolesOffset4.94mm
+62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.41x1.9mm, pin-PCB-offset 3.03mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 4.94mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+62-pin D-Sub connector horizontal angled 90deg THT male pitch 2.41x1.9mm pin-PCB-offset 3.03mm mounting-holes-distance 63.5mm mounting-hole-offset 4.94mm
 0
 64
 63
@@ -10051,6 +10226,13 @@ DSUB-62-HD_Male_Horizontal_P2.41x1.98mm_EdgePinOffset9.40mm
 0
 62
 62
+Connector_Dsub
+DSUB-62-HD_Male_Horizontal_P2.41x2.54mm_EdgePinOffset8.35mm_Housed_MountingHolesOffset10.89mm
+62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.41x2.54mm, pin-PCB-offset 8.35mm, distance of mounting holes 63.5mm, distance of mounting holes to PCB edge 10.89mm, see https://disti-assets.s3.amazonaws.com/tonar/files/datasheets/16730.pdf
+62-pin D-Sub connector horizontal angled 90deg THT male pitch 2.41x2.54mm pin-PCB-offset 8.35mm mounting-holes-distance 63.5mm mounting-hole-offset 10.89mm
+0
+64
+63
 Connector_Dsub
 DSUB-62-HD_Male_Horizontal_P2.41x2.54mm_EdgePinOffset9.40mm
 62-pin D-Sub connector, horizontal/angled (90 deg), THT-mount, male, pitch 2.41x2.54mm, pin-PCB-offset 9.4mm, see http://docs-europe.electrocomponents.com/webdocs/1585/0900766b81585df2.pdf
@@ -17647,6 +17829,13 @@ connector JST XH horizontal
 3
 3
 Connector_JST
+JST_XH_S3B-XH-SM4-TB_1x03-1MP_P2.50mm_Horizontal
+JST XH series connector, S3B-XH-SM4-TB (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
+connector JST XH horizontal
+0
+5
+4
+Connector_JST
 JST_XH_S4B-XH-A-1_1x04_P2.50mm_Horizontal
 JST XH series connector, S4B-XH-A-1 (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
 connector JST XH horizontal
@@ -17660,6 +17849,13 @@ connector JST XH horizontal
 0
 4
 4
+Connector_JST
+JST_XH_S4B-XH-SM4-TB_1x04-1MP_P2.50mm_Horizontal
+JST XH series connector, S4B-XH-SM4-TB (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
+connector JST XH horizontal
+0
+6
+5
 Connector_JST
 JST_XH_S5B-XH-A-1_1x05_P2.50mm_Horizontal
 JST XH series connector, S5B-XH-A-1 (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
@@ -17688,6 +17884,13 @@ connector JST XH horizontal
 0
 6
 6
+Connector_JST
+JST_XH_S6B-XH-SM4-TB_1x06-1MP_P2.50mm_Horizontal
+JST XH series connector, S6B-XH-SM4-TB (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
+connector JST XH horizontal
+0
+8
+7
 Connector_JST
 JST_XH_S7B-XH-A-1_1x07_P2.50mm_Horizontal
 JST XH series connector, S7B-XH-A-1 (http://www.jst-mfg.com/product/pdf/eng/eXH.pdf), generated with kicad-footprint-generator
@@ -43680,6 +43883,13 @@ RJ45 ethernet magnetic
 14
 13
 Connector_RJ
+RJ45_Wuerth_7499010211A_Horizontal
+RJ45 connector, horizontal, tab down, 10/100Base-TX, with magnetics, green/yellow LEDs, https://katalog.we-online.de/pbs/datasheet/7499010211A.pdf
+RJ45 ethernet magnetic magjack transformer
+0
+14
+13
+Connector_RJ
 RJ45_Wuerth_7499111446_Horizontal
 LAN-Transformer WE-RJ45LAN 10/100/1000 BaseT
 ethernet lan connector
@@ -49469,6 +49679,13 @@ USB-A CUI stacked horizontal through-hole
 12
 9
 Connector_USB
+USB_A_Kycon_KUSBX-AS1N-B_Horizontal
+Kycon, USB-A receptacle, through-hole, https://www.kycon.com/Catalog_PDF/KUSBX.pdf'
+USB-A receptacle horizontal THT
+0
+6
+5
+Connector_USB
 USB_A_Molex_48037-2200_Horizontal
 USB type A Plug, Horizontal, https://www.molex.com/pdm_docs/sd/480372200_sd.pdf
 USB-A
@@ -52766,6 +52983,13 @@ ACDC-Converter TRACO TMF20 THT 20W
 4
 4
 Converter_ACDC
+Converter_ACDC_TRACO_TMF_301xx_THT
+ACDC-Converter, TRACO, TMF 301xx, 30W, Rev. October 10. 2024 (Script generated with StandardBox.py) (https://www.tracopower.com/products/tmf30.pdf)
+ACDC-Converter TRACO TMF30 THT 30W
+0
+4
+4
+Converter_ACDC
 Converter_ACDC_TRACO_TMG-15_THT
 ACDC-Converter, TRACO, TMG Series 15 https://www.tracopower.com/products/tmg.pdf
 ACDC-Converter TRACO TMG Series 15
@@ -53263,6 +53487,13 @@ DCDC-Converter TRACO THN30 Generic
 6
 6
 Converter_DCDC
+Converter_DCDC_TRACO_THR40-72xxWI_THT
+DCDC-Converter, TRACO, THR40-72xxWI, THR40-72xxxWI, 40W, Rev. November 4. 2024 (Script generated with StandardBox.py) (https://www.tracopower.com/products/thr40wi.pdf)
+DCDC-Converter TRACO THR40WI THT 2"x1" 40W
+0
+6
+6
+Converter_DCDC
 Converter_DCDC_TRACO_TMA-05xxD_12xxD_Dual_THT
 DCDC-Converter, TRACO, TMA-05xxD, TMA-12xxD, Dual, 1W, Rev. November 10. 2023 (Script generated with StandardBox.py) (https://www.tracopower.com/products/tma.pdf)
 DCDC-Converter TRACO TMA THT SIP-7 1W
@@ -53385,6 +53616,13 @@ Converter_DCDC
 Converter_DCDC_TRACO_TSR-1_THT
 DCDC-Converter, TRACO, TSR 1-xxxx
 DCDC-Converter TRACO TSR-1
+0
+3
+3
+Converter_DCDC
+Converter_DCDC_TRACO_TSR0.6-48xxWI_TSR0.6-48xxxWI_THT
+DCDC-Converter, TRACO, TSR0.6-48xxWI, TSR0.6-48xxxWI, 0.6A, Rev. October 29. 2024 (Script generated with StandardBox.py) (https://www.tracopower.com/products/tsr0.6wi.pdf)
+DCDC-Converter SWITCHING-REGULATOR STEP-DOWN TRACO TSR0.6WI 2.54MM THT SIP-3 0.6A
 0
 3
 3
@@ -53980,6 +54218,13 @@ Crystal
 Crystal_SMD_0603-4Pin_6.0x3.5mm_HandSoldering
 SMD Crystal SERIES SMD0603/4 http://www.petermann-technik.de/fileadmin/petermann/pdf/SMD0603-4.pdf, hand-soldering, 6.0x3.5mm^2 package
 SMD SMT crystal hand-soldering
+0
+4
+4
+Crystal
+Crystal_SMD_1210-4Pin_1.2x1.0mm
+SMD Crystal SERIES SMD1210/4 https://ecsxtal.com/store/pdf/ECX-1048.pdf, 1.2x1.0mm^2 package
+SMT
 0
 4
 4
@@ -56273,6 +56518,13 @@ TFT-graphical display 800x480 16-bit colours and touch display
 48
 48
 Display
+ER-OLED0.42-1W_Folded
+72x40 white graphic OLED display 0.42 inch, SSD1306B controller, I2C and SPI, folded back https://www.buydisplay.com/download/manual/ER-OLED0.42-1_Datasheet.pdf
+SSD1306 OLED display 0.42 inch
+0
+16
+16
+Display
 ERM19264
 STN/FSTN LCD 192x64 dot https://www.buydisplay.com/download/manual/ERM19264-1_Series_Datasheet.pdf
 ERM19264 Graphics Display 192x64
@@ -56874,6 +57126,13 @@ EMI filter
 0
 4
 4
+Filter
+Filter_KEMET_PZB300_24.0x12.5mm_P10.0mm
+EMI suppression capacitor PZB300 series, length 24.0 mm, width 12.5 mm, drill hole 1.00mm ( https://content.kemet.com/datasheets/KEM_F3019_PZB300X2_2XY2_275.pdf )
+suppressor filter cap
+0
+3
+3
 Filter
 Filter_Mini-Circuits_FV1206
 Mini-Circuits Filter SMD 1206 https://ww2.minicircuits.com/case_style/FV1206.pdf
@@ -57964,7 +58223,14 @@ Mini360
 
 
 0
+8
 4
+Hexapod_Library
+XL4005
+
+
+0
+8
 4
 Inductor_SMD
 L_6.3x6.3_H3
@@ -58667,6 +58933,13 @@ Inductor Bourns_SRP5030T
 2
 2
 Inductor_SMD
+L_Bourns_SRP6060FA
+Inductor, Bourns, SRP6060FA, 6.4x6.6x5.8mm, (https://www.bourns.com/docs/Product-Datasheets/SRP6060FA.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor power shielded
+0
+2
+2
+Inductor_SMD
 L_Bourns_SRP7028A_7.3x6.6mm
 Shielded Power Inductors (https://www.bourns.com/docs/product-datasheets/srp7028a.pdf)
 Shielded Inductors Bourns SMD SRP7028A
@@ -59286,6 +59559,118 @@ Inductor_SMD
 L_Chilisin_BMRx00060630
 Inductor, Chilisin, BMRx00060630, 7.3x6.6x3.0mm, https://www.chilisin.com/upload/media/product/power/file/BMRx_Series.pdf
 Inductor bmrx mchi
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_1515SQ-47N
+Inductor, Coilcraft, 1515SQ-47N, 4.06x3.56x3.73mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_1515SQ-68N
+Inductor, Coilcraft, 1515SQ-68N, 5.33x3.56x3.73mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_1515SQ-82N
+Inductor, Coilcraft, 1515SQ-82N, 5.84x3.56x3.73mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-90N
+Inductor, Coilcraft, 2222SQ-90N, 5.21x5.46x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-111
+Inductor, Coilcraft, 2222SQ-111, 6.35x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-131
+Inductor, Coilcraft, 2222SQ-131, 6.73x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-161
+Inductor, Coilcraft, 2222SQ-161, 7.37x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-181
+Inductor, Coilcraft, 2222SQ-181, 8.13x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-221
+Inductor, Coilcraft, 2222SQ-221, 9.91x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-271
+Inductor, Coilcraft, 2222SQ-271, 11.68x5.59x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2222SQ-301
+Inductor, Coilcraft, 2222SQ-301, 11.94x5.72x5.69mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2929SQ-331
+Inductor, Coilcraft, 2929SQ-331, 10.29x7.49x7.24mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2929SQ-361
+Inductor, Coilcraft, 2929SQ-361, 11.3x7.49x7.24mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2929SQ-391
+Inductor, Coilcraft, 2929SQ-391, 12.32x7.49x7.24mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2929SQ-431
+Inductor, Coilcraft, 2929SQ-431, 13.21x7.49x7.24mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
+0
+2
+2
+Inductor_SMD
+L_Coilcraft_2929SQ-501
+Inductor, Coilcraft, 2929SQ-501, 14.0x7.49x7.24mm, (https://www.coilcraft.com/getmedia/a4eed406-a97e-4630-9d8e-771bb470867f/1515sq.pdf), generated with kicad-footprint-generator gen_inductor.py
+Inductor sq
 0
 2
 2
@@ -60368,6 +60753,13 @@ Inductor Pulse -SMT -PA4340
 2
 2
 Inductor_SMD
+L_Pulse_PA4341
+Inductor, Pulse, PA4341, 6.4x6.6x2.8mm, (https://productfinder.pulseelectronics.com/api/open/part-attachments/datasheet/pa4341.102anlt), generated with kicad-footprint-generator gen_inductor.py
+Inductor Pulse SMT PA4341
+0
+2
+2
+Inductor_SMD
 L_Pulse_PA4344
 Pulse PA4344 / PM4344 Series SMD Inductors https://productfinder.pulseelectronics.com/api/public/uploads/product-attachments/datasheet_p771_1608107700.pdf
 Pulse PA4344 PM4344 Series SMD Inductors
@@ -60378,6 +60770,13 @@ Inductor_SMD
 L_Pulse_PA4349
 Shielded Molded High Current Power Inductors 23.5x22mm, https://productfinder.pulseelectronics.com/api/open/product-attachments/datasheet/pa4349.104anlt
 Shielded Molded High Current Power Inductor
+0
+2
+2
+Inductor_SMD
+L_Pulse_PA5402
+Inductor, Pulse, PA5402, 4.45x4.06x1.8mm, (https://productfinder.pulseelectronics.com/api/open/part-attachments/datasheet/PM5402.222NLT), generated with kicad-footprint-generator gen_inductor.py
+Inductor Pulse SMT PA5402
 0
 2
 2
@@ -65506,6 +65905,13 @@ AI Kendryte K210 RISC-V
 85
 77
 Module
+Sipeed-M1W
+MAIX RISC-V Dual Core MCU with wifi, https://dl.sipeed.com/MAIX/HDK/Sipeed-M1&M1W/Specifications
+AI Kendryte K210 RISC-V
+0
+85
+72
+Module
 Texas_EUK_R-PDSS-T7_THT
 Texas Instruments EUK 7 Pin Double Sided Module
 module pcb
@@ -67864,6 +68270,20 @@ Mounting 4.5mm 9774100982
 0
 8
 1
+Mounting_Wuerth
+Mounting_Wuerth_WP-SMRA-D3.3mm_L7mm_7466300_Horizontal
+Right-angle SMD mounting hardware, inside through hole 3.3mm, lenght 7mm, total height 5mm, Würth electronics 7466300 (https://www.we-online.com/components/products/datasheet/7466300.pdf)
+screw
+0
+4
+1
+Mounting_Wuerth
+Mounting_Wuerth_WP-SMRA-M3_L7mm_7466303_Horizontal
+Right-angle SMD mounting Hardware, inside threaded M3, length 7m, total height 5mm, Würth electronics 7466303 (https://www.we-online.com/components/products/datasheet/7466303.pdf)
+threaded screw
+0
+4
+1
 NetTie
 NetTie-2_SMD_Pad0.5mm
 Net tie, 2 pin, 0.5mm square SMD pads
@@ -68039,6 +68459,13 @@ Broadcom LGA NoLead
 0
 8
 8
+OptoDevice
+Everlight_IRM-H6xxT
+Everlight IRM-H6xxT infrared remote control receiver module, https://en.everlight.com/wp-content/plugins/ItemRelationship/product_files/pdf/DMO-0000004-IRM-H6XX-TR2_Series_Datasheet_V4.pdf
+everlight ir remote receiver
+0
+4
+4
 OptoDevice
 Everlight_ITR1201SR10AR
 package for Everlight ITR1201SR10AR, light-direction upwards, see https://www.everlight.com/file/ProductFile/ITR1201SR10AR-TR.pdf
@@ -69104,6 +69531,13 @@ DIL DIP PDIP 2.54mm 7.62mm 300mil
 4
 4
 Package_BGA
+Alliance_TFBGA-36_6x8mm_Layout6x8_P0.75mm
+Alliance TFBGA-36, NSMD, 6.0x8.0mm, 36 Ball, 6x8 Layout, 0.75mm Pitch, https://www.alliancememory.com/wp-content/uploads/pdf/AS6C1008_Mar_2023V1.2.pdf
+BGA 36 0.75 36-ball FBGA
+0
+36
+36
+Package_BGA
 Alliance_TFBGA-54_8x8mm_Layout9x9_P0.8mm
 Alliance TFBGA 54 pins, 8x8mm, 54 Ball, 9x9 Layout, 0.8mm Pitch, https://www.alliancememory.com/wp-content/uploads/pdf/dram/Alliance_Memory_64M-AS4C4M16SA-CI_v5.0_October_2018.pdf#page=54
 BGA 54 0.8
@@ -69286,6 +69720,13 @@ Altera UBGA U169 BGA-169
 169
 169
 Package_BGA
+BGA-196_15x15mm_Layout14x14_P1.0mm_Ball0.5mm
+BGA-196, 15.0x15.0mm, 196 Ball, 14x14 Layout, 1.0mm Pitch, http://ww1.microchip.com/downloads/en/DeviceDoc/VMDS-10502.pdf#page=99
+BGA 196 1.0
+0
+196
+196
+Package_BGA
 BGA-200_10.0x14.5mm_Layout12x22_P0.80x0.65mm
 BGA-200, 10.0x14.5mm, 200 Ball, 12x22 Layout, 0.8x0.65mm Pitch, http://www.issi.com/WW/pdf/43-46LQ32256A-AL.pdf
 BGA 200 0.8x0.65
@@ -69446,6 +69887,13 @@ BGA 292 0.8
 0
 292
 292
+Package_BGA
+Infineon_TFBGA-48_6x10mm_Layout6x8_P0.75mm
+Cypress / Infineon TFBGA-48, NSMD, 6.0x10.0mm, 48 Ball, 6x8 Layout, 0.75mm Pitch, https://www.infineon.com/dgdl/Infineon-CY14U256LA_256-Kbit_(32_K_8)_nvSRAM-DataSheet-v03_00-EN.pdf?fileId=8ac78c8c7d0d8da4017d0ec0a9c33546
+BGA 48 0.75 48-ball FBGA
+0
+48
+48
 Package_BGA
 LFBGA-100_10x10mm_Layout10x10_P0.8mm
 LFBGA-100, 10.0x10.0mm, 100 Ball, 10x10 Layout, 0.8mm Pitch, http://www.st.com/resource/en/datasheet/stm32f103tb.pdf#page=87
@@ -69706,6 +70154,13 @@ BGA 36 0.5
 36
 36
 Package_BGA
+TFBGA-48_6x10mm_Layout6x8_P0.75mm
+TFBGA-48, NSMD, 6.0x10.0mm, 48 Ball, 6x8 Layout, 0.75mm Pitch, https://www.jedec.org/system/files/docs/MO-207N.pdf
+BGA 48 0.75 48-ball FBGA
+0
+48
+48
+Package_BGA
 TFBGA-49_3x3mm_Layout7x7_P0.4mm
 TFBGA-49, NSMD, 3.0x3.0mm, 49 Ball, 7x7 Layout, 0.4mm Pitch, https://www.efinixinc.com/docs/trion-packaging-ug-v4.9.pdf
 BGA 49 0.4 49-ball FBGA
@@ -69818,6 +70273,13 @@ BGA 576 0.65 576-ball FBGA
 576
 576
 Package_BGA
+TFBGA-636_19x19mm_Layout28x28_P0.65mm
+TFBGA-636, 19.0x19.0mm, 644 Ball, 28x28 Layout, 0.65mm Pitch, https://opensource.rock-chips.com/images/b/b6/Rockchip_RK3568_Datasheet_V1.3-20220929P.PDF
+BGA 644 0.65 636-ball FBGA Rockchip RK3568 RK3288 Realtek RTD1296 Allwinner A80 A80T
+0
+644
+644
+Package_BGA
 Texas_BGA-289_15.0x15.0mm_Layout17x17_P0.8mm_Ball0.5mm_Pad0.4mm
 Texas Instruments BGA-289, 0.4mm pad, 15x15mm, 289 Ball, 17x17 Layout, 0.8mm Pitch, https://www.ti.com/lit/ml/mpbg777/mpbg777.pdf
 BGA 289 0.8 ZAV S-PBGA-N289
@@ -69865,6 +70327,13 @@ Texas Instruments, DSBGA-6, 0.704x1.054mm, NSMD, YKA pad definition, 0.704x1.054
 BGA 6 0.35
 0
 6
+6
+Package_BGA
+Texas_DSBGA-6_0.757x1.01mm_Layout2x3_P0.35mm
+Texas Instruments, DSBGA-6, 0.757x1.01mm, SMD, YKA0006 pad definition, 0.757x1.01mm, 6 Ball, 2x3 Layout, 0.35mm Pitch, https://www.ti.com/lit/ds/symlink/tps62843.pdf
+BGA 6 0.35 TI 0.787x1.04mm (max)
+0
+12
 6
 Package_BGA
 Texas_DSBGA-6_0.855x1.255mm_Layout2x3_P0.4mm_LevelB
@@ -70497,6 +70966,13 @@ Analog LFCSP-UQ NoLead
 10
 10
 Package_CSP
+Anpec_WLCSP-20_1.73x2.0mm_P0.4mm
+WLCSP-20, 1.76x2.03mm, 20 Ball, 4x5 Layout, 0.4mm Pitch, https://www.lcsc.com/datasheet/lcsc_datasheet_2007032014_Anpec-Elec-APW7261HAI-TRG_C691404.pdf
+CSP 20 0.4
+0
+20
+20
+Package_CSP
 Dialog_WLCSP-34_4.54x1.66mm_Stagger
 Dialog Semiconductor (Renesas) WLCSP-34, staggered array, 4.54x1.66mm, 34 Ball, 17x4 Layout, 0.25x0.34mm Pitch, https://www.renesas.com/us/en/document/dst/da7212-datasheet
 CSP 34 0.25x0.34 34-ball
@@ -70713,6 +71189,13 @@ LFCSP NoLead
 0
 35
 21
+Package_CSP
+LFCSP-24-1EP_4x4mm_P0.5mm_EP0.5x0.5mm
+LFCSP, 24 Pin (https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/lfcspcp/cp-24/CP_24_25.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
+LFCSP NoLead
+0
+26
+25
 Package_CSP
 LFCSP-24-1EP_4x4mm_P0.5mm_EP2.3x2.3mm
 LFCSP, 24 Pin (https://www.analog.com/media/en/package-pcb-resources/package/pkg_pdf/lfcspcp/cp_24_14.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
@@ -71078,6 +71561,13 @@ CSP 36 0.4
 36
 36
 Package_CSP
+ST_WLCSP-41_2.98x2.76mm_P0.40mm_Stagger
+ST WLCSP-41, 2.98x2.76mm, 41 Ball, X-staggered 13x7 Layout, 0.4mm Pitch, https://www.st.com/resource/en/datasheet/stm32wba55hg.pdf#page=140
+CSP 41 0.4
+0
+41
+41
+Package_CSP
 ST_WLCSP-42_2.82x2.93mm_P0.40mm_Stagger
 ST WLCSP-42, ST Die ID 489, 2.82x2.93mm, 42 Ball, X-staggered 12x7 Layout, 0.4mm Pitch, https://www.st.com/resource/en/datasheet/stm32u073rc.pdf
 CSP 42 0.4
@@ -71086,6 +71576,13 @@ CSP 42 0.4
 42
 Package_CSP
 ST_WLCSP-42_2.93mmx2.82_P0.40mm_Stagger
+ST WLCSP-42, ST Die ID 489, 2.93x2.82mm, 42 Ball, X-staggered 12x7 Layout, 0.4mm Pitch, https://www.st.com/resource/en/datasheet/stm32u073rc.pdf
+CSP 42 0.4
+0
+42
+42
+Package_CSP
+ST_WLCSP-42_2.93x2.82mm_P0.40mm_Stagger
 ST WLCSP-42, ST Die ID 489, 2.93x2.82mm, 42 Ball, X-staggered 12x7 Layout, 0.4mm Pitch, https://www.st.com/resource/en/datasheet/stm32u073rc.pdf
 CSP 42 0.4
 0
@@ -71686,6 +72183,13 @@ QFN 0.5
 0
 87
 57
+Package_DFN_QFN
+DFN-4_5x7mm_P5.08mm
+DFN, 4 Pin (https://ww1.microchip.com/downloads/aemDocuments/documents/TCG/ProductDocuments/DataSheets/DSC1001-3-4-1.8V-3.3V-Low-Power-Precision-CMOS-Oscillators-DS20005529.pdf#page=14), generated with kicad-footprint-generator ipc_noLead_generator.py
+DFN NoLead Microchip-DFN75-4LD-PL-1
+0
+4
+4
 Package_DFN_QFN
 DFN-6-1EP_1.2x1.2mm_P0.4mm_EP0.3x0.94mm_PullBack
 DFN, 6 Pin (http://www.onsemi.com/pub/Collateral/NCP133-D.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
@@ -72296,12 +72800,26 @@ U-DFN2020-6 (Type F)
 8
 8
 Package_DFN_QFN
+Diodes_UDFN3810-9_TYPE_B
+9-pin UDFN package, 1.0x3.8mm, (Ref: https://www.diodes.com/assets/Datasheets/D3V3X8U9LP3810.pdf)
+UDFN SMD
+0
+9
+9
+Package_DFN_QFN
 Diodes_ZL32_TQFN-32-1EP_3x6mm_P0.4mm_EP1.25x3.5mm
 Diodes ZL32 TQFN, 32 Pin (https://www.diodes.com/assets/Package-Files/ZL32.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
 Diodes TQFN NoLead
 0
 41
 33
+Package_DFN_QFN
+EPC_QFN-13-3EP_3.5x5mm_P0.5mm
+EPC QFN-13, 5.0x3.5mm, Pitch 0.5mm, https://epc-co.com/epc/Portals/0/epc/documents/datasheets/EPC23102_datasheet.pdf
+ePower-Stage-IC EPC23102 EPC23103 EPC23104
+0
+62
+13
 Package_DFN_QFN
 HVQFN-16-1EP_3x3mm_P0.5mm_EP1.5x1.5mm
 HVQFN, 16 Pin (https://www.nxp.com/docs/en/package-information/SOT758-1.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
@@ -72639,6 +73157,13 @@ DFN 0.5
 8
 8
 Package_DFN_QFN
+OnSemi_DFN-14-1EP_4x4mm_P0.5mm_EP2.7x3.4mm
+OnSemi  DFN, 14 Pin (https://www.onsemi.com/pub/Collateral/506CM.PDF), generated with kicad-footprint-generator ipc_noLead_generator.py
+OnSemi DFN NoLead
+0
+24
+15
+Package_DFN_QFN
 OnSemi_SIP-38-6EP-9x7mm_P0.65mm_EP1.2x1.2mm
 On Semiconductor, SIP-38, 9x7mm, (https://www.onsemi.com/pub/Collateral/AX-SIP-SFEU-D.PDF#page=19)
 On Semiconductor SIP
@@ -72743,6 +73268,20 @@ QFN NoLead
 0
 17
 13
+Package_DFN_QFN
+QFN-16-1EP_1.8x2.6mm_P0.4mm_EP0.7x1.5mm
+QFN, 16 Pin (https://www.st.com/resource/en/datasheet/stg3692.pdf#page=13), generated with kicad-footprint-generator ipc_noLead_generator.py
+QFN NoLead QFN16L
+0
+18
+17
+Package_DFN_QFN
+QFN-16-1EP_1.8x2.6mm_P0.4mm_EP0.7x1.5mm_ThermalVias
+QFN, 16 Pin (https://www.st.com/resource/en/datasheet/stg3692.pdf#page=13), generated with kicad-footprint-generator ipc_noLead_generator.py
+QFN NoLead QFN16L
+0
+22
+17
 Package_DFN_QFN
 QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm
 QFN, 16 Pin (https://www.st.com/resource/en/datasheet/tsv521.pdf), generated with kicad-footprint-generator ipc_noLead_generator.py
@@ -74879,6 +75418,13 @@ ti qfm mof0009a
 24
 9
 Package_DFN_QFN
+Texas_PicoStar_DFN-3_0.69x0.60mm
+Texas Picostar DFN-3, 0.73x0.64mm max, 0.69x0.60mm nom, https://www.ti.com/lit/ds/symlink/csd13380f3.pdf
+TI YJM0003A
+0
+5
+3
+Package_DFN_QFN
 Texas_QFN-41_10x16mm
 QFN, 41 Pin (http://www.ti.com/lit/ml/mpqf506/mpqf506.pdf)
 QFN DFN_QFN
@@ -75614,6 +76160,20 @@ UQFN NoLead
 16
 16
 Package_DFN_QFN
+UQFN-20-1EP_3x3mm_P0.4mm_EP1.7x1.7mm
+UQFN, 20 Pin (https://www.kinet-ic.com/uploads/web/KTD2058,%20KTD2059,%20KTD2060,%20KTD2061/KTD2061-58-59-60-04e.pdf#page=25), generated with kicad-footprint-generator ipc_noLead_generator.py
+UQFN NoLead
+0
+25
+21
+Package_DFN_QFN
+UQFN-20-1EP_3x3mm_P0.4mm_EP1.7x1.7mm_ThermalVias
+UQFN, 20 Pin (https://www.kinet-ic.com/uploads/web/KTD2058,%20KTD2059,%20KTD2060,%20KTD2061/KTD2061-58-59-60-04e.pdf#page=25), generated with kicad-footprint-generator ipc_noLead_generator.py
+UQFN NoLead
+0
+30
+21
+Package_DFN_QFN
 UQFN-20-1EP_3x3mm_P0.4mm_EP1.85x1.85mm
 UQFN, 20 Pin (http://ww1.microchip.com/downloads/en/PackagingSpec/00000049BQ.pdf#page=332), generated with kicad-footprint-generator ipc_noLead_generator.py
 UQFN NoLead
@@ -75864,6 +76424,20 @@ VQFN, 28 Pin (http://www.ti.com/lit/ds/symlink/lm5175.pdf#page=40), generated wi
 VQFN NoLead
 0
 48
+29
+Package_DFN_QFN
+VQFN-28-1EP_5x5mm_P0.5mm_EP3.25x3.25mm
+VQFN, 28 Pin (https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP251863-External-CAN-FD-Controller-with-Integrated-Transceiver-DS20006624.pdf#page=101), generated with kicad-footprint-generator ipc_noLead_generator.py
+VQFN NoLead
+0
+33
+29
+Package_DFN_QFN
+VQFN-28-1EP_5x5mm_P0.5mm_EP3.25x3.25mm_ThermalVias
+VQFN, 28 Pin (https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP251863-External-CAN-FD-Controller-with-Integrated-Transceiver-DS20006624.pdf#page=101), generated with kicad-footprint-generator ipc_noLead_generator.py
+VQFN NoLead
+0
+43
 29
 Package_DFN_QFN
 VQFN-32-1EP_4x4mm_P0.4mm_EP2.8x2.8mm
@@ -77153,6 +77727,41 @@ THT DIP DIL PDIP 2.54mm 11.43mm 450mil SMDSocket LongPads
 0
 22
 22
+Package_DIP
+DIP-24_18.0mmx34.29mm_W15.24mm
+24-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils) https://www.mouser.at/datasheet/2/389/m48t02-1849963.pdf
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil PCDIP24 CAPHAT M48T02 M48T12 M48Z02 M48Z12
+0
+24
+24
+Package_DIP
+DIP-24_18.0mmx34.29mm_W15.24mm_LongPads
+24-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils) https://www.mouser.at/datasheet/2/389/m48t02-1849963.pdf
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil PCDIP24 CAPHAT M48T02 M48T12 M48Z02 M48Z12
+0
+24
+24
+Package_DIP
+DIP-24_18.0mmx34.29mm_W15.24mm_SMDSocket_SmallPads
+24-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils) https://www.mouser.at/datasheet/2/389/m48t02-1849963.pdf
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil PCDIP24 CAPHAT M48T02 M48T12 M48Z02 M48Z12
+0
+24
+24
+Package_DIP
+DIP-24_18.0mmx34.29mm_W15.24mm_Socket
+24-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils) https://www.mouser.at/datasheet/2/389/m48t02-1849963.pdf
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil PCDIP24 CAPHAT M48T02 M48T12 M48Z02 M48Z12
+0
+24
+24
+Package_DIP
+DIP-24_18.0mmx34.29mm_W15.24mm_Socket_LongPads
+24-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils) https://www.mouser.at/datasheet/2/389/m48t02-1849963.pdf
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil PCDIP24 CAPHAT M48T02 M48T12 M48Z02 M48Z12
+0
+24
+24
 Package_DIP
 DIP-24_W7.62mm
 24-lead though-hole mounted DIP package, row spacing 7.62 mm (300 mils)
@@ -79086,6 +79695,13 @@ MQFP QFP
 44
 44
 Package_QFP
+Microchip_PQFP-44_10x10mm_P0.8mm
+Microchip  PQFP, 44 Pin (https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/20005418B.pdf#page=10), generated with kicad-footprint-generator ipc_gullwing_generator.py
+Microchip PQFP QFP
+0
+44
+44
+Package_QFP
 PQFP-32_5x5mm_P0.5mm
 PQFP, 32 Pin (https://www.ti.com/lit/ds/symlink/ads127l01.pdf#page=87), generated with kicad-footprint-generator ipc_gullwing_generator.py
 PQFP QFP
@@ -79253,6 +79869,20 @@ TQFP QFP
 0
 79
 53
+Package_QFP
+TQFP-64-1EP_10x10mm_P0.5mm_EP5.305x5.305mm
+TQFP, 64 Pin (https://www.esstech.com/wp-content/uploads/2022/09/ES9028PRO-Datasheet-v3.7.pdf#page=54), generated with kicad-footprint-generator ipc_gullwing_generator.py
+TQFP QFP ESS-eTQFP-64
+0
+81
+65
+Package_QFP
+TQFP-64-1EP_10x10mm_P0.5mm_EP5.305x5.305mm_ThermalVias
+TQFP, 64 Pin (https://www.esstech.com/wp-content/uploads/2022/09/ES9028PRO-Datasheet-v3.7.pdf#page=54), generated with kicad-footprint-generator ipc_gullwing_generator.py
+TQFP QFP ESS-eTQFP-64
+0
+107
+65
 Package_QFP
 TQFP-64-1EP_10x10mm_P0.5mm_EP8x8mm
 64-Lead Plastic Thin Quad Flatpack (PT) - 10x10x1 mm Body, 2.00 mm Footprint [TQFP] thermal pad
@@ -80416,6 +81046,13 @@ QSOP SO
 28
 28
 Package_SO
+Renesas_SOP-32_11.4x20.75mm_P1.27mm
+Renesas  SOP, 32 Pin (https://www.renesas.com/en/document/psc/package-drawing-sop-32pin-prsp0032df), generated with kicad-footprint-generator ipc_gullwing_generator.py
+Renesas SOP SO
+0
+32
+32
+Package_SO
 SO-4_4.4x2.3mm_P1.27mm
 4-Lead Plastic Small Outline (SO), see http://datasheet.octopart.com/OPIA403BTRE-Optek-datasheet-5328560.pdf
 SO SOIC 1.27
@@ -80808,12 +81445,68 @@ SOIC SO
 28
 28
 Package_SO
+SOIC-32_7.518x20.777mm_P1.27mm
+SOIC, 32 Pin (JEDEC MO-119-B, 300 mils width, variation AC, https://www.jedec.org/system/files/docs/Mo-119b.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOIC SO
+0
+32
+32
+Package_SO
+SOJ-24_7.62x15.875mm_P1.27mm
+SOJ, 24 Pin (JEDEC MS-023-A, 300 mils width, variation AA, https://www.jedec.org/system/files/docs/Ms-023a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+24
+24
+Package_SO
+SOJ-28_7.62x18.415mm_P1.27mm
+SOJ, 28 Pin (JEDEC MS-023-A, 300 mils width, variation AD, https://www.jedec.org/system/files/docs/Ms-023a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+28
+28
+Package_SO
+SOJ-28_10.16x18.415mm_P1.27mm
+SOJ, 28 Pin (JEDEC MS-027-A, 400 mils width, variation AA, https://www.jedec.org/system/files/docs/Ms-027a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+28
+28
+Package_SO
+SOJ-32_7.62x20.955mm_P1.27mm
+SOJ, 32 Pin (JEDEC MS-023-A, 300 mils width, variation AE, https://www.jedec.org/system/files/docs/Ms-023a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+32
+32
+Package_SO
+SOJ-32_10.16x20.955mm_P1.27mm
+SOJ, 32 Pin (JEDEC MS-027-A, 400 mils width, variation AC, https://www.jedec.org/system/files/docs/Ms-027a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+32
+32
+Package_SO
 SOJ-36_10.16x23.49mm_P1.27mm
 SOJ, 36 Pin (http://www.issi.com/WW/pdf/61-64C5128AL.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
 SOJ SO
 0
 36
 36
+Package_SO
+SOJ-36_10.16x23.495mm_P1.27mm
+SOJ, 36 Pin (JEDEC MS-027-A, 400 mils width, variation AE, https://www.jedec.org/system/files/docs/Ms-027a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+36
+36
+Package_SO
+SOJ-44_10.16x28.575mm_P1.27mm
+SOJ, 44 Pin (JEDEC MS-027-A, 400 mils width, variation AH, https://www.jedec.org/system/files/docs/Ms-027a.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOJ SO
+0
+44
+44
 Package_SO
 SOP-4_3.8x4.1mm_P2.54mm
 SOP, 4 Pin (http://www.ixysic.com/home/pdfs.nsf/www/CPC1017N.pdf/$file/CPC1017N.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
@@ -80940,6 +81633,13 @@ SOP SO
 0
 28
 28
+Package_SO
+SOP-32_11.305x20.495mm_P1.27mm
+SOP, 32 Pin (http://www.issi.com/WW/pdf/61-64C5128AL.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+SOP SO
+0
+32
+32
 Package_SO
 SOP-44_12.6x28.5mm_P1.27mm
 SOP, 44 Pin (https://www.mxic.com.tw/Lists/Datasheet/Attachments/8177/MX23C6410,%205V,%2064Mb,%20v3.1.pdf#page=5), generated with kicad-footprint-generator ipc_gullwing_generator.py
@@ -82326,6 +83026,20 @@ PowerFLAT5x6
 0
 10
 6
+Package_SON
+ST_PowerFLAT_HV-5_8x8mm
+High-Voltage 5-pin package, https://www.st.com/resource/en/datasheet/sctl35n65g2v.pdf
+PowerFLAT8x8
+0
+5
+5
+Package_SON
+ST_PowerFLAT_HV-8_5x6mm
+High-Voltage 8-pin package, https://www.st.com/resource/en/datasheet/sgt65r65al.pdf
+PowerFLAT5x6
+0
+17
+8
 Package_SON
 Texas_DPY0002A_0.6x1mm_P0.65mm
 X1SON 2 pin 0.6x1mm 0.375mm height package, https://www.ti.com/lit/ml/mpss034c/mpss034c.pdf, https://www.ti.com/lit/ds/symlink/tpd6e05u06.pdf
@@ -86765,6 +87479,13 @@ GSM NB-IoT module BC95
 188
 94
 RF_GSM
+Quectel_BG95
+Quectel BG95 Cellular GSM NB-IoT Module https://images.quectel.com/python/sites/2/2023/05/Quectel_BG95_Series_QuecOpen_Hardware_Design_V1.3.pdf
+Quectel BG95 Cellular GSM NB-IoT Module
+0
+102
+102
+RF_GSM
 Quectel_BG96
 Quectel BG96 Cellular GSM 2G Module https://www.quectel.com/download/quectel_bg96_hardware_design_v1-4
 Quectel BG96 Cellular GSM 2G Module
@@ -87108,6 +87829,13 @@ BLE BLE5 nRF52832
 44
 44
 RF_Module
+ESP-01
+Wi-Fi Module, https://docs.ai-thinker.com/_media/esp8266/esp8266_series_modules_user_manual_en.pdf
+Wi-Fi Module
+0
+8
+8
+RF_Module
 ESP-07
 Wi-Fi Module, http://wiki.ai-thinker.com/_media/esp8266/docs/a007ps01a2_esp-07_product_specification_v1.2.pdf
 Wi-Fi Module
@@ -87128,6 +87856,13 @@ ESP WROOM-02 espressif esp8266ex
 0
 19
 19
+RF_Module
+ESP32-C3-DevKitM-1
+2.4 GHz Wi-Fi and Bluetooth module https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c3/esp32-c3-devkitm-1/index.html
+esp32 esp32-c3 riscv risc-v wifi bluetooth ble
+0
+30
+30
 RF_Module
 ESP32-C3-WROOM-02
 RF Module, ESP32-C3 WROOM-02, Wi-Fi and Bluetooth, BLE, onboard antenna, https://www.espressif.com/sites/default/files/documentation/esp32-c3-wroom-02_datasheet_en.pdf
@@ -87422,6 +88157,13 @@ Taiyo Yuden NRF51822 Module Bluetooth
 0
 30
 28
+RF_Module
+WEMOS_D1_mini_light
+16-pin module, column spacing 22.86 mm (900 mils), https://wiki.wemos.cc/products:d1:d1_mini, https://c1.staticflickr.com/1/734/31400410271_f278b087db_z.jpg
+ESP8266 WiFi microcontroller
+0
+16
+16
 RF_Module
 ZETA-433-SO_SMD
 RF transceiver SMD style https://www.rfsolutions.co.uk/downloads/1456219226DS-ZETA.pdf
@@ -87908,6 +88650,34 @@ Kemet EC2 signal relay DPDT non single coil latching through hole THT
 Relay_THT
 Relay_DPDT_Kemet_EC2_DoubleCoil
 Kemet signal relay, DPDT, double coil latching, https://content.kemet.com/datasheets/KEM_R7002_EC2_EE2.pdf
+Kemet EC2 signal relay DPDT double dual coil latching through hole THT
+0
+10
+10
+Relay_THT
+Relay_DPDT_Kemet_EC2_NJ
+Kemet signal relay, DPDT, non-latching, single coil latching, 2.8mm pin height, https://content.kemet.com/datasheets/KEM_R7002_EC2_EE2.pdf
+Kemet EC2 signal relay DPDT non single coil latching through hole THT
+0
+8
+8
+Relay_THT
+Relay_DPDT_Kemet_EC2_NJ_DoubleCoil
+Kemet signal relay, DPDT, double coil latching, 2.8mm pin height, https://content.kemet.com/datasheets/KEM_R7002_EC2_EE2.pdf
+Kemet EC2 signal relay DPDT double dual coil latching through hole THT
+0
+10
+10
+Relay_THT
+Relay_DPDT_Kemet_EC2_NU
+Kemet signal relay, DPDT, non-latching, single coil latching, 3.2mm pin height, https://content.kemet.com/datasheets/KEM_R7002_EC2_EE2.pdf
+Kemet EC2 signal relay DPDT non single coil latching through hole THT
+0
+8
+8
+Relay_THT
+Relay_DPDT_Kemet_EC2_NU_DoubleCoil
+Kemet signal relay, DPDT, double coil latching, 3.2mm pin height, https://content.kemet.com/datasheets/KEM_R7002_EC2_EE2.pdf
 Kemet EC2 signal relay DPDT double dual coil latching through hole THT
 0
 10
@@ -90397,6 +91167,13 @@ QFN 0.5
 0
 25
 24
+Sensor_Pressure
+CFSensor_XGZP6859D_7x7mm
+CFSensor XGZP6859D SO, 6 Pin (https://cfsensor.com/wp-content/uploads/2022/11/XGZP6859D-Pressure-Sensor-V2.5.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py
+CFSensor SO Sensor_Pressure
+0
+6
+6
 Sensor_Pressure
 CFSensor_XGZP6897x
 Port External Dia 3.13mm, Port Internal Dia 0.9mm, 8 Pin (https://cfsensor.com/wp-content/uploads/2022/11/XGZP6897D-Pressure-Sensor-V2.7.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py, hand modified

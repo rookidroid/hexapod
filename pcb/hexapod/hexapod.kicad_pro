@@ -179,6 +179,7 @@
       ],
       "track_widths": [
         0.0,
+        0.5,
         1.0,
         2.0
       ],
@@ -481,7 +482,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "",
+      "plot": "hexapod_gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
