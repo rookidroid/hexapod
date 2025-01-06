@@ -116,7 +116,7 @@
 	(net 33 "/power_r1")
 	(net 34 "/power")
 	(net 35 "/power_l1")
-	(net 36 "Net-(D1-K)")
+	(net 36 "/VSYS")
 	(net 37 "Net-(D1-A)")
 	(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical"
 		(layer "F.Cu")
@@ -1005,7 +1005,7 @@
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
-			(net 36 "Net-(D1-K)")
+			(net 36 "/VSYS")
 			(pinfunction "K")
 			(pintype "passive")
 			(uuid "1736263e-4c00-4bc1-a72c-38ab4108327f")
@@ -1318,7 +1318,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J3"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "e6fab89c-99e3-460d-b86e-e61d6c8434f0")
 			(effects
@@ -2161,7 +2161,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J1"
-			(at -1.75 -2.25 360)
+			(at -1.75 -2.25 0)
 			(layer "F.SilkS")
 			(uuid "85fa4a9f-f9e3-4af4-a776-90c36d0a2592")
 			(effects
@@ -3570,7 +3570,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J6"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "3b00d34c-31ab-43f1-b293-5f7df714fa44")
 			(effects
@@ -3848,7 +3848,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J9"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "c51ca410-d4b9-47a6-977e-56819b76cae2")
 			(effects
@@ -4126,7 +4126,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J8"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "33157e6a-d6f7-4bfe-948e-d4f443d2093e")
 			(effects
@@ -4404,7 +4404,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J2"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "b729d0c2-f88f-4cc5-a635-2434e9dfa9bd")
 			(effects
@@ -6606,7 +6606,7 @@
 			(drill 1.02)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
-			(net 36 "Net-(D1-K)")
+			(net 36 "/VSYS")
 			(pinfunction "VSYS")
 			(pintype "power_in")
 			(uuid "dba3ef90-ca82-4bd7-b26f-4aa7781d100c")
@@ -6618,7 +6618,7 @@
 				(offset 0.9 0)
 			)
 			(layers "F.Cu" "F.Mask")
-			(net 36 "Net-(D1-K)")
+			(net 36 "/VSYS")
 			(pinfunction "VSYS")
 			(pintype "power_in")
 			(uuid "aa915b49-c780-42ce-836e-bc4d232df699")
@@ -6665,7 +6665,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J5"
-			(at -2 -1.75 360)
+			(at -2 -1.75 0)
 			(layer "F.SilkS")
 			(uuid "5ed26379-7103-41b3-b1c5-bde20a8c2fda")
 			(effects
@@ -7499,7 +7499,7 @@
 		(descr "Through hole straight pin header, 1x03, 2.54mm pitch, single row")
 		(tags "Through hole pin header THT 1x03 2.54mm single row")
 		(property "Reference" "J7"
-			(at -2 -1.5 360)
+			(at -2 -1.5 0)
 			(layer "F.SilkS")
 			(uuid "353327a5-4bf9-42e8-9e55-05d7c346c54b")
 			(effects
@@ -8366,7 +8366,7 @@
 		)
 		(fp_arc
 			(start 3.521125 1.286294)
-			(mid 3.477135 1.233898)
+			(mid 3.477135 1.233899)
 			(end 3.435 1.18)
 			(stroke
 				(width 0.12)
@@ -8377,7 +8377,7 @@
 		)
 		(fp_arc
 			(start 3.521202 -1.287012)
-			(mid 3.578748 -1.350292)
+			(mid 3.578747 -1.350293)
 			(end 3.639 -1.411)
 			(stroke
 				(width 0.12)
@@ -8443,7 +8443,7 @@
 		)
 		(fp_arc
 			(start 3.93363 -1.644317)
-			(mid 4.00637 -1.689264)
+			(mid 4.006369 -1.689267)
 			(end 4.081 -1.731)
 			(stroke
 				(width 0.12)
@@ -8454,7 +8454,7 @@
 		)
 		(fp_arc
 			(start 4.080344 1.730739)
-			(mid 4.005725 1.688977)
+			(mid 4.005725 1.688978)
 			(end 3.933 1.644)
 			(stroke
 				(width 0.12)
@@ -8498,7 +8498,7 @@
 		)
 		(fp_arc
 			(start 5.000479 1.960685)
-			(mid 4.744554 1.943974)
+			(mid 4.744554 1.943973)
 			(end 4.493 1.894)
 			(stroke
 				(width 0.12)
@@ -8531,7 +8531,7 @@
 		)
 		(fp_arc
 			(start 5.638712 -1.85392)
-			(mid 5.734863 -1.817952)
+			(mid 5.734863 -1.817951)
 			(end 5.829 -1.777)
 			(stroke
 				(width 0.12)
@@ -8542,7 +8542,7 @@
 		)
 		(fp_arc
 			(start 5.829295 1.77705)
-			(mid 5.735154 1.818015)
+			(mid 5.735155 1.818016)
 			(end 5.639 1.854)
 			(stroke
 				(width 0.12)
@@ -8553,7 +8553,7 @@
 		)
 		(fp_arc
 			(start 5.920652 -1.730826)
-			(mid 5.995273 -1.68902)
+			(mid 5.995274 -1.689022)
 			(end 6.068 -1.644)
 			(stroke
 				(width 0.12)
@@ -8575,7 +8575,7 @@
 		)
 		(fp_arc
 			(start 6.096479 -1.625751)
-			(mid 6.166349 -1.576376)
+			(mid 6.166348 -1.576374)
 			(end 6.234 -1.524)
 			(stroke
 				(width 0.12)
@@ -8586,7 +8586,7 @@
 		)
 		(fp_arc
 			(start 6.233457 1.523294)
-			(mid 6.165839 1.575648)
+			(mid 6.16584 1.575649)
 			(end 6.096 1.625)
 			(stroke
 				(width 0.12)
@@ -8608,7 +8608,7 @@
 		)
 		(fp_arc
 			(start 6.36213 1.410651)
-			(mid 6.299301 1.468722)
+			(mid 6.2993 1.468721)
 			(end 6.234 1.524)
 			(stroke
 				(width 0.12)
@@ -8663,7 +8663,7 @@
 		)
 		(fp_arc
 			(start 6.566102 1.179628)
-			(mid 6.523978 1.233565)
+			(mid 6.523978 1.233564)
 			(end 6.48 1.286)
 			(stroke
 				(width 0.12)
