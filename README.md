@@ -4,14 +4,13 @@ A 3D Printed Hexapod Robot
 
 **This is the Hexapod v2 with 21G servos, for the instructions of the original Hexapod with MG92B or MG90S servos, please go to [v1 branch](https://github.com/rookidroid/hexapod/tree/v1)**
 
-
 ![hexapod_model](./images/hexapod_model.jpg)
 
 ![booting_up](./images/booting_up.gif)
 
 ## Introduction
 
-This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a range of advanced features, including:
+This agile, 3D-printed hexapod robot, built with Raspberry Pi PICO, offers a range of advanced features, including:
 
 - A robust, durable structure
 - WiFi-enabled remote control
@@ -26,16 +25,15 @@ This agile, 3D-printed hexapod robot, built with ESP32 and Arduino, offers a ran
 
 ## Electronics
 
-| Name                       | Thumbnail                                                                | Required          | Note      |
-| -------------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
-| ESP32 Dev Module           | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
-| MG92B or MG90S (metal gear)| <img src="./images/mg90s.png" alt="mg90s" width="300"/>                  | 18                | Can be mixed |
-| PCA9685 servo driver       | <img src="./images/PCA9685.jpg" alt="PCA9685" width="300"/>              | 2                 | Need to be configured as different I2C addresss |
-| XL4005 DC-DC step down     | <img src="./images/XL4005.jpg" alt="XL4005" width="300"/>                | 2                 | 6V output |
-| Mini 360 DC-DC step down   | <img src="./images/mini360.jpg" alt="mini360" width="300"/>              | 1                 | 5V output |
-| Switch                     | <img src="./images/switch.jpg" alt="switch" width="300"/>                | 1                 |           |
-| 18650 battery              | <img src="./images/battery.jpg" alt="battery" width="300"/>              | 2                 |           |
-| 18650 battery holder       | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>  | 1                 |           |
+| Name                                  | Thumbnail                                                                | Required          | Note      |
+| ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
+| Raspberry PICO W (or PICO 2W)         | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
+| 21G Servo (DSPOWER 21G or Miuzei 21G) | <img src="./images/mg90s.png" alt="mg90s" width="300"/>                  | 18                |           |
+| XL4005 DC-DC step down                | <img src="./images/XL4005.jpg" alt="XL4005" width="300"/>                | 2                 | 5V output |
+| Mini 360 DC-DC step down              | <img src="./images/mini360.jpg" alt="mini360" width="300"/>              | 1                 | 5V output |
+| Switch                                | <img src="./images/switch.jpg" alt="switch" width="300"/>                | 1                 |           |
+| 18650 battery                         | <img src="./images/battery.jpg" alt="battery" width="300"/>              | 2                 |           |
+| 18650 battery holder                  | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/> | 1                 |           |
 
 ### Connection Diagram
 
