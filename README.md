@@ -2,6 +2,9 @@
 
 A 3D Printed Hexapod Robot
 
+**This is the Hexapod v2 with 21G servos, for the instructions of the original Hexapod with MG92B or MG90S servos, please go to [v1 branch](https://github.com/rookidroid/hexapod/tree/v1)**
+
+
 ![hexapod_model](./images/hexapod_model.jpg)
 
 ![booting_up](./images/booting_up.gif)
