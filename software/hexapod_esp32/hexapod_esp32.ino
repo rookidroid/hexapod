@@ -206,6 +206,9 @@ void setup() {
   pinMode(19, OUTPUT);
   pinMode(26, OUTPUT);
 
+  digitalWrite(19, LOW);
+  digitalWrite(26, LOW);
+
   boot_up_motion(lut_standup_length, lut_standup);
 
   //  posture_calibration();
