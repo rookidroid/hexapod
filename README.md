@@ -6,22 +6,14 @@ A 3D Printed Hexapod Robot
 
 ![hexapod_model](./images/hexapod_model.jpg)
 
-![booting_up](./images/booting_up.gif)
-
 ## Introduction
 
-This agile, 3D-printed hexapod robot, built with Raspberry Pi PICO, offers a range of advanced features, including:
+This agile, 3D-printed hexapod robot is designed to work with either a Raspberry Pi PICO or an ESP32, providing flexibility and enhanced performance. Equipped with stronger and faster 21G servos, it offers a range of advanced features, including:
 
 - A robust, durable structure
 - WiFi-enabled remote control
 - Smooth, agile movement
 - Over-the-air (OTA) firmware updates for easy maintenance
-
-### Watch on Youtube
-
-[![youtube_booting_up](https://img.youtube.com/vi/QFQOPC1Mbdo/0.jpg)](https://www.youtube.com/watch?v=QFQOPC1Mbdo)
-
-[![youtube_remote_control](https://img.youtube.com/vi/YvXEto3tymQ/0.jpg)](https://www.youtube.com/watch?v=YvXEto3tymQ)
 
 ## Electronics
 
@@ -29,9 +21,7 @@ This agile, 3D-printed hexapod robot, built with Raspberry Pi PICO, offers a ran
 | ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
 | Raspberry PICO W (or PICO 2W)         | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
 | 21G Servo (DSPOWER 21G or Miuzei 21G) | <img src="./images/mg90s.png" alt="mg90s" width="300"/>                  | 18                |           |
-| XL4005 DC-DC step down                | <img src="./images/XL4005.jpg" alt="XL4005" width="300"/>                | 2                 | 5V output |
-| Mini 360 DC-DC step down              | <img src="./images/mini360.jpg" alt="mini360" width="300"/>              | 1                 | 5V output |
-| Switch                                | <img src="./images/switch.jpg" alt="switch" width="300"/>                | 1                 |           |
+| Rocker Switch                         | <img src="./images/switch.jpg" alt="switch" width="300"/>                | 1                 |           |
 | 18650 battery                         | <img src="./images/battery.jpg" alt="battery" width="300"/>              | 2                 |           |
 | 18650 battery holder                  | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/> | 1                 |           |
 
@@ -49,16 +39,17 @@ This agile, 3D-printed hexapod robot, built with Raspberry Pi PICO, offers a ran
 
 ![body_assembly](./images/assembly_body.gif)
 
-| Filename       | Thumbnail                                                               | Required |
+| Filename       | Thumbnail                                                               | Required # |
 | -------------- | ----------------------------------------------------------------------- | -------- |
-| body_top       | <img src="./images/body_top.jpg" alt="body_top" width="300"/>           | 1        |
-| body_base      | <img src="./images/body_base.jpg" alt="body_base" width="300"/>         | 1        |
-| body_side      | <img src="./images/body_side.jpg" alt="body_side" width="300"/>         | 2        |
-| body_front_back| <img src="./images/body_front_back.jpg" alt="body_front_back" width="300"/>| 2        |
-| body_battery   | <img src="./images/body_battery.jpg" alt="body_battery" width="300"/>     | 1        |
-| body_servo_side1 | <img src="./images/body_servo_side1.jpg" alt="body_servo_side1" width="300"/> | 6        |
-| body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="300"/> | 6        |
-| body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="300"/>     | 6        |
+| body_base      | <img src="./images/body_base.jpg" alt="body_base" width="400"/>         | 1        |
+| body_side      | <img src="./images/body_side.jpg" alt="body_side" width="400"/>         | 2        |
+| body_front_back| <img src="./images/body_front_back.jpg" alt="body_front_back" width="400"/>| 2        |
+| body_top       | <img src="./images/body_top.jpg" alt="body_top" width="400"/>           | 1        |
+| body_top_cover | <img src="./images/body_top_cover.jpg" alt="body_servo_top" width="400"/>     | 1        |
+| body_battery   | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>     | 1        |
+| body_servo_side1 | <img src="./images/body_servo_side1.jpg" alt="body_servo_side1" width="400"/> | 6        |
+| body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="400"/> | 6        |
+| body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="400"/>     | 6        |
 
 #### Joint x 3 + Mirrored Joint x 3
 
