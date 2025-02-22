@@ -57,22 +57,21 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ![joint_assembly](./images/assembly_joint.gif)
 
-| Filename        | Thumbnail                                                                   | Required | Note      |
+| Filename        | Thumbnail                                                                   | Required # | Note      |
 | --------------- | --------------------------------------------------------------------------- | -------- | --------- |
-| joint_bottom    | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="300"/>       | 12       |           |
-| joint_cross     | <img src="./images/joint_cross.jpg" alt="joint_cross" width="300"/>         | 6        |           |
-| joint_top_mg90s | <img src="./images/joint_top_mg90s.jpg" alt="joint_top_mg90s" width="300"/> | 12       | For MG90S |
-| joint_top_mg92b | <img src="./images/joint_top_mg92b.jpg" alt="joint_top_mg92b" width="300"/> | 12       | For MG92B |
+| joint_bottom    | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="400"/>       | 12       |           |
+| joint_cross     | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>         | 6        |           |
+| joint_top       | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12       |           |
 
 #### Leg x 6
 
 ![leg_assembly](./images/assembly_leg.gif)
 
-| Filename        | Thumbnail                                                                   | Required |
+| Filename        | Thumbnail                                                                   | Required # |
 | --------------- | --------------------------------------------------------------------------- | -------- |
-| leg_bottom      | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="300"/>           | 6        |
-| leg_side        | <img src="./images/leg_side.jpg" alt="leg_side" width="300"/>               | 12       |
-| leg_top         | <img src="./images/leg_top.jpg" alt="leg_top" width="300"/>                 | 6        |
+| leg_bottom      | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="400"/>           | 6        |
+| leg_side        | <img src="./images/leg_side.jpg" alt="leg_side" width="400"/>               | 12       |
+| leg_top         | <img src="./images/leg_top.jpg" alt="leg_top" width="400"/>                 | 6        |
 
 #### Foot x 3 + Mirrored Foot x 3
 
@@ -80,24 +79,22 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ![foot_assembly](./images/assembly_foot.gif)
 
-| Filename        | Thumbnail                                                                   | Required | Note      |
+| Filename        | Thumbnail                                                                   | Required # | Note      |
 | --------------- | --------------------------------------------------------------------------- | -------- | --------- |
-| foot_bottom     | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="300"/>         | 6        |           |
-| foot_ground     | <img src="./images/foot_ground.jpg" alt="foot_ground" width="300"/>         | 6        |           |
-| foot_tip        | <img src="./images/foot_tip.jpg" alt="foot_tip" width="300"/>               | 6        |           |
-| foot_top_mg90s  | <img src="./images/foot_top_mg90s.jpg" alt="foot_top_mg90s" width="300"/>   | 6        | For MG90S |
-| foot_top_mg92b  | <img src="./images/foot_top_mg92b.jpg" alt="foot_top_mg92b" width="300"/>   | 6        | For MG92B |
+| foot_bottom     | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="400"/>         | 6        |           |
+| foot_top        | <img src="./images/foot_top.jpg" alt="foot_top" width="400"/>               | 6        |           |
+| foot_ground     | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/>         | 6        |           |
+| foot_tip        | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>               | 6        |           |
 
 #### Accessory
 
 | Filename               | Thumbnail                                                                                 | Note             |
 | ---------------------- | ----------------------------------------------------------------------------------------- | ---------------- |
-| accessory_spacer_mg90s | <img src="./images/accessory_spacer_mg90s.jpg" alt="accessory_spacer_mg90s" width="300"/> | Spacer for MG90S |
-| accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="300"/> |                  |
+| accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="400"/> |                  |
 
 ### Others
 
-| Name      | Spec    | Required |
+| Name      | Spec    | Required # |
 | --------- | ------- | -------- |
 | Screw     | M2 6mm  | 36       |
 | Screw     | M2 10mm | 198      |
