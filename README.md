@@ -133,4 +133,6 @@ static int left_offset_ticks[3][3] = {{-5, 10, 0}, {-15, 5, -20}, {20, -10, 10}}
 static int right_offset_ticks[3][3] = {{20, -10, 0}, {-15, 0, -5}, {-10, 0, -20}};
 ```
 
-![calibration](./images/calibration.gif)
+![calibration_1](./images/calibration_1.jpg)
+
+![calibration_2](./images/calibration_2.jpg)
