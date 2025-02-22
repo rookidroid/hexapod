@@ -19,8 +19,8 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 | Name                                  | Thumbnail                                                                | Required          | Note      |
 | ------------------------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
-| Raspberry PICO W (or PICO 2W)         | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
-| 21G Servo (DSPOWER 21G or Miuzei 21G) | <img src="./images/mg90s.png" alt="mg90s" width="300"/>                  | 18                |           |
+| Controller Board         | <img src="./images/esp32.jpg" alt="esp32" width="300"/>                  | 1                 |           |
+| 21G Servo (DSPOWER 21G or Miuzei 21G) | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="300"/>                  | 18                |           |
 | Rocker Switch                         | <img src="./images/switch.jpg" alt="switch" width="300"/>                | 1                 |           |
 | 18650 battery                         | <img src="./images/battery.jpg" alt="battery" width="300"/>              | 2                 |           |
 | 18650 battery holder                  | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/> | 1                 |           |
