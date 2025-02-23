@@ -20,10 +20,10 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 | Name                 | Thumbnail                                                                                                                                                    | Required # | Note |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---- |
 | Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="200"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="200"/> | 1          |      |
-| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="400"/>                                                                                          | 18         |      |
-| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="400"/>                                                                                                    | 1          |      |
-| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="400"/>                                                                                                  | 2          |      |
-| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="400"/>                                                                                     | 1          |      |
+| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="300"/>                                                                                          | 18         |      |
+| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          |      |
+| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 2          |      |
+| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          |      |
 
 ### Connection Diagram
 
