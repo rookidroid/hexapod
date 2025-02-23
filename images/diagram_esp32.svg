@@ -8,7 +8,7 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
-   sodipodi:docname="diagram.svg"
+   sodipodi:docname="diagram_esp32.svg"
    xml:space="preserve"
    inkscape:export-filename="..\..\..\..\..\OneDrive\Desktop\diagram.png"
    inkscape:export-xdpi="177.94"
@@ -242,7 +242,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(94.889175,97.498169)"><image
+     transform="translate(94.889175,97.498169)"><rect
+       style="fill:#ffffff;stroke-width:1;stroke-linecap:round;fill-opacity:1"
+       id="rect1"
+       width="428.2323"
+       height="440.46753"
+       x="-94.889175"
+       y="-97.498169" /><image
        width="61.030556"
        height="53.974998"
        preserveAspectRatio="none"

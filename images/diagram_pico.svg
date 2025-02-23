@@ -242,7 +242,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(94.889175,97.498169)"><image
+     transform="translate(94.889175,97.498169)"><rect
+       style="fill:#ffffff;stroke-width:1;stroke-linecap:round"
+       id="rect1"
+       width="428.2323"
+       height="440.46753"
+       x="-94.889175"
+       y="-97.498169" /><image
        width="491.21106"
        height="368.83319"
        preserveAspectRatio="none"
