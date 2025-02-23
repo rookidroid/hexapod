@@ -19,13 +19,13 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ## Electronics
 
-| Name                 | Thumbnail                                                                                                                                                    | Required # | Note |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---- |
-| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="150"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="150"/> | 1          |      |
-| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="300"/>                                                                                          | 18         |      |
-| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          |      |
-| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 2          |      |
-| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          |      |
+| Name                 | Thumbnail                                                                                                                                                    | Required # | Note                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------ |
+| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="150"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="150"/> | 1          | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) or [RPi Pico version](https://rookidroid.com/product/hexapod-controller-board-pico/) |
+| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="200"/>                                                                                          | 18         | DS Power or Miuzei 21G servo                                                                     |
+| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          |                                                                                                  |
+| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 2          |                                                                                                  |
+| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          |                                                                                                  |
 
 ### Connection Diagram
 
@@ -33,7 +33,7 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ![diagram_esp32](./images/diagram_esp32.svg)
 
-#### Respberry Pi PICO W/2W
+#### Respberry Pi Pico W/2W
 
 ![diagram_pico](./images/diagram_pico.svg)
 
@@ -59,6 +59,8 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 | body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="400"/> | 6          |
 | body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="400"/>     | 6          |
 
+*Use the orientations of the thumbnials to print, no support is needed.*
+
 #### Joint x 3 + Mirrored Joint x 3
 
 _Check the images of the fully assembled robot for the orientations of the joints and the mirrored joints_
@@ -71,6 +73,8 @@ _Check the images of the fully assembled robot for the orientations of the joint
 | joint_cross  | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>   | 6          |      |
 | joint_top    | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12         |      |
 
+*Use the orientations of the thumbnials to print, no support is needed.*
+
 #### Leg x 6
 
 ![leg_assembly](./images/assembly_leg.gif)
@@ -80,6 +84,8 @@ _Check the images of the fully assembled robot for the orientations of the joint
 | leg_bottom | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="400"/> | 6          |
 | leg_side   | <img src="./images/leg_side.jpg" alt="leg_side" width="400"/>     | 12         |
 | leg_top    | <img src="./images/leg_top.jpg" alt="leg_top" width="400"/>       | 6          |
+
+*Use the orientations of the thumbnials to print, no support is needed.*
 
 #### Foot x 3 + Mirrored Foot x 3
 
@@ -94,11 +100,15 @@ _Check the images of the fully assembled robot for the orientations of the feet 
 | foot_ground | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/> | 6          |      |
 | foot_tip    | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>       | 6          |      |
 
+*Use the orientations of the thumbnials to print, no support is needed.*
+
 #### Accessory
 
 | Filename               | Thumbnail                                                                                 | Note |
 | ---------------------- | ----------------------------------------------------------------------------------------- | ---- |
 | accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="400"/> |      |
+
+*Use the orientations of the thumbnials to print, no support is needed.*
 
 ### Others
 
