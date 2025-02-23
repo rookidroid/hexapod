@@ -17,13 +17,13 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ## Electronics
 
-| Name                 | Thumbnail                                                                | Required #        | Note      |
-| -------------------- | ------------------------------------------------------------------------ | ----------------- | --------- |
-| Controller Board     | <img src="./images/esp32.jpg" alt="esp32" width="400"/>                  | 1                 |           |
-| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="400"/>      | 18                |           |
-| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="400"/>                | 1                 |           |
-| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="400"/>              | 2                 |           |
-| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="400"/> | 1                 |           |
+| Name                 | Thumbnail                                                                                                                                                    | Required # | Note |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | ---- |
+| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="200"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="200"/> | 1          |      |
+| 21G Servo            | <img src="./images/dspower_21g.jpg" alt="dspower_21g" width="400"/>                                                                                          | 18         |      |
+| Rocker Switch        | <img src="./images/switch.jpg" alt="switch" width="400"/>                                                                                                    | 1          |      |
+| 18650 battery        | <img src="./images/battery.jpg" alt="battery" width="400"/>                                                                                                  | 2          |      |
+| 18650 battery holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="400"/>                                                                                     | 1          |      |
 
 ### Connection Diagram
 
@@ -45,68 +45,68 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 ![body_assembly](./images/assembly_body.gif)
 
-| Filename       | Thumbnail                                                               | Required # |
-| -------------- | ----------------------------------------------------------------------- | -------- |
-| body_base      | <img src="./images/body_base.jpg" alt="body_base" width="400"/>         | 1        |
-| body_side      | <img src="./images/body_side.jpg" alt="body_side" width="400"/>         | 2        |
-| body_front_back| <img src="./images/body_front_back.jpg" alt="body_front_back" width="400"/>| 2        |
-| body_top       | <img src="./images/body_top.jpg" alt="body_top" width="400"/>           | 1        |
-| body_top_cover | <img src="./images/body_top_cover.jpg" alt="body_servo_top" width="400"/>     | 1        |
-| body_battery   | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>     | 1        |
-| body_servo_side1 | <img src="./images/body_servo_side1.jpg" alt="body_servo_side1" width="400"/> | 6        |
-| body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="400"/> | 6        |
-| body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="400"/>     | 6        |
+| Filename         | Thumbnail                                                                     | Required # |
+| ---------------- | ----------------------------------------------------------------------------- | ---------- |
+| body_base        | <img src="./images/body_base.jpg" alt="body_base" width="400"/>               | 1          |
+| body_side        | <img src="./images/body_side.jpg" alt="body_side" width="400"/>               | 2          |
+| body_front_back  | <img src="./images/body_front_back.jpg" alt="body_front_back" width="400"/>   | 2          |
+| body_top         | <img src="./images/body_top.jpg" alt="body_top" width="400"/>                 | 1          |
+| body_top_cover   | <img src="./images/body_top_cover.jpg" alt="body_servo_top" width="400"/>     | 1          |
+| body_battery     | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>         | 1          |
+| body_servo_side1 | <img src="./images/body_servo_side1.jpg" alt="body_servo_side1" width="400"/> | 6          |
+| body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="400"/> | 6          |
+| body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="400"/>     | 6          |
 
 #### Joint x 3 + Mirrored Joint x 3
 
-*Check the images of the fully assembled robot for the orientations of the joints and the mirrored joints*
+_Check the images of the fully assembled robot for the orientations of the joints and the mirrored joints_
 
 ![joint_assembly](./images/assembly_joint.gif)
 
-| Filename        | Thumbnail                                                                   | Required # | Note      |
-| --------------- | --------------------------------------------------------------------------- | -------- | --------- |
-| joint_bottom    | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="400"/>       | 12       |           |
-| joint_cross     | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>         | 6        |           |
-| joint_top       | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12       |           |
+| Filename     | Thumbnail                                                             | Required # | Note |
+| ------------ | --------------------------------------------------------------------- | ---------- | ---- |
+| joint_bottom | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="400"/> | 12         |      |
+| joint_cross  | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>   | 6          |      |
+| joint_top    | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12         |      |
 
 #### Leg x 6
 
 ![leg_assembly](./images/assembly_leg.gif)
 
-| Filename        | Thumbnail                                                                   | Required # |
-| --------------- | --------------------------------------------------------------------------- | -------- |
-| leg_bottom      | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="400"/>           | 6        |
-| leg_side        | <img src="./images/leg_side.jpg" alt="leg_side" width="400"/>               | 12       |
-| leg_top         | <img src="./images/leg_top.jpg" alt="leg_top" width="400"/>                 | 6        |
+| Filename   | Thumbnail                                                         | Required # |
+| ---------- | ----------------------------------------------------------------- | ---------- |
+| leg_bottom | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="400"/> | 6          |
+| leg_side   | <img src="./images/leg_side.jpg" alt="leg_side" width="400"/>     | 12         |
+| leg_top    | <img src="./images/leg_top.jpg" alt="leg_top" width="400"/>       | 6          |
 
 #### Foot x 3 + Mirrored Foot x 3
 
-*Check the images of the fully assembled robot for the orientations of the feet and the mirrored feet*
+_Check the images of the fully assembled robot for the orientations of the feet and the mirrored feet_
 
 ![foot_assembly](./images/assembly_foot.gif)
 
-| Filename        | Thumbnail                                                                   | Required # | Note      |
-| --------------- | --------------------------------------------------------------------------- | -------- | --------- |
-| foot_bottom     | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="400"/>         | 6        |           |
-| foot_top        | <img src="./images/foot_top.jpg" alt="foot_top" width="400"/>               | 6        |           |
-| foot_ground     | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/>         | 6        |           |
-| foot_tip        | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>               | 6        |           |
+| Filename    | Thumbnail                                                           | Required # | Note |
+| ----------- | ------------------------------------------------------------------- | ---------- | ---- |
+| foot_bottom | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="400"/> | 6          |      |
+| foot_top    | <img src="./images/foot_top.jpg" alt="foot_top" width="400"/>       | 6          |      |
+| foot_ground | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/> | 6          |      |
+| foot_tip    | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>       | 6          |      |
 
 #### Accessory
 
-| Filename               | Thumbnail                                                                                 | Note             |
-| ---------------------- | ----------------------------------------------------------------------------------------- | ---------------- |
-| accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="400"/> |                  |
+| Filename               | Thumbnail                                                                                 | Note |
+| ---------------------- | ----------------------------------------------------------------------------------------- | ---- |
+| accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="400"/> |      |
 
 ### Others
 
-| Name      | Spec    | Required # |
-| --------- | ------- | -------- |
-| Screw     | M2 6mm  | 36       |
-| Screw     | M2 10mm | 198      |
-| Nuts      | M2      | 234      |
-| Pin (304) | M4 6mm  | 18       |
-| Bearing   | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18 |
+| Name      | Spec                                  | Required # |
+| --------- | ------------------------------------- | ---------- |
+| Screw     | M2 6mm                                | 36         |
+| Screw     | M2 10mm                               | 198        |
+| Nuts      | M2                                    | 234        |
+| Pin (304) | M4 6mm                                | 18         |
+| Bearing   | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18         |
 
 ## Software
 
@@ -122,11 +122,11 @@ Source code is under `./hexapod_arduino`.
 
 ### Android
 
-*Working in progress*
+_Working in progress_
 
 ### PC
 
-*Working in progress*
+_Working in progress_
 
 ## Calibration
 
