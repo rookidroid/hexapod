@@ -6,8 +6,6 @@ A 3D Printed Hexapod Robot
 
 <img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="300"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="300"/>
 
-&nbsp;
-
 <img src="./images/hexapod_lego_1.jpg" alt="hexapod_photo" width="300"/><img src="./images/hexapod_lego_2.jpg" alt="hexapod_photo" width="300"/>
 
 ## Introduction
