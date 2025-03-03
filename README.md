@@ -31,11 +31,11 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 
 #### ESP32
 
-![diagram_esp32](./images/diagram_esp32.jpg)
+![diagram_esp32](./images/pcb_diagram_esp32.jpg)
 
 #### Respberry Pi Pico W/2W
 
-![diagram_pico](./images/diagram_pico.jpg)
+![diagram_pico](./images/pcb_diagram_pico.jpg)
 
 ## Assembly
 
