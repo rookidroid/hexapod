@@ -2,7 +2,8 @@
 
 A 3D Printed Hexapod Robot
 
-**Check the upgraded [Hexapod v2](https://github.com/rookidroid/hexapod/tree/v2) with stronger 21G servos and improved circuit. [Hexapod v2](https://github.com/rookidroid/hexapod/tree/v2) also supports ESP32 or Raspberry Pi PICO W/2W.**
+**It is strongly recommended to start with [Hexapod v2](https://github.com/rookidroid/hexapod/tree/v2) rather than building Hexapod v1. Our experience has shown that MG90S servos frequently fail due to their inherent weaknesses and inconsistencies in quality.
+Check the upgraded [Hexapod v2](https://github.com/rookidroid/hexapod/tree/v2) with stronger 21G servos and improved circuit. [Hexapod v2](https://github.com/rookidroid/hexapod/tree/v2) also supports ESP32 or Raspberry Pi PICO W/2W.**
 
 ![hexapod_model](./images/hexapod_model.jpg)
 
