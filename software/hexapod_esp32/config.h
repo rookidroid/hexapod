@@ -73,9 +73,9 @@ static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
 
 // Offset to correct the installation error. Offset value is the number of ticks
 static int left_offset_ticks[3][3] = {
-    {0, 10, -10}, {-12, 10, 15}, {-3, -10, 10}};
+    {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 static int right_offset_ticks[3][3] = {
-    {-10, 5, 0}, {3, -5, -10}, {15, -10, -10}};
+    {0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
 
 /** WiFi Configurations */
 #ifndef APSSID

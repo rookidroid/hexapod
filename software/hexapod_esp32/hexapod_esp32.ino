@@ -211,7 +211,7 @@ void setup() {
 
   boot_up_motion(lut_standup_length, lut_standup);
 
-  //  posture_calibration();
+  // posture_calibration();
 }
 
 /**
