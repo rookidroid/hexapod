@@ -192,7 +192,19 @@ void setup() {
   digitalWrite(LEFT_PWM_ENABLE_PIN, LOW);   // Enable left legs PWM driver
   digitalWrite(RIGHT_PWM_ENABLE_PIN, LOW);  // Enable right legs PWM driver
 
-  boot_up_motion(lut_standup_length, lut_standup);
+  // Wait for a client to connect before executing boot sequence
+  if (wifi_connected) {
+    Serial.println("Waiting for client to connect...");
+    while (WiFi.softAPgetStationNum() == 0) {
+      delay(100);
+      ArduinoOTA.handle(); // Allow OTA updates while waiting
+    }
+    Serial.print("Client connected! Station count: ");
+    Serial.println(WiFi.softAPgetStationNum());
+    boot_up_motion(lut_standup_length, lut_standup);
+  } else {
+    Serial.println("WARNING: WiFi AP not started - boot sequence skipped");
+  }
   
   Serial.println("=== Initialization Complete ===");
 
