@@ -51,8 +51,23 @@
 /** Motion Path LUT */
 #include "motion.h"
 
-Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(0x40);
-Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(0x41);
+// I2C addresses for PWM drivers
+const uint8_t LEFT_PWM_ADDRESS = 0x40;
+const uint8_t RIGHT_PWM_ADDRESS = 0x41;
+
+// GPIO pins for PWM driver enable (active LOW)
+const uint8_t LEFT_PWM_ENABLE_PIN = 19;   // Enable for left legs PWM driver
+const uint8_t RIGHT_PWM_ENABLE_PIN = 26;  // Enable for right legs PWM driver
+
+// Servo calibration constants
+const uint16_t SERVO_INIT_DELAY_MS = 50;
+const uint8_t TRANSITION_TICK_STEP = 6;
+
+// PWM frequency for servos (Hz)
+const uint16_t SERVO_PWM_FREQ = 50;
+
+Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(LEFT_PWM_ADDRESS);
+Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(RIGHT_PWM_ADDRESS);
 
 MotionMode current_motion = MotionMode::Mode_Standby;
 MotionMode next_motion = MotionMode::Mode_Standby;
@@ -62,6 +77,11 @@ const char *password = APPSK;
 AsyncUDP udp_socket;
 
 bool ota_mode = true;
+bool wifi_connected = false;
+
+// Forward declarations
+void parseCommand(char* data, size_t length);
+void setAllServos(int positions[][3]);
 
 /**
    @brief Sets up the hexapod robot system.
@@ -72,13 +92,23 @@ bool ota_mode = true;
 */
 void setup() {
   Serial.begin(115200);
+  while (!Serial && millis() < 3000) {
+    ; // Wait for serial port to connect, timeout after 3s
+  }
+  Serial.println("\n=== Hexapod Robot Initializing ===");
 
+  // Initialize WiFi Access Point
   WiFi.mode(WIFI_AP);
-  WiFi.softAP(ssid, password);
-
+  wifi_connected = WiFi.softAP(ssid, password);
+  
   IPAddress myIP = WiFi.softAPIP();
-  Serial.print("AP IP address: ");
-  Serial.println(myIP);
+  
+  if (!wifi_connected) {
+    Serial.println("ERROR: Failed to create WiFi AP");
+  } else {
+    Serial.print("AP IP address: ");
+    Serial.println(myIP);
+  }
 
   ArduinoOTA
   .onStart([]() {
@@ -115,13 +145,16 @@ void setup() {
   });
 
   ArduinoOTA.begin();
+  Serial.println("OTA update enabled");
 
-  // Initialize the PCA9685 library
+  // Initialize the PCA9685 PWM drivers
+  Serial.println("Initializing PWM drivers...");
   left_pwm.begin();
-  left_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
+  left_pwm.setPWMFreq(SERVO_PWM_FREQ);
 
   right_pwm.begin();
-  right_pwm.setPWMFreq(50);  // Set the PWM frequency of the PCA9685
+  right_pwm.setPWMFreq(SERVO_PWM_FREQ);
+  Serial.println("PWM drivers initialized");
 
   if (udp_socket.listen(UDP_PORT)) {
     Serial.print("UDP Listening on IP: ");
@@ -146,70 +179,22 @@ void setup() {
       Serial.println();
       // reply to the client
       packet.printf("Got %u bytes of data", packet.length());
-      char *packet_ptr = (char *)packet.data();
-      String inputString = "";
-      for (int str_idx = 0; str_idx < packet.length(); str_idx++) {
-        char inChar = packet_ptr[str_idx];
-
-        if (inChar != '\n' && inChar != ':') {
-          // add it to the inputString:
-          inputString += inChar;
-        } else if (inChar == ':') {
-          MotionMode current_mode = next_motion;
-          if (inputString == String("standby")) {
-            next_motion = MotionMode::Mode_Standby;
-          } else if (inputString == String("walk0")) {
-            next_motion = MotionMode::Mode_Walk_0;
-          } else if (inputString == String("walk180")) {
-            next_motion = MotionMode::Mode_Walk_180;
-          } else if (inputString == String("walkr45")) {
-            next_motion = MotionMode::Mode_Walk_R45;
-          } else if (inputString == String("walkr90")) {
-            next_motion = MotionMode::Mode_Walk_R90;
-          } else if (inputString == String("walkr135")) {
-            next_motion = MotionMode::Mode_Walk_R135;
-          } else if (inputString == String("walkl45")) {
-            next_motion = MotionMode::Mode_Walk_L45;
-          } else if (inputString == String("walkl90")) {
-            next_motion = MotionMode::Mode_Walk_L90;
-          } else if (inputString == String("walkl135")) {
-            next_motion = MotionMode::Mode_Walk_L135;
-          } else if (inputString == String("fastforward")) {
-            next_motion = MotionMode::Mode_Fast_Forward;
-          } else if (inputString == String("fastbackward")) {
-            next_motion = MotionMode::Mode_Fast_Backward;
-          } else if (inputString == String("turnleft")) {
-            next_motion = MotionMode::Mode_Turn_Left;
-          } else if (inputString == String("turnright")) {
-            next_motion = MotionMode::Mode_Turn_Right;
-          } else if (inputString == String("climbforward")) {
-            next_motion = MotionMode::Mode_Climb_Forward;
-          } else if (inputString == String("climbbackward")) {
-            next_motion = MotionMode::Mode_Climb_Backward;
-          } else if (inputString == String("rotatex")) {
-            next_motion = MotionMode::Mode_Rotate_X;
-          } else if (inputString == String("rotatey")) {
-            next_motion = MotionMode::Mode_Rotate_Y;
-          } else if (inputString == String("rotatez")) {
-            next_motion = MotionMode::Mode_Rotate_Z;
-          } else if (inputString == String("twist")) {
-            next_motion = MotionMode::Mode_Twist;
-          }
-
-          inputString = "";
-          ota_mode = false;
-        }
-      }
+      // Parse command from packet
+      parseCommand((char *)packet.data(), packet.length());
     });
   }
 
-  pinMode(19, OUTPUT);
-  pinMode(26, OUTPUT);
+  // Configure PWM driver enable pins (active LOW)
+  pinMode(LEFT_PWM_ENABLE_PIN, OUTPUT);
+  pinMode(RIGHT_PWM_ENABLE_PIN, OUTPUT);
 
-  digitalWrite(19, LOW);
-  digitalWrite(26, LOW);
+  // Enable PWM drivers (active LOW)
+  digitalWrite(LEFT_PWM_ENABLE_PIN, LOW);   // Enable left legs PWM driver
+  digitalWrite(RIGHT_PWM_ENABLE_PIN, LOW);  // Enable right legs PWM driver
 
   boot_up_motion(lut_standup_length, lut_standup);
+  
+  Serial.println("=== Initialization Complete ===");
 
   // posture_calibration();
 }
@@ -265,6 +250,7 @@ void loop() {
 
   if (ota_mode) {
     ArduinoOTA.handle();
+    delay(10); // Small delay to prevent watchdog issues
   }
 }
 
@@ -288,32 +274,29 @@ void posture_calibration() {
 }
 
 void boot_up_motion(int lut_size, int lut[][6][3]) {
+  Serial.println("Starting boot sequence...");
+  
+  // Initialize servos to starting position with gradual activation
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                        lut[0][leg_idx][joint_idx] +
                        right_offset_ticks[leg_idx][joint_idx]);
-      delay(50);
+      delay(SERVO_INIT_DELAY_MS);
       left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
                       lut[0][leg_idx + 3][joint_idx] +
                       left_offset_ticks[leg_idx][joint_idx]);
-      delay(50);
+      delay(SERVO_INIT_DELAY_MS);
     }
   }
 
+  // Execute stand-up motion sequence
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
-    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                         lut[lut_idx][leg_idx][joint_idx] +
-                         right_offset_ticks[leg_idx][joint_idx]);
-        left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                        lut[lut_idx][leg_idx + 3][joint_idx] +
-                        left_offset_ticks[leg_idx][joint_idx]);
-      }
-    }
+    setAllServos(lut[lut_idx]);
     delay(DELAY_MS);
   }
+  
+  Serial.println("Boot sequence complete");
 }
 
 /**
@@ -328,30 +311,23 @@ void boot_up_motion(int lut_size, int lut[][6][3]) {
    the motion.
 */
 void exec_motion(int lut_size, int lut[][6][3]) {
-  int mid_step = (int)(lut_size / 2);
+  const int mid_step = lut_size / 2;
+  
+  // Transition from standby to target motion
   if (current_motion == MotionMode::Mode_Standby) {
     exec_transition(lut_standby, 0, lut, 0);
   }
   current_motion = next_motion;
 
+  // Execute motion loop with interruption check
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
-    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
-      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                         lut[lut_idx][leg_idx][joint_idx] +
-                         right_offset_ticks[leg_idx][joint_idx]);
-        left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                        lut[lut_idx][leg_idx + 3][joint_idx] +
-                        left_offset_ticks[leg_idx][joint_idx]);
-      }
-    }
+    setAllServos(lut[lut_idx]);
 
-    if (mid_step > 0) {
-      if (lut_idx % mid_step == 0 && current_motion != next_motion) {
-        exec_transition(lut, lut_idx, lut_standby, 0);
-        delay(DELAY_MS);
-        break;
-      }
+    // Check for motion change at mid-point for smooth transitions
+    if (mid_step > 0 && lut_idx % mid_step == 0 && current_motion != next_motion) {
+      exec_transition(lut, lut_idx, lut_standby, 0);
+      delay(DELAY_MS);
+      break;
     }
     delay(DELAY_MS);
   }
@@ -374,7 +350,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 */
 void exec_transition(int start_pos[][6][3], int start_pos_idx,
                      int end_pos[][6][3], int end_pos_idx) {
-  int tick_step = 6;
+  const int tick_step = TRANSITION_TICK_STEP;
   int max_step = 0;
   int signed_ticks[6][3];
 
@@ -395,29 +371,24 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
       max_step = max(max_step, abs(diff));
     }
   }
-  max_step = ceil(max_step / tick_step);
+  max_step = (max_step + tick_step - 1) / tick_step; // Ceiling division
+  
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
+    for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
+      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+        // Update position towards target
+        int remaining = abs(current_pos[leg_idx][joint_idx] - end_pos[end_pos_idx][leg_idx][joint_idx]);
+        if (remaining > tick_step) {
+          current_pos[leg_idx][joint_idx] += signed_ticks[leg_idx][joint_idx];
+        } else {
+          current_pos[leg_idx][joint_idx] = end_pos[end_pos_idx][leg_idx][joint_idx];
+        }
+      }
+    }
+    
+    // Update all servos with new positions
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
-        if (abs(current_pos[leg_idx][joint_idx] -
-                end_pos[end_pos_idx][leg_idx][joint_idx]) > tick_step) {
-          current_pos[leg_idx][joint_idx] = current_pos[leg_idx][joint_idx] +
-                                            signed_ticks[leg_idx][joint_idx];
-        } else {
-          current_pos[leg_idx][joint_idx] =
-            end_pos[end_pos_idx][leg_idx][joint_idx];
-        }
-
-        if (abs(current_pos[leg_idx + 3][joint_idx] -
-                end_pos[end_pos_idx][leg_idx + 3][joint_idx]) > tick_step) {
-          current_pos[leg_idx + 3][joint_idx] =
-            current_pos[leg_idx + 3][joint_idx] +
-            signed_ticks[leg_idx + 3][joint_idx];
-        } else {
-          current_pos[leg_idx + 3][joint_idx] =
-            end_pos[end_pos_idx][leg_idx + 3][joint_idx];
-        }
-
         right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
                          current_pos[leg_idx][joint_idx] +
                          right_offset_ticks[leg_idx][joint_idx]);
@@ -426,5 +397,118 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
                         left_offset_ticks[leg_idx][joint_idx]);
       }
     }
+    delay(DELAY_MS / 2); // Smoother transition with shorter delays
   }
+}
+
+/**
+   @brief Helper function to set all servo positions from a LUT entry.
+
+   This function reduces code duplication by centralizing the servo positioning logic.
+   
+   @param positions Array of positions for all 6 legs (3 joints each)
+*/
+void setAllServos(int positions[][3]) {
+  for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+      right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
+                       positions[leg_idx][joint_idx] +
+                       right_offset_ticks[leg_idx][joint_idx]);
+      left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
+                      positions[leg_idx + 3][joint_idx] +
+                      left_offset_ticks[leg_idx][joint_idx]);
+    }
+  }
+}
+
+/**
+   @brief Parses UDP command and updates next motion mode.
+
+   This function extracts the command parsing logic to improve code organization
+   and reduce memory usage by avoiding String concatenation in the UDP handler.
+   
+   @param data Pointer to the command data
+   @param length Length of the command data
+*/
+void parseCommand(char* data, size_t length) {
+  if (length == 0) return;
+  
+  // Buffer for command string (max expected length + null terminator)
+  char command[32] = {0};
+  size_t cmd_len = 0;
+  
+  // Extract command - parse until delimiter or end of data
+  for (size_t i = 0; i < length && i < sizeof(command) - 1; i++) {
+    char c = data[i];
+    
+    // Check for delimiters that end the command
+    if (c == ':' || c == '\n' || c == '\r' || c == '\0') {
+      if (cmd_len > 0) {
+        command[cmd_len] = '\0';
+        break;
+      }
+      continue; // Skip leading delimiters
+    }
+    
+    // Add character to command buffer
+    command[cmd_len++] = c;
+  }
+  
+  // Null-terminate if we reached the end without a delimiter
+  if (cmd_len > 0 && cmd_len < sizeof(command)) {
+    command[cmd_len] = '\0';
+  }
+  
+  if (cmd_len == 0) return;
+  
+  // Map command to motion mode using strcmp for efficiency
+  if (strcmp(command, "standby") == 0) {
+    next_motion = MotionMode::Mode_Standby;
+  } else if (strcmp(command, "walk0") == 0) {
+    next_motion = MotionMode::Mode_Walk_0;
+  } else if (strcmp(command, "walk180") == 0) {
+    next_motion = MotionMode::Mode_Walk_180;
+  } else if (strcmp(command, "walkr45") == 0) {
+    next_motion = MotionMode::Mode_Walk_R45;
+  } else if (strcmp(command, "walkr90") == 0) {
+    next_motion = MotionMode::Mode_Walk_R90;
+  } else if (strcmp(command, "walkr135") == 0) {
+    next_motion = MotionMode::Mode_Walk_R135;
+  } else if (strcmp(command, "walkl45") == 0) {
+    next_motion = MotionMode::Mode_Walk_L45;
+  } else if (strcmp(command, "walkl90") == 0) {
+    next_motion = MotionMode::Mode_Walk_L90;
+  } else if (strcmp(command, "walkl135") == 0) {
+    next_motion = MotionMode::Mode_Walk_L135;
+  } else if (strcmp(command, "fastforward") == 0) {
+    next_motion = MotionMode::Mode_Fast_Forward;
+  } else if (strcmp(command, "fastbackward") == 0) {
+    next_motion = MotionMode::Mode_Fast_Backward;
+  } else if (strcmp(command, "turnleft") == 0) {
+    next_motion = MotionMode::Mode_Turn_Left;
+  } else if (strcmp(command, "turnright") == 0) {
+    next_motion = MotionMode::Mode_Turn_Right;
+  } else if (strcmp(command, "climbforward") == 0) {
+    next_motion = MotionMode::Mode_Climb_Forward;
+  } else if (strcmp(command, "climbbackward") == 0) {
+    next_motion = MotionMode::Mode_Climb_Backward;
+  } else if (strcmp(command, "rotatex") == 0) {
+    next_motion = MotionMode::Mode_Rotate_X;
+  } else if (strcmp(command, "rotatey") == 0) {
+    next_motion = MotionMode::Mode_Rotate_Y;
+  } else if (strcmp(command, "rotatez") == 0) {
+    next_motion = MotionMode::Mode_Rotate_Z;
+  } else if (strcmp(command, "twist") == 0) {
+    next_motion = MotionMode::Mode_Twist;
+  } else {
+    Serial.print("Unknown command: ");
+    Serial.println(command);
+    return;
+  }
+  
+  // Disable OTA mode when first command is received
+  ota_mode = false;
+  
+  Serial.print("Command received: ");
+  Serial.println(command);
 }
