@@ -51,14 +51,25 @@
 /** Motion Path LUT */
 #include "motion.h"
 
-// Unified motion configuration
+/**
+ * @brief Unified motion configuration structure
+ *
+ * Maps UDP command strings to motion modes and their corresponding
+ * look-up tables. This centralizes all motion definitions in one place.
+ *
+ * @param cmd Command string received via UDP
+ * @param mode Corresponding MotionMode enum value
+ * @param length Number of steps in the motion sequence
+ * @param lut Pointer to the look-up table with servo positions
+ */
 struct MotionConfig {
-  const char* cmd;
-  MotionMode mode;
-  int length;
-  int (*lut)[6][3];
+  const char* cmd;   // UDP command string
+  MotionMode mode;   // Motion mode enum
+  int length;        // Number of steps in sequence
+  int (*lut)[6][3];  // LUT: [step][leg][joint]
 };
 
+// Motion configuration table - add new motions here
 static const MotionConfig motion_config[] = {
   { "standby", MotionMode::Mode_Standby, lut_standby_length, lut_standby },
   { "walk0", MotionMode::Mode_Walk_0, lut_walk_0_length, lut_walk_0 },
@@ -89,35 +100,57 @@ static const MotionConfig motion_config[] = {
   { "twist", MotionMode::Mode_Twist, lut_twist_length, lut_twist }
 };
 
-// I2C addresses for PWM drivers
-const uint8_t LEFT_PWM_ADDRESS = 0x40;
-const uint8_t RIGHT_PWM_ADDRESS = 0x41;
+// ============================================================================
+// Hardware Configuration
+// ============================================================================
 
-// GPIO pins for PWM driver enable (active LOW)
-const uint8_t LEFT_PWM_ENABLE_PIN = 19;   // Enable for left legs PWM driver
-const uint8_t RIGHT_PWM_ENABLE_PIN = 26;  // Enable for right legs PWM driver
+// I2C addresses for PCA9685 PWM driver boards
+const uint8_t LEFT_PWM_ADDRESS = 0x40;   // Left side servos (3 legs)
+const uint8_t RIGHT_PWM_ADDRESS = 0x41;  // Right side servos (3 legs)
 
-// Servo calibration constants
+// GPIO pins for PWM driver enable control (active LOW)
+const uint8_t LEFT_PWM_ENABLE_PIN = 19;   // Enable left legs PWM driver
+const uint8_t RIGHT_PWM_ENABLE_PIN = 26;  // Enable right legs PWM driver
+
+// ============================================================================
+// Servo Control Parameters
+// ============================================================================
+
+// Delay between individual servo movements during boot (ms)
 const uint16_t SERVO_INIT_DELAY_MS = 50;
+
+// Step size for smooth transitions between positions
 const uint8_t TRANSITION_TICK_STEP = 6;
 
-// PWM frequency for servos (Hz)
+// PWM frequency for servo control signals (Hz)
 const uint16_t SERVO_PWM_FREQ = 50;
 
+// ============================================================================
+// Global Objects and State
+// ============================================================================
+
+// PWM driver instances for left and right servo banks
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(LEFT_PWM_ADDRESS);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(RIGHT_PWM_ADDRESS);
 
-MotionMode current_motion = MotionMode::Mode_Standby;
-MotionMode next_motion = MotionMode::Mode_Standby;
+// Motion state tracking
+MotionMode current_motion =
+  MotionMode::Mode_Standby;                         // Currently executing motion
+MotionMode next_motion = MotionMode::Mode_Standby;  // Next motion to execute
 
+// WiFi credentials (defined in config.h)
 const char* ssid = APSSID;
 const char* password = APPSK;
+
+// UDP socket for receiving commands
 AsyncUDP udp_socket;
 
-bool ota_mode = true;
-bool wifi_connected = false;
-bool boot_sequence_executed = false;
-volatile bool trigger_boot_sequence = false;
+// System state flags
+bool ota_mode = true;                 // OTA updates enabled until first command
+bool wifi_connected = false;          // WiFi AP connection status
+bool boot_sequence_executed = false;  // Boot sequence completion flag
+volatile bool trigger_boot_sequence =
+  false;  // Boot trigger from WiFi event (volatile for ISR)
 
 // Forward declarations
 void parseCommand(char* data, size_t length);
@@ -199,7 +232,9 @@ void setup() {
   if (udp_socket.listen(UDP_PORT)) {
     Serial.print("UDP Listening on IP: ");
     Serial.println(myIP);
+    // Register callback for incoming UDP packets
     udp_socket.onPacket([](AsyncUDPPacket packet) {
+      // Log packet details for debugging
       Serial.print("UDP Packet Type: ");
       Serial.print(packet.isBroadcast()   ? "Broadcast"
                    : packet.isMulticast() ? "Multicast"
@@ -305,7 +340,8 @@ void posture_calibration() {
 void boot_up_motion(int lut_size, int lut[][6][3]) {
   Serial.println("Starting boot sequence...");
 
-  // Initialize servos to starting position with gradual activation
+  // Phase 1: Initialize servos to starting position
+  // Gradual activation prevents current spikes and sudden movements
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
       right_pwm.setPWM(
@@ -318,7 +354,8 @@ void boot_up_motion(int lut_size, int lut[][6][3]) {
     }
   }
 
-  // Execute stand-up motion sequence
+  // Phase 2: Execute stand-up motion sequence
+  // Step through each position in the LUT to stand up robot
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
     setAllServos(lut[lut_idx]);
     delay(DELAY_MS);
@@ -346,6 +383,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
     setAllServos(lut[lut_idx]);
 
     // Check for motion change at mid-point for smooth transitions
+    // Allows interruption at stable points in the gait cycle
     if (mid_step > 0 && lut_idx % mid_step == 0 && current_motion != next_motion) {
       exec_transition(lut, lut_idx, lut_standby, 0);
       delay(DELAY_MS);
@@ -384,8 +422,10 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
       max_step = max(max_step, abs(diff));
     }
   }
-  max_step = (max_step + tick_step - 1) / tick_step;  // Ceiling division
+  // Calculate number of steps needed (ceiling division ensures we reach target)
+  max_step = (max_step + tick_step - 1) / tick_step;
 
+  // Interpolate positions in small steps for smooth motion
   for (int step_idx = 0; step_idx < max_step; step_idx++) {
     for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
@@ -436,11 +476,12 @@ void setAllServos(int positions[][3]) {
 void parseCommand(char* data, size_t length) {
   if (length == 0) return;
 
-  // Buffer for command string (max expected length + null terminator)
+  // Command buffer with space for null terminator
   char command[32] = { 0 };
   size_t cmd_len = 0;
 
-  // Extract command - parse until delimiter or end of data
+  // Parse command string from UDP packet
+  // Stops at delimiters: ':', '\n', '\r', '\0'
   for (size_t i = 0; i < length && i < sizeof(command) - 1; i++) {
     char c = data[i];
 
@@ -481,6 +522,7 @@ void parseCommand(char* data, size_t length) {
     return;
   }
 
+  // Disable OTA after first command for better performance
   ota_mode = false;
   Serial.print("Command received: ");
   Serial.println(command);
@@ -494,15 +536,18 @@ void parseCommand(char* data, size_t length) {
 void WiFiEvent(arduino_event_id_t event) {
   switch (event) {
     case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
+      // Client connected - trigger boot sequence if not already done
       Serial.println("Station connected to AP");
       if (!boot_sequence_executed) {
-        trigger_boot_sequence = true;
+        trigger_boot_sequence = true;  // Flag checked in main loop
       }
       break;
     case ARDUINO_EVENT_WIFI_AP_STADISCONNECTED:
+      // Client disconnected - servos remain in last position
       Serial.println("Station disconnected from AP");
       break;
     case ARDUINO_EVENT_WIFI_AP_START:
+      // Access point initialized and ready
       Serial.println("AP Started");
       break;
     default:
