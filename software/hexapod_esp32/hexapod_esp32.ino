@@ -78,10 +78,13 @@ AsyncUDP udp_socket;
 
 bool ota_mode = true;
 bool wifi_connected = false;
+bool boot_sequence_executed = false;
+volatile bool trigger_boot_sequence = false;
 
 // Forward declarations
 void parseCommand(char* data, size_t length);
 void setAllServos(int positions[][3]);
+void WiFiEvent(arduino_event_id_t event);
 
 /**
    @brief Sets up the hexapod robot system.
@@ -96,6 +99,9 @@ void setup() {
     ; // Wait for serial port to connect, timeout after 3s
   }
   Serial.println("\n=== Hexapod Robot Initializing ===");
+
+  // Register WiFi event handler
+  WiFi.onEvent(WiFiEvent);
 
   // Initialize WiFi Access Point
   WiFi.mode(WIFI_AP);
@@ -192,18 +198,11 @@ void setup() {
   digitalWrite(LEFT_PWM_ENABLE_PIN, LOW);   // Enable left legs PWM driver
   digitalWrite(RIGHT_PWM_ENABLE_PIN, LOW);  // Enable right legs PWM driver
 
-  // Wait for a client to connect before executing boot sequence
   if (wifi_connected) {
     Serial.println("Waiting for client to connect...");
-    while (WiFi.softAPgetStationNum() == 0) {
-      delay(100);
-      ArduinoOTA.handle(); // Allow OTA updates while waiting
-    }
-    Serial.print("Client connected! Station count: ");
-    Serial.println(WiFi.softAPgetStationNum());
-    boot_up_motion(lut_standup_length, lut_standup);
+    Serial.println("Boot sequence will start automatically when client connects");
   } else {
-    Serial.println("WARNING: WiFi AP not started - boot sequence skipped");
+    Serial.println("WARNING: WiFi AP not started - boot sequence will not execute");
   }
   
   Serial.println("=== Initialization Complete ===");
@@ -220,6 +219,23 @@ void setup() {
    `ArduinoOTA.handle()`.
 */
 void loop() {
+  // Handle boot sequence trigger from WiFi event
+  if (trigger_boot_sequence && !boot_sequence_executed) {
+    boot_sequence_executed = true;
+    trigger_boot_sequence = false;
+    boot_up_motion(lut_standup_length, lut_standup);
+    return;
+  }
+
+  // Don't execute motion commands until boot sequence is complete
+  if (!boot_sequence_executed) {
+    if (ota_mode) {
+      ArduinoOTA.handle();
+      delay(10);
+    }
+    return;
+  }
+
   if (next_motion == MotionMode::Mode_Walk_0) {
     exec_motion(lut_walk_0_length, lut_walk_0);
   } else if (next_motion == MotionMode::Mode_Walk_180) {
@@ -523,4 +539,33 @@ void parseCommand(char* data, size_t length) {
   
   Serial.print("Command received: ");
   Serial.println(command);
+}
+
+/**
+   @brief WiFi event handler.
+
+   This function handles WiFi events, specifically triggering the boot sequence
+   when a station connects to the AP for the first time.
+   Note: This runs in a separate FreeRTOS task, so it only sets a flag.
+   
+   @param event The WiFi event ID
+*/
+void WiFiEvent(arduino_event_id_t event) {
+  switch(event) {
+    case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
+      Serial.println("Station connected to AP");
+      // Verify connection with station count check
+      if (!boot_sequence_executed && WiFi.softAPgetStationNum() > 0) {
+        trigger_boot_sequence = true;
+      }
+      break;
+    case ARDUINO_EVENT_WIFI_AP_STADISCONNECTED:
+      Serial.println("Station disconnected from AP");
+      break;
+    case ARDUINO_EVENT_WIFI_AP_START:
+      Serial.println("AP Started");
+      break;
+    default:
+      break;
+  }
 }
