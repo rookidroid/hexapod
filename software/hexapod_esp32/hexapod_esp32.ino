@@ -54,50 +54,40 @@
 /**
  * @brief Unified motion configuration structure
  *
- * Maps UDP command strings to motion modes and their corresponding
- * look-up tables. This centralizes all motion definitions in one place.
+ * Maps UDP command strings directly to their corresponding look-up tables.
+ * This centralizes all motion definitions in one place.
  *
  * @param cmd Command string received via UDP
- * @param mode Corresponding MotionMode enum value
  * @param length Number of steps in the motion sequence
  * @param lut Pointer to the look-up table with servo positions
  */
 struct MotionConfig {
   const char* cmd;   // UDP command string
-  MotionMode mode;   // Motion mode enum
   int length;        // Number of steps in sequence
   int (*lut)[6][3];  // LUT: [step][leg][joint]
 };
 
 // Motion configuration table - add new motions here
 static const MotionConfig motion_config[] = {
-  { "standby", MotionMode::Mode_Standby, lut_standby_length, lut_standby },
-  { "walk0", MotionMode::Mode_Walk_0, lut_walk_0_length, lut_walk_0 },
-  { "walk180", MotionMode::Mode_Walk_180, lut_walk_180_length, lut_walk_180 },
-  { "walkr45", MotionMode::Mode_Walk_R45, lut_walk_r45_length, lut_walk_r45 },
-  { "walkr90", MotionMode::Mode_Walk_R90, lut_walk_r90_length, lut_walk_r90 },
-  { "walkr135", MotionMode::Mode_Walk_R135, lut_walk_r135_length,
-    lut_walk_r135 },
-  { "walkl45", MotionMode::Mode_Walk_L45, lut_walk_l45_length, lut_walk_l45 },
-  { "walkl90", MotionMode::Mode_Walk_L90, lut_walk_l90_length, lut_walk_l90 },
-  { "walkl135", MotionMode::Mode_Walk_L135, lut_walk_l135_length,
-    lut_walk_l135 },
-  { "fastforward", MotionMode::Mode_Fast_Forward, lut_fast_forward_length,
-    lut_fast_forward },
-  { "fastbackward", MotionMode::Mode_Fast_Backward, lut_fast_backward_length,
-    lut_fast_backward },
-  { "turnleft", MotionMode::Mode_Turn_Left, lut_turn_left_length,
-    lut_turn_left },
-  { "turnright", MotionMode::Mode_Turn_Right, lut_turn_right_length,
-    lut_turn_right },
-  { "climbforward", MotionMode::Mode_Climb_Forward, lut_climb_forward_length,
-    lut_climb_forward },
-  { "climbbackward", MotionMode::Mode_Climb_Backward,
-    lut_climb_backward_length, lut_climb_backward },
-  { "rotatex", MotionMode::Mode_Rotate_X, lut_rotate_x_length, lut_rotate_x },
-  { "rotatey", MotionMode::Mode_Rotate_Y, lut_rotate_y_length, lut_rotate_y },
-  { "rotatez", MotionMode::Mode_Rotate_Z, lut_rotate_z_length, lut_rotate_z },
-  { "twist", MotionMode::Mode_Twist, lut_twist_length, lut_twist }
+  { "standby", lut_standby_length, lut_standby },
+  { "walk0", lut_walk_0_length, lut_walk_0 },
+  { "walk180", lut_walk_180_length, lut_walk_180 },
+  { "walkr45", lut_walk_r45_length, lut_walk_r45 },
+  { "walkr90", lut_walk_r90_length, lut_walk_r90 },
+  { "walkr135", lut_walk_r135_length, lut_walk_r135 },
+  { "walkl45", lut_walk_l45_length, lut_walk_l45 },
+  { "walkl90", lut_walk_l90_length, lut_walk_l90 },
+  { "walkl135", lut_walk_l135_length, lut_walk_l135 },
+  { "fastforward", lut_fast_forward_length, lut_fast_forward },
+  { "fastbackward", lut_fast_backward_length, lut_fast_backward },
+  { "turnleft", lut_turn_left_length, lut_turn_left },
+  { "turnright", lut_turn_right_length, lut_turn_right },
+  { "climbforward", lut_climb_forward_length, lut_climb_forward },
+  { "climbbackward", lut_climb_backward_length, lut_climb_backward },
+  { "rotatex", lut_rotate_x_length, lut_rotate_x },
+  { "rotatey", lut_rotate_y_length, lut_rotate_y },
+  { "rotatez", lut_rotate_z_length, lut_rotate_z },
+  { "twist", lut_twist_length, lut_twist }
 };
 
 // ============================================================================
@@ -133,10 +123,9 @@ const uint16_t SERVO_PWM_FREQ = 50;
 Adafruit_PWMServoDriver left_pwm = Adafruit_PWMServoDriver(LEFT_PWM_ADDRESS);
 Adafruit_PWMServoDriver right_pwm = Adafruit_PWMServoDriver(RIGHT_PWM_ADDRESS);
 
-// Motion state tracking
-MotionMode current_motion =
-  MotionMode::Mode_Standby;                         // Currently executing motion
-MotionMode next_motion = MotionMode::Mode_Standby;  // Next motion to execute
+// Current motion index in motion_config table
+int current_motion_idx = 0;  // Starts at standby
+int next_motion_idx = 0;     // Next motion to execute
 
 // WiFi credentials (defined in config.h)
 const char* ssid = APSSID;
@@ -297,20 +286,9 @@ void loop() {
     return;
   }
 
-  // Find and execute matching motion
-  bool found = false;
-  for (size_t i = 0; i < sizeof(motion_config) / sizeof(motion_config[0]);
-       i++) {
-    if (next_motion == motion_config[i].mode) {
-      exec_motion(motion_config[i].length, motion_config[i].lut);
-      found = true;
-      break;
-    }
-  }
-
-  if (!found) {
-    exec_motion(lut_standby_length, lut_standby);
-  }
+  // Execute motion based on next_motion_idx
+  exec_motion(motion_config[next_motion_idx].length,
+              motion_config[next_motion_idx].lut);
 
   if (ota_mode) {
     ArduinoOTA.handle();
@@ -373,10 +351,10 @@ void exec_motion(int lut_size, int lut[][6][3]) {
   const int mid_step = lut_size / 2;
 
   // Transition from standby to target motion
-  if (current_motion == MotionMode::Mode_Standby) {
+  if (current_motion_idx == 0) {  // 0 = standby
     exec_transition(lut_standby, 0, lut, 0);
   }
-  current_motion = next_motion;
+  current_motion_idx = next_motion_idx;
 
   // Execute motion loop with interruption check
   for (int lut_idx = 0; lut_idx < lut_size; lut_idx++) {
@@ -384,7 +362,7 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 
     // Check for motion change at mid-point for smooth transitions
     // Allows interruption at stable points in the gait cycle
-    if (mid_step > 0 && lut_idx % mid_step == 0 && current_motion != next_motion) {
+    if (mid_step > 0 && lut_idx % mid_step == 0 && current_motion_idx != next_motion_idx) {
       exec_transition(lut, lut_idx, lut_standby, 0);
       delay(DELAY_MS);
       break;
@@ -505,12 +483,12 @@ void parseCommand(char* data, size_t length) {
 
   if (cmd_len == 0) return;
 
-  // Find matching command
+  // Find matching command and set motion index
   bool found = false;
   for (size_t i = 0; i < sizeof(motion_config) / sizeof(motion_config[0]);
        i++) {
     if (strcmp(command, motion_config[i].cmd) == 0) {
-      next_motion = motion_config[i].mode;
+      next_motion_idx = i;
       found = true;
       break;
     }
