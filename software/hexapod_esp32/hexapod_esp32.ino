@@ -51,6 +51,44 @@
 /** Motion Path LUT */
 #include "motion.h"
 
+// Unified motion configuration
+struct MotionConfig {
+  const char* cmd;
+  MotionMode mode;
+  int length;
+  int (*lut)[6][3];
+};
+
+static const MotionConfig motion_config[] = {
+  { "standby", MotionMode::Mode_Standby, lut_standby_length, lut_standby },
+  { "walk0", MotionMode::Mode_Walk_0, lut_walk_0_length, lut_walk_0 },
+  { "walk180", MotionMode::Mode_Walk_180, lut_walk_180_length, lut_walk_180 },
+  { "walkr45", MotionMode::Mode_Walk_R45, lut_walk_r45_length, lut_walk_r45 },
+  { "walkr90", MotionMode::Mode_Walk_R90, lut_walk_r90_length, lut_walk_r90 },
+  { "walkr135", MotionMode::Mode_Walk_R135, lut_walk_r135_length,
+    lut_walk_r135 },
+  { "walkl45", MotionMode::Mode_Walk_L45, lut_walk_l45_length, lut_walk_l45 },
+  { "walkl90", MotionMode::Mode_Walk_L90, lut_walk_l90_length, lut_walk_l90 },
+  { "walkl135", MotionMode::Mode_Walk_L135, lut_walk_l135_length,
+    lut_walk_l135 },
+  { "fastforward", MotionMode::Mode_Fast_Forward, lut_fast_forward_length,
+    lut_fast_forward },
+  { "fastbackward", MotionMode::Mode_Fast_Backward, lut_fast_backward_length,
+    lut_fast_backward },
+  { "turnleft", MotionMode::Mode_Turn_Left, lut_turn_left_length,
+    lut_turn_left },
+  { "turnright", MotionMode::Mode_Turn_Right, lut_turn_right_length,
+    lut_turn_right },
+  { "climbforward", MotionMode::Mode_Climb_Forward, lut_climb_forward_length,
+    lut_climb_forward },
+  { "climbbackward", MotionMode::Mode_Climb_Backward,
+    lut_climb_backward_length, lut_climb_backward },
+  { "rotatex", MotionMode::Mode_Rotate_X, lut_rotate_x_length, lut_rotate_x },
+  { "rotatey", MotionMode::Mode_Rotate_Y, lut_rotate_y_length, lut_rotate_y },
+  { "rotatez", MotionMode::Mode_Rotate_Z, lut_rotate_z_length, lut_rotate_z },
+  { "twist", MotionMode::Mode_Twist, lut_twist_length, lut_twist }
+};
+
 // I2C addresses for PWM drivers
 const uint8_t LEFT_PWM_ADDRESS = 0x40;
 const uint8_t RIGHT_PWM_ADDRESS = 0x41;
@@ -87,11 +125,7 @@ void setAllServos(int positions[][3]);
 void WiFiEvent(arduino_event_id_t event);
 
 /**
-   @brief Sets up the hexapod robot system.
-
-   This function initializes the serial communication, sets up the WiFi access
-   point, configures the Over-the-Air (OTA) update functionality, initializes
-   the PWM drivers for the servos, and starts listening for UDP packets.
+   @brief Initialize system: WiFi AP, OTA, PWM drivers, and UDP server.
 */
 void setup() {
   Serial.begin(115200);
@@ -198,13 +232,8 @@ void setup() {
   digitalWrite(LEFT_PWM_ENABLE_PIN, LOW);   // Enable left legs PWM driver
   digitalWrite(RIGHT_PWM_ENABLE_PIN, LOW);  // Enable right legs PWM driver
 
-  if (wifi_connected) {
-    Serial.println("Waiting for client to connect...");
-    Serial.println(
-      "Boot sequence will start automatically when client connects");
-  } else {
-    Serial.println(
-      "WARNING: WiFi AP not started - boot sequence will not execute");
+  if (!wifi_connected) {
+    Serial.println("WARNING: WiFi AP not started");
   }
 
   Serial.println("=== Initialization Complete ===");
@@ -213,12 +242,7 @@ void setup() {
 }
 
 /**
-   @brief Main loop of the hexapod robot program.
-
-   This function continuously checks the `next_motion` variable to determine the
-   desired motion mode. Based on the mode, it calls the `exec_motion` function
-   with the appropriate LUT and length. It also handles OTA updates using
-   `ArduinoOTA.handle()`.
+   @brief Main loop: execute boot sequence, motion commands, and OTA updates.
 */
 void loop() {
   // Handle boot sequence trigger from WiFi event
@@ -238,43 +262,18 @@ void loop() {
     return;
   }
 
-  if (next_motion == MotionMode::Mode_Walk_0) {
-    exec_motion(lut_walk_0_length, lut_walk_0);
-  } else if (next_motion == MotionMode::Mode_Walk_180) {
-    exec_motion(lut_walk_180_length, lut_walk_180);
-  } else if (next_motion == MotionMode::Mode_Walk_R45) {
-    exec_motion(lut_walk_r45_length, lut_walk_r45);
-  } else if (next_motion == MotionMode::Mode_Walk_R90) {
-    exec_motion(lut_walk_r90_length, lut_walk_r90);
-  } else if (next_motion == MotionMode::Mode_Walk_R135) {
-    exec_motion(lut_walk_r135_length, lut_walk_r135);
-  } else if (next_motion == MotionMode::Mode_Walk_L45) {
-    exec_motion(lut_walk_l45_length, lut_walk_l45);
-  } else if (next_motion == MotionMode::Mode_Walk_L90) {
-    exec_motion(lut_walk_l90_length, lut_walk_l90);
-  } else if (next_motion == MotionMode::Mode_Walk_L135) {
-    exec_motion(lut_walk_l135_length, lut_walk_l135);
-  } else if (next_motion == MotionMode::Mode_Fast_Forward) {
-    exec_motion(lut_fast_forward_length, lut_fast_forward);
-  } else if (next_motion == MotionMode::Mode_Fast_Backward) {
-    exec_motion(lut_fast_backward_length, lut_fast_backward);
-  } else if (next_motion == MotionMode::Mode_Turn_Left) {
-    exec_motion(lut_turn_left_length, lut_turn_left);
-  } else if (next_motion == MotionMode::Mode_Turn_Right) {
-    exec_motion(lut_turn_right_length, lut_turn_right);
-  } else if (next_motion == MotionMode::Mode_Climb_Forward) {
-    exec_motion(lut_climb_forward_length, lut_climb_forward);
-  } else if (next_motion == MotionMode::Mode_Climb_Backward) {
-    exec_motion(lut_climb_backward_length, lut_climb_backward);
-  } else if (next_motion == MotionMode::Mode_Rotate_X) {
-    exec_motion(lut_rotate_x_length, lut_rotate_x);
-  } else if (next_motion == MotionMode::Mode_Rotate_Y) {
-    exec_motion(lut_rotate_y_length, lut_rotate_y);
-  } else if (next_motion == MotionMode::Mode_Rotate_Z) {
-    exec_motion(lut_rotate_z_length, lut_rotate_z);
-  } else if (next_motion == MotionMode::Mode_Twist) {
-    exec_motion(lut_twist_length, lut_twist);
-  } else {
+  // Find and execute matching motion
+  bool found = false;
+  for (size_t i = 0; i < sizeof(motion_config) / sizeof(motion_config[0]);
+       i++) {
+    if (next_motion == motion_config[i].mode) {
+      exec_motion(motion_config[i].length, motion_config[i].lut);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
     exec_motion(lut_standby_length, lut_standby);
   }
 
@@ -285,12 +284,7 @@ void loop() {
 }
 
 /**
-   @brief Calibrates the posture of the hexapod robot.
-
-   This function sets the PWM values for each joint of the hexapod's legs to a
-   neutral position, defined by SERVOMID and the offset values stored in
-   right_offset_ticks and left_offset_ticks. This helps ensure that the robot
-   starts in a balanced and stable posture.
+   @brief Set all servos to neutral position using calibration offsets.
 */
 void posture_calibration() {
   for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
@@ -303,6 +297,11 @@ void posture_calibration() {
   }
 }
 
+/**
+   @brief Execute boot sequence to stand up the robot.
+   @param lut_size Number of steps in the motion sequence
+   @param lut Look-up table with servo positions for each step
+*/
 void boot_up_motion(int lut_size, int lut[][6][3]) {
   Serial.println("Starting boot sequence...");
 
@@ -329,15 +328,9 @@ void boot_up_motion(int lut_size, int lut[][6][3]) {
 }
 
 /**
-   @brief Executes a motion sequence defined by a lookup table (LUT).
-
-   This function iterates through the provided LUT, setting the PWM values for
-   each joint of the hexapod's legs. It handles transitions between different
-   motion modes and ensures smooth movement.
-
-   @param lut_size The size of the LUT.
-   @param lut The LUT containing the PWM values for each joint at each step of
-   the motion.
+   @brief Execute motion sequence with transition and interruption support.
+   @param lut_size Number of steps in the motion sequence
+   @param lut Look-up table with servo positions for each step
 */
 void exec_motion(int lut_size, int lut[][6][3]) {
   const int mid_step = lut_size / 2;
@@ -363,19 +356,11 @@ void exec_motion(int lut_size, int lut[][6][3]) {
 }
 
 /**
-   @brief Executes a smooth transition between two motion positions.
-
-   This function takes two motion positions (start_pos and end_pos) and their
-   respective indices in their respective LUTs. It calculates the difference
-   between the start and end positions for each joint and determines the number
-   of steps required for a smooth transition. The function then iterates through
-   these steps, adjusting the PWM values for each joint to gradually move from
-   the start position to the end position.
-
-   @param start_pos The starting position LUT.
-   @param start_pos_idx The index of the starting position in the start_pos LUT.
-   @param end_pos The ending position LUT.
-   @param end_pos_idx The index of the ending position in the end_pos LUT.
+   @brief Smoothly transition between two servo positions.
+   @param start_pos Starting position LUT
+   @param start_pos_idx Index in start_pos LUT
+   @param end_pos Target position LUT
+   @param end_pos_idx Index in end_pos LUT
 */
 void exec_transition(int start_pos[][6][3], int start_pos_idx,
                      int end_pos[][6][3], int end_pos_idx) {
@@ -429,11 +414,7 @@ void exec_transition(int start_pos[][6][3], int start_pos_idx,
 }
 
 /**
-   @brief Helper function to set all servo positions from a LUT entry.
-
-   This function reduces code duplication by centralizing the servo positioning
-   logic.
-
+   @brief Set all servo positions from a LUT entry.
    @param positions Array of positions for all 6 legs (3 joints each)
 */
 void setAllServos(int positions[][3]) {
@@ -448,13 +429,9 @@ void setAllServos(int positions[][3]) {
 }
 
 /**
-   @brief Parses UDP command and updates next motion mode.
-
-   This function extracts the command parsing logic to improve code organization
-   and reduce memory usage by avoiding String concatenation in the UDP handler.
-
-   @param data Pointer to the command data
-   @param length Length of the command data
+   @brief Parse UDP command string and update motion mode.
+   @param data Command data buffer
+   @param length Length of command data
 */
 void parseCommand(char* data, size_t length) {
   if (length == 0) return;
@@ -487,73 +464,38 @@ void parseCommand(char* data, size_t length) {
 
   if (cmd_len == 0) return;
 
-  // Map command to motion mode using strcmp for efficiency
-  if (strcmp(command, "standby") == 0) {
-    next_motion = MotionMode::Mode_Standby;
-  } else if (strcmp(command, "walk0") == 0) {
-    next_motion = MotionMode::Mode_Walk_0;
-  } else if (strcmp(command, "walk180") == 0) {
-    next_motion = MotionMode::Mode_Walk_180;
-  } else if (strcmp(command, "walkr45") == 0) {
-    next_motion = MotionMode::Mode_Walk_R45;
-  } else if (strcmp(command, "walkr90") == 0) {
-    next_motion = MotionMode::Mode_Walk_R90;
-  } else if (strcmp(command, "walkr135") == 0) {
-    next_motion = MotionMode::Mode_Walk_R135;
-  } else if (strcmp(command, "walkl45") == 0) {
-    next_motion = MotionMode::Mode_Walk_L45;
-  } else if (strcmp(command, "walkl90") == 0) {
-    next_motion = MotionMode::Mode_Walk_L90;
-  } else if (strcmp(command, "walkl135") == 0) {
-    next_motion = MotionMode::Mode_Walk_L135;
-  } else if (strcmp(command, "fastforward") == 0) {
-    next_motion = MotionMode::Mode_Fast_Forward;
-  } else if (strcmp(command, "fastbackward") == 0) {
-    next_motion = MotionMode::Mode_Fast_Backward;
-  } else if (strcmp(command, "turnleft") == 0) {
-    next_motion = MotionMode::Mode_Turn_Left;
-  } else if (strcmp(command, "turnright") == 0) {
-    next_motion = MotionMode::Mode_Turn_Right;
-  } else if (strcmp(command, "climbforward") == 0) {
-    next_motion = MotionMode::Mode_Climb_Forward;
-  } else if (strcmp(command, "climbbackward") == 0) {
-    next_motion = MotionMode::Mode_Climb_Backward;
-  } else if (strcmp(command, "rotatex") == 0) {
-    next_motion = MotionMode::Mode_Rotate_X;
-  } else if (strcmp(command, "rotatey") == 0) {
-    next_motion = MotionMode::Mode_Rotate_Y;
-  } else if (strcmp(command, "rotatez") == 0) {
-    next_motion = MotionMode::Mode_Rotate_Z;
-  } else if (strcmp(command, "twist") == 0) {
-    next_motion = MotionMode::Mode_Twist;
-  } else {
+  // Find matching command
+  bool found = false;
+  for (size_t i = 0; i < sizeof(motion_config) / sizeof(motion_config[0]);
+       i++) {
+    if (strcmp(command, motion_config[i].cmd) == 0) {
+      next_motion = motion_config[i].mode;
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
     Serial.print("Unknown command: ");
     Serial.println(command);
     return;
   }
 
-  // Disable OTA mode when first command is received
   ota_mode = false;
-
   Serial.print("Command received: ");
   Serial.println(command);
 }
 
 /**
-   @brief WiFi event handler.
-
-   This function handles WiFi events, specifically triggering the boot sequence
-   when a station connects to the AP for the first time.
-   Note: This runs in a separate FreeRTOS task, so it only sets a flag.
-
-   @param event The WiFi event ID
+   @brief Handle WiFi events: trigger boot on connect, disable servos on
+   disconnect.
+   @param event WiFi event ID
 */
 void WiFiEvent(arduino_event_id_t event) {
   switch (event) {
     case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
       Serial.println("Station connected to AP");
-      // Verify connection with station count check
-      if (!boot_sequence_executed && WiFi.softAPgetStationNum() > 0) {
+      if (!boot_sequence_executed) {
         trigger_boot_sequence = true;
       }
       break;
