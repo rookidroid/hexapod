@@ -163,9 +163,12 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 ### Prerequisites
 
-- **Arduino IDE** (version 1.8.19 or later) or **PlatformIO**
+- **Arduino IDE** (version 2.x recommended)
 - **USB cable** compatible with your controller board
-- **WiFi network** (for ESP32 wireless control and OTA updates)
+- **Required Libraries** (install via Arduino Library Manager):
+  - ESP32: `Adafruit_PWMServoDriver` (for PCA9685 control)
+  - ESP32: `AsyncUDP` and `ArduinoOTA` (included with arduino-esp32)
+  - Pico: No additional libraries needed (uses custom PicoPWM)
 
 ### Step-by-Step Installation
 
@@ -174,58 +177,66 @@ _Refer to the fully assembled robot images for correct foot orientations_
 1. **Install Arduino IDE** from [arduino.cc](https://www.arduino.cc/en/software)
 
 2. **Add ESP32 Board Support**:
-   - Open Arduino IDE → File → Preferences
-   - Add to "Additional Board Manager URLs":
-
+   - Follow the official [ESP32 Arduino installation guide](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html)
+   - Or add to Arduino IDE → File → Preferences → "Additional Board Manager URLs":
      ```
      https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
      ```
+   - Then install via Tools → Board → Boards Manager → Search "ESP32"
 
-   - Go to Tools → Board → Boards Manager
-   - Search "ESP32" and install "esp32 by Espressif Systems"
+3. **Install Required Library**:
+   - Go to Sketch → Include Library → Manage Libraries
+   - Search for "Adafruit PWM Servo Driver"
+   - Click Install
 
-3. **Configure Board Settings**:
+4. **Configure Board Settings**:
    - Board: "ESP32 Dev Module"
    - Upload Speed: "115200"
    - Flash Frequency: "80MHz"
    - Partition Scheme: "Default 4MB with spiffs"
 
-4. **Open and Configure Code**:
+5. **Open and Configure Code**:
    - Open `./software/hexapod_esp32/hexapod_esp32.ino`
-   - Edit `config.h` to set your WiFi credentials:
-
+   - Edit `config.h` to set your WiFi credentials (default: SSID="hexapod", password="hexapod_1234"):
      ```cpp
-     const char* ssid = "YOUR_WIFI_SSID";
-     const char* password = "YOUR_WIFI_PASSWORD";
+     #define APSSID "hexapod"
+     #define APPSK "hexapod_1234"
      ```
+   - Configure servo pin mappings if using custom wiring:
+     ```cpp
+     static int left_legs[3][3] = {{1, 2, 3}, {5, 6, 7}, {9, 8, 10}};
+     static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
+     ```
+   - Adjust calibration offset values after assembly (see Calibration section)
 
-   - Adjust servo offset values based on your assembly (see Calibration section)
-
-5. **Upload Firmware**:
+6. **Upload Firmware**:
    - Connect ESP32 via USB
    - Select correct COM port in Tools → Port
    - Click Upload button
-   - Wait for "Done uploading" message
+   - Open Serial Monitor (115200 baud) to see the WiFi AP IP address (default: 192.168.4.1)
 
 #### Option 2: Raspberry Pi Pico Setup
 
-1. **Install Arduino IDE** and **Arduino-Pico Core**:
-   - Follow instructions at [arduino-pico](https://github.com/earlephilhower/arduino-pico)
+1. **Install Arduino IDE and Arduino-Pico Core**:
+   - Install [Arduino IDE](https://www.arduino.cc/en/software)
+   - Follow [arduino-pico installation guide](https://github.com/earlephilhower/arduino-pico)
    - Add board manager URL: `https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json`
 
 2. **Configure Board Settings**:
-   - Board: "Raspberry Pi Pico W" (or "Pico 2W")
-   - Flash Size: "2MB (Sketch: 1MB, FS: 1MB)"
+   - Board: "Raspberry Pi Pico W" (or "Raspberry Pi Pico 2W")
+   - **Flash Size: Must select option with "FS: 1MB"** (e.g., "2MB (Sketch: 1MB, FS: 1MB)")
    - Upload Method: "Default (UF2)"
 
 3. **Open and Configure Code**:
    - Open `./software/hexapod_pico/hexapod_pico.ino`
-   - Edit `config.h` for WiFi and servo settings
+   - Edit `config.h` for WiFi credentials (default: SSID="hexapod", password="hexapod_1234")
+   - Configure servo pin mappings and calibration offsets as needed
 
 4. **Upload Firmware**:
-   - Hold BOOTSEL button while connecting USB
-   - Release after Pico appears as mass storage device
-   - Upload sketch through Arduino IDE
+   - Hold BOOTSEL button while connecting Pico via USB
+   - Release button when Pico appears as mass storage device
+   - Select the Pico board and upload through Arduino IDE
+   - Robot will perform boot-up sequence after upload
 
 ### Project File Structure
 
@@ -252,27 +263,55 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 ### Control Interface
 
-#### Web Interface (ESP32 only)
+#### Connection
 
-1. After uploading, open Serial Monitor (115200 baud)
-2. Note the IP address displayed (e.g., `192.168.1.100`)
-3. Open browser and navigate to the IP address
-4. Use on-screen controls to move the hexapod
+1. **Power on the hexapod** - Connect batteries and turn on
+2. **Connect to WiFi** - Join the hexapod's WiFi network:
+   - SSID: `hexapod` (default)
+   - Password: `hexapod_1234` (default)
+   - The hexapod creates its own Access Point
+3. **Default IP**: `192.168.4.1` (for both ESP32 and Pico)
+4. **UDP Port**: `1234`
 
-#### UDP Commands (Both ESP32 and Pico)
+#### Sending UDP Commands
 
-The hexapod accepts motion commands via UDP packets. Available commands include:
+The hexapod accepts motion commands via UDP packets on port 1234. Commands must be wrapped with `:` delimiters (e.g., `:walk0:`).
 
-- `standby`: Stand in neutral position
-- `walk0`: Walk forward
-- `walk180`: Walk backward  
-- `turnleft`: Rotate left in place
-- `turnright`: Rotate right in place
-- `fastforward`: Walk forward at faster speed
-- `fastbackward`: Walk backward at faster speed
-- And many more (see `motion.h` for full list)
+**Available Commands:**
 
-Commands are sent via the web interface or UDP client applications.
+- `:standby:` - Stop and hold position
+- `:walk0:` - Walk forward
+- `:walk180:` - Walk backward
+- `:walkr45:` / `:walkr90:` / `:walkr135:` - Walk right at 45°/90°/135°
+- `:walkl45:` / `:walkl90:` / `:walkl135:` - Walk left at 45°/90°/135°
+- `:turnleft:` / `:turnright:` - Rotate in place
+- `:fastforward:` / `:fastbackward:` - Fast walking
+- `:climbforward:` / `:climbbackward:` - Climbing gait
+- `:rotatex:` / `:rotatey:` / `:rotatez:` - Body rotation (pitch/roll/yaw)
+- `:twist:` - Body twist motion
+
+**Example (Python):**
+```python
+import socket
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.sendto(b":walk0:", ("192.168.4.1", 1234))
+```
+
+**Boot Behavior:** The robot automatically performs a boot sequence (stands up) when a client connects to its WiFi network.
+
+### Over-The-Air (OTA) Updates
+
+Both ESP32 and Pico support wireless firmware updates:
+
+1. **Power on** the robot and **connect** to its WiFi network
+2. In Arduino IDE, go to **Tools → Port → Network Ports**
+3. Select the hexapod from network ports
+4. Click **Upload** as normal
+
+**Important Notes:**
+- For ESP32: OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
+- For Pico: Ensure Flash Size includes "FS: 1MB" in board settings for OTA to work.
 
 ### Troubleshooting
 
@@ -285,19 +324,42 @@ Commands are sent via the web interface or UDP client applications.
 
 **Servos not responding:**
 
-- Verify battery voltage (should be 7.4V nominal)
-- Check all servo connections match wiring diagram
-- Test servos individually using calibration mode
+- Verify battery voltage (should be 7.4V nominal for 2S Li-ion setup)
+- Check all servo connections match the wiring diagram
+- For ESP32: Verify PCA9685 I2C addresses (default: 0x40 left, 0x41 right)
+- For ESP32: Check enable pins (GPIO 19 for left, GPIO 26 for right)
+- Test individual servos using `posture_calibration()` function
+- Confirm servo pin mappings in `config.h` match your wiring
 
 **WiFi connection issues:**
 
-- Verify SSID and password in config.h
-- Ensure 2.4GHz WiFi (5GHz not supported)
-- Check router allows new device connections
+- Verify SSID and password in `config.h` (default: hexapod/hexapod_1234)
+- The hexapod creates an **Access Point** - connect to it, don't look for it on your router
+- Ensure your device supports 2.4GHz WiFi (5GHz not supported)
+- Default IP is always `192.168.4.1` when connected to the hexapod's AP
+
+**OTA not working:**
+
+- For ESP32: OTA only works before the first motion command - reboot to re-enable
+- Ensure you're connected to the hexapod's WiFi network
+- Check firewall settings on your computer
+- For Pico: Verify Flash Size setting includes "FS: 1MB"
 
 ### Android App
 
-_Work in progress - Check repository for updates_
+Control your hexapod directly from your Android smartphone:
+
+<a href="https://play.google.com/store/apps/details?id=com.rookiedev.hexapod">
+  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="80"/>
+</a>
+
+The app provides an intuitive interface to:
+- Connect to your hexapod's WiFi network
+- Control movement with on-screen buttons
+- Execute all available motion commands
+- Monitor connection status
+
+**Requirements:** Android device with WiFi capability
 
 ### Desktop Control Software
 
