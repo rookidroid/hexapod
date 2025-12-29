@@ -50,16 +50,11 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 | Filename         | Thumbnail                                                                     | Required # |
 | ---------------- | ----------------------------------------------------------------------------- | ---------- |
 | body_base        | <img src="./images/body_base.jpg" alt="body_base" width="400"/>               | 1          |
-| body_side        | <img src="./images/body_side.jpg" alt="body_side" width="400"/>               | 2          |
-| body_front_back  | <img src="./images/body_front_back.jpg" alt="body_front_back" width="400"/>   | 2          |
+| body_side        | <img src="./images/body_side.jpg" alt="body_side" width="400"/>               | 6          |
 | body_top         | <img src="./images/body_top.jpg" alt="body_top" width="400"/>                 | 1          |
-| body_top_cover   | <img src="./images/body_top_cover.jpg" alt="body_servo_top" width="400"/>     | 1          |
-| body_battery     | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>         | 1          |
-| body_servo_side1 | <img src="./images/body_servo_side1.jpg" alt="body_servo_side1" width="400"/> | 6          |
-| body_servo_side2 | <img src="./images/body_servo_side2.jpg" alt="body_servo_side2" width="400"/> | 6          |
-| body_servo_top   | <img src="./images/body_servo_top.jpg" alt="body_servo_top" width="400"/>     | 6          |
-
-_Use the orientations of the thumbnials to print, no support is needed._
+| body_head   | <img src="./images/body_head.jpg" alt="body_head" width="400"/>     | 1          |
+| body_battery_top     | <img src="./images/body_battery.jpg" alt="body_battery_top" width="400"/>         | 1          |
+| body_servo_side | <img src="./images/body_servo_side.jpg" alt="body_servo_side" width="400"/> | 12          |
 
 #### Joint x 3 + Mirrored Joint x 3
 
@@ -73,8 +68,6 @@ _Check the images of the fully assembled robot for the orientations of the joint
 | joint_cross  | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>   | 6          |      |
 | joint_top    | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12         |      |
 
-_Use the orientations of the thumbnials to print, no support is needed._
-
 #### Leg x 6
 
 ![leg_assembly](./images/assembly_leg.gif)
@@ -84,8 +77,6 @@ _Use the orientations of the thumbnials to print, no support is needed._
 | leg_bottom | <img src="./images/leg_bottom.jpg" alt="leg_bottom" width="400"/> | 6          |
 | leg_side   | <img src="./images/leg_side.jpg" alt="leg_side" width="400"/>     | 12         |
 | leg_top    | <img src="./images/leg_top.jpg" alt="leg_top" width="400"/>       | 6          |
-
-_Use the orientations of the thumbnials to print, no support is needed._
 
 #### Foot x 3 + Mirrored Foot x 3
 
@@ -100,23 +91,13 @@ _Check the images of the fully assembled robot for the orientations of the feet 
 | foot_ground | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/> | 6          |      |
 | foot_tip    | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>       | 6          |      |
 
-_Use the orientations of the thumbnials to print, no support is needed._
-
-#### Accessory
-
-| Filename               | Thumbnail                                                                                 | Note |
-| ---------------------- | ----------------------------------------------------------------------------------------- | ---- |
-| accessory_cable_holder | <img src="./images/accessory_cable_holder.jpg" alt="accessory_cable_holder" width="400"/> |      |
-
-_Use the orientations of the thumbnials to print, no support is needed._
-
 ### Others
 
 | Name      | Spec                                  | Required # |
 | --------- | ------------------------------------- | ---------- |
-| Screw     | M2 6mm                                | 36         |
-| Screw     | M2 10mm                               | 198        |
-| Nuts      | M2                                    | 234        |
+| Screw     | M2 6mm hex socket                     | 36         |
+| Screw     | M2 12mm countersunk                   | 180        |
+| Nuts      | M2                                    | 216        |
 | Pin (304) | M4 6mm                                | 18         |
 | Bearing   | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18         |
 
