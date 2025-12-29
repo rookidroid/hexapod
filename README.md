@@ -404,7 +404,7 @@ All servos should be at 90° (neutral position) when the legs are in the referen
    - Note which leg (L0-L2 for left, R0-R2 for right)
    - Note which joint (0=coxa, 1=femur, 2=tibia)
    - Estimate angle difference in degrees
-   - Convert to ticks (1° ≈ 10 ticks for most servos)
+   - Convert to ticks (0.44° ≈ 1 tick for most servos)
 
 6. **Update config.h**: Edit the offset arrays in `config.h`:
 
