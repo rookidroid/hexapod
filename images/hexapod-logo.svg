@@ -4,7 +4,7 @@
    version="1.1"
    id="svg19"
    sodipodi:docname="hexapod-logo.svg"
-   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    inkscape:export-filename="hexapod-logo.png"
    inkscape:export-xdpi="1371.4286"
    inkscape:export-ydpi="1371.4286"
@@ -26,14 +26,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.59114587"
-     inkscape:cx="872.03519"
-     inkscape:cy="515.94711"
+     inkscape:cx="310.41408"
+     inkscape:cy="627.59467"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="-11"
      inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g2" />
+     inkscape:current-layer="svg19" />
   <!-- Background -->
   <!-- Robot Body Base Layer -->
   <!-- Body Details -->
@@ -56,7 +56,7 @@
      ry="173.0601" />
   <g
      id="g2"
-     transform="matrix(22.894409,0,0,22.894409,91.577636,91.577636)">
+     transform="matrix(22.114301,5.9255096,-5.9255096,22.114301,252.20684,-31.677473)">
     <circle
        cx="23.954424"
        cy="23.954424"
@@ -64,205 +64,212 @@
        id="circle1"
        style="fill:#0f5fab;fill-opacity:1"
        r="24.023333" />
+    <ellipse
+       style="fill:#ffffff;stroke-width:0.330171;stroke-linecap:round"
+       id="path1"
+       cx="23.954424"
+       cy="23.954424"
+       rx="10.489925"
+       ry="10.53006" />
+    <circle
+       style="fill:#e3f2fd;fill-opacity:1;stroke-width:0.330171;stroke-linecap:round"
+       id="path2"
+       cx="23.954424"
+       cy="23.954424"
+       r="8.9495869" />
+    <circle
+       style="fill:#9c27b0;fill-opacity:1;stroke-width:0.330171;stroke-linecap:round"
+       id="path2-9"
+       cx="23.954424"
+       cy="23.954424"
+       r="7.8689566" />
+    <line
+       x1="21.589413"
+       y1="19.858089"
+       x2="28.517616"
+       y2="23.858089"
+       stroke="#90caf9"
+       stroke-width="0.5"
+       id="line4" />
+    <line
+       x1="20.405445"
+       y1="21.862238"
+       x2="27.333649"
+       y2="25.862238"
+       stroke="#90caf9"
+       stroke-width="0.5"
+       id="line5" />
+    <line
+       x1="19.221479"
+       y1="23.866386"
+       x2="26.149683"
+       y2="27.866386"
+       stroke="#90caf9"
+       stroke-width="0.5"
+       id="line6" />
+    <circle
+       cx="27.515686"
+       cy="-1.2674556"
+       r="1"
+       fill="#1976D2"
+       id="circle7"
+       style="fill:#19b5ff;fill-opacity:1"
+       transform="rotate(30)" />
+    <circle
+       cx="37.230888"
+       cy="-2.2076654"
+       r="1"
+       fill="#1976D2"
+       id="circle8"
+       style="fill:#19b5ff;fill-opacity:1"
+       transform="rotate(30)" />
+    <circle
+       cx="27.255604"
+       cy="20.083851"
+       r="1"
+       fill="#1976D2"
+       id="circle9"
+       style="fill:#19b5ff;fill-opacity:1"
+       transform="rotate(30)" />
+    <circle
+       cx="40.722351"
+       cy="20.767927"
+       r="1"
+       fill="#1976D2"
+       id="circle10"
+       style="fill:#19b5ff;fill-opacity:1"
+       transform="rotate(30)" />
+    <path
+       d="m 31.756207,28.828003 c 2.598076,1.5 4.330127,2.5 6.928203,4"
+       stroke="#ffffff"
+       stroke-width="2.5"
+       stroke-linecap="round"
+       id="path11" />
+    <circle
+       cx="45.915665"
+       cy="9.0876751"
+       r="1"
+       fill="#ffffff"
+       id="circle12"
+       transform="rotate(30)" />
+    <path
+       d="m 16.15264,19.080843 c -2.598076,-1.5 -4.330127,-2.5 -6.9281994,-4"
+       stroke="#ffffff"
+       stroke-width="2.5"
+       stroke-linecap="round"
+       id="path14" />
+    <circle
+       cx="19.529037"
+       cy="8.4481792"
+       r="1"
+       fill="#ffffff"
+       id="circle15"
+       transform="rotate(30)" />
     <g
-       id="g1"
-       transform="rotate(30,24.062259,23.892165)">
-      <rect
-         x="16"
-         y="12"
-         width="16"
-         height="24"
-         rx="2"
-         fill="#ffffff"
-         id="rect1"
-         ry="2" />
-      <rect
-         x="18"
-         y="14"
-         width="12"
-         height="20"
-         rx="1"
-         fill="#e3f2fd"
-         id="rect2"
-         ry="1" />
-      <rect
-         x="19"
-         y="15"
-         width="10"
-         height="18"
-         fill="#1976D2"
-         id="rect3"
-         style="fill:#9c27b0;fill-opacity:1" />
-      <line
-         x1="20"
-         y1="18"
-         x2="28"
-         y2="18"
-         stroke="#90caf9"
-         stroke-width="0.5"
-         id="line3" />
-      <line
-         x1="20"
-         y1="21"
-         x2="28"
-         y2="21"
-         stroke="#90caf9"
-         stroke-width="0.5"
-         id="line4" />
-      <line
-         x1="20"
-         y1="24"
-         x2="28"
-         y2="24"
-         stroke="#90caf9"
-         stroke-width="0.5"
-         id="line5" />
-      <line
-         x1="20"
-         y1="27"
-         x2="28"
-         y2="27"
-         stroke="#90caf9"
-         stroke-width="0.5"
-         id="line6" />
-      <line
-         x1="20"
-         y1="30"
-         x2="28"
-         y2="30"
-         stroke="#90caf9"
-         stroke-width="0.5"
-         id="line7" />
-      <circle
-         cx="16"
-         cy="12"
-         r="1"
-         fill="#1976D2"
-         id="circle7"
-         style="fill:#19b5ff;fill-opacity:1" />
-      <circle
-         cx="32"
-         cy="12"
-         r="1"
-         fill="#1976D2"
-         id="circle8"
-         style="fill:#19b5ff;fill-opacity:1" />
-      <circle
-         cx="16"
-         cy="36"
-         r="1"
-         fill="#1976D2"
-         id="circle9"
-         style="fill:#19b5ff;fill-opacity:1" />
-      <circle
-         cx="32"
-         cy="36"
-         r="1"
-         fill="#1976D2"
-         id="circle10"
-         style="fill:#19b5ff;fill-opacity:1" />
-      <path
-         d="m 32,16 c 2,0 4,-2 6,-4"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path10" />
-      <circle
-         cx="35"
-         cy="14"
-         r="1"
-         fill="#ffffff"
-         id="circle11" />
-      <path
-         d="m 32,24 c 3,0 5,0 8,0"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path11" />
-      <circle
-         cx="36"
-         cy="24"
-         r="1"
-         fill="#ffffff"
-         id="circle12" />
-      <path
-         d="m 32,32 c 2,0 4,2 6,4"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path12" />
-      <circle
-         cx="35"
-         cy="34"
-         r="1"
-         fill="#ffffff"
-         id="circle13" />
-      <path
-         d="m 16,16 c -2,0 -4,-2 -6,-4"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path13" />
-      <circle
-         cx="13"
-         cy="14"
-         r="1"
-         fill="#ffffff"
-         id="circle14" />
-      <path
-         d="m 16,24 c -3,0 -5,0 -8,0"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path14" />
-      <circle
-         cx="12"
-         cy="24"
-         r="1"
-         fill="#ffffff"
-         id="circle15" />
-      <path
-         d="m 16,32 c -2,0 -4,2 -6,4"
-         stroke="#ffffff"
-         stroke-width="2.5"
-         stroke-linecap="round"
-         id="path15" />
-      <circle
-         cx="13"
-         cy="34"
-         r="1"
-         fill="#ffffff"
-         id="circle16" />
-      <circle
-         cx="17.5"
-         cy="13"
-         r="0.5"
-         fill="#ff4081"
-         id="circle17" />
-      <circle
-         cx="30.5"
-         cy="13"
-         r="0.5"
-         fill="#69f0ae"
-         id="circle18" />
-      <rect
-         x="20"
-         y="32"
-         width="8"
-         height="2"
-         fill="#90caf9"
-         rx="0.5"
-         id="rect18"
-         ry="0.5" />
-      <rect
-         x="20"
-         y="14"
-         width="8"
-         height="2"
-         fill="#90caf9"
-         rx="0.5"
-         id="rect19"
-         ry="0.5" />
+       id="g7"
+       transform="translate(-0.32504067,0.20996634)">
+      <g
+         id="g4"
+         transform="translate(0.73299406,0.50373719)">
+        <path
+           d="m 32.873393,19.27906 c 1.732051,1 4.464101,0.267949 7.196152,-0.464101"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path10" />
+        <circle
+           cx="41.108765"
+           cy="-1.7405388"
+           r="1"
+           fill="#ffffff"
+           id="circle11"
+           transform="rotate(30)" />
+      </g>
+      <g
+         id="g6"
+         transform="translate(-0.49701694,-0.20640993)">
+        <path
+           d="m 26.009047,34.009047 c 1.732051,1 2.464101,3.73205 3.196152,6.464101"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path12" />
+        <circle
+           cx="42.529037"
+           cy="18.448179"
+           r="1"
+           fill="#ffffff"
+           id="circle13"
+           transform="rotate(30)" />
+      </g>
+      <g
+         id="g3"
+         transform="translate(0.27352011,-0.21351981)">
+        <path
+           d="m 22.77338,13.8998 c -1.73205,-1 -2.464101,-3.732054 -3.196152,-6.4641055"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path13" />
+        <circle
+           cx="23.672195"
+           cy="-1.3491093"
+           r="1"
+           fill="#ffffff"
+           id="circle14"
+           transform="rotate(30)" />
+      </g>
+      <g
+         id="g5"
+         transform="translate(1.0527471,-0.05009143)">
+        <path
+           d="m 13.8998,27.756207 c -1.73205,-1 -4.4641052,-0.26795 -7.196156,0.464101"
+           stroke="#ffffff"
+           stroke-width="2.5"
+           stroke-linecap="round"
+           id="path15" />
+        <circle
+           cx="22.915665"
+           cy="19.087675"
+           r="1"
+           fill="#ffffff"
+           id="circle16"
+           transform="rotate(30)" />
+      </g>
     </g>
+    <circle
+       cx="29.015686"
+       cy="-0.26745555"
+       r="0.5"
+       fill="#ff4081"
+       id="circle17"
+       transform="rotate(30)" />
+    <circle
+       cx="35.730888"
+       cy="-1.2076654"
+       r="0.5"
+       fill="#69f0ae"
+       id="circle18"
+       transform="rotate(30)" />
+    <rect
+       x="28.623039"
+       y="12.886381"
+       width="8"
+       height="2"
+       fill="#90caf9"
+       rx="0.5"
+       id="rect18"
+       ry="0.5"
+       transform="rotate(30)" />
+    <rect
+       x="28.582468"
+       y="2.5746818"
+       width="8"
+       height="2"
+       fill="#90caf9"
+       rx="0.5"
+       id="rect19"
+       ry="0.5"
+       transform="rotate(30)" />
   </g>
 </svg>
