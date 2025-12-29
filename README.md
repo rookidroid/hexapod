@@ -71,7 +71,6 @@ Follow these steps in order for the best results:
 - Infill: 20-30%
 - Material: PLA or PETG
 - Supports: Required for some parts (check STL orientation)
-- Print time: Approximately 30-40 hours total for all parts
 
 #### Step 1.1: Body Components (x1 complete body)
 
@@ -179,9 +178,11 @@ _Refer to the fully assembled robot images for correct foot orientations_
 2. **Add ESP32 Board Support**:
    - Follow the official [ESP32 Arduino installation guide](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html)
    - Or add to Arduino IDE → File → Preferences → "Additional Board Manager URLs":
+
      ```
      https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
      ```
+
    - Then install via Tools → Board → Boards Manager → Search "ESP32"
 
 3. **Install Required Library**:
@@ -198,15 +199,19 @@ _Refer to the fully assembled robot images for correct foot orientations_
 5. **Open and Configure Code**:
    - Open `./software/hexapod_esp32/hexapod_esp32.ino`
    - Edit `config.h` to set your WiFi credentials (default: SSID="hexapod", password="hexapod_1234"):
+
      ```cpp
      #define APSSID "hexapod"
      #define APPSK "hexapod_1234"
      ```
+
    - Configure servo pin mappings if using custom wiring:
+
      ```cpp
      static int left_legs[3][3] = {{1, 2, 3}, {5, 6, 7}, {9, 8, 10}};
      static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
      ```
+
    - Adjust calibration offset values after assembly (see Calibration section)
 
 6. **Upload Firmware**:
@@ -291,6 +296,7 @@ The hexapod accepts motion commands via UDP packets on port 1234. Commands must 
 - `:twist:` - Body twist motion
 
 **Example (Python):**
+
 ```python
 import socket
 
@@ -310,6 +316,7 @@ Both ESP32 and Pico support wireless firmware updates:
 4. Click **Upload** as normal
 
 **Important Notes:**
+
 - For ESP32: OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
 - For Pico: Ensure Flash Size includes "FS: 1MB" in board settings for OTA to work.
 
@@ -354,6 +361,7 @@ Control your hexapod directly from your Android smartphone:
 </a>
 
 The app provides an intuitive interface to:
+
 - Connect to your hexapod's WiFi network
 - Control movement with on-screen buttons
 - Execute all available motion commands
