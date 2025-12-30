@@ -433,11 +433,11 @@ All servos should be at 90° (neutral position) when the legs are in the referen
 
 ### Reference Images
 
-**Front View - Check coxa and femur alignment:**
+**Front View**
 
 ![calibration_1](./images/calibration_1.jpg)
 
-**Side View - Check all three joints:**
+**Top View**
 
 ![calibration_2](./images/calibration_2.jpg)
 
