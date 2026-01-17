@@ -262,33 +262,33 @@ void setup() {
 
   Serial.println("=== Initialization Complete ===");
 
-  // posture_calibration();
+  posture_calibration();
 }
 
 /**
    @brief Main loop: execute boot sequence, motion commands, and OTA updates.
 */
 void loop() {
-  // Handle boot sequence trigger from WiFi event
-  if (trigger_boot_sequence && !boot_sequence_executed) {
-    boot_sequence_executed = true;
-    trigger_boot_sequence = false;
-    boot_up_motion(lut_standup_length, lut_standup);
-    return;
-  }
+  // // Handle boot sequence trigger from WiFi event
+  // if (trigger_boot_sequence && !boot_sequence_executed) {
+  //   boot_sequence_executed = true;
+  //   trigger_boot_sequence = false;
+  //   boot_up_motion(lut_standup_length, lut_standup);
+  //   return;
+  // }
 
-  // Don't execute motion commands until boot sequence is complete
-  if (!boot_sequence_executed) {
-    if (ota_mode) {
-      ArduinoOTA.handle();
-      delay(10);
-    }
-    return;
-  }
+  // // Don't execute motion commands until boot sequence is complete
+  // if (!boot_sequence_executed) {
+  //   if (ota_mode) {
+  //     ArduinoOTA.handle();
+  //     delay(10);
+  //   }
+  //   return;
+  // }
 
-  // Execute motion based on next_motion_idx
-  exec_motion(motion_config[next_motion_idx].length,
-              motion_config[next_motion_idx].lut);
+  // // Execute motion based on next_motion_idx
+  // exec_motion(motion_config[next_motion_idx].length,
+  //             motion_config[next_motion_idx].lut);
 
   if (ota_mode) {
     ArduinoOTA.handle();
