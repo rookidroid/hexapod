@@ -355,12 +355,12 @@ const char index_html[] PROGMEM = R"rawliteral(
       background-color: #1a1a2e;
       color: #eee;
     }
-    h1 { color: #00d9ff; text-align: center; }
-    h2 { color: #00d9ff; margin-top: 30px; }
+    h1 { color: #bb86fc; text-align: center; }
+    h2 { color: #bb86fc; margin-top: 30px; }
     .container { max-width: 1200px; margin: 0 auto; }
     .btn {
-      background-color: #00d9ff;
-      color: #1a1a2e;
+      background-color: #8b5cf6;
+      color: #fff;
       border: none;
       padding: 15px 30px;
       font-size: 18px;
@@ -369,48 +369,74 @@ const char index_html[] PROGMEM = R"rawliteral(
       margin: 10px 5px;
       transition: all 0.3s;
     }
-    .btn:hover { background-color: #00b8d4; transform: scale(1.05); }
+    .btn:hover { background-color: #7c3aed; transform: scale(1.05); }
     .btn:active { transform: scale(0.95); }
-    .btn-small { padding: 8px 16px; font-size: 14px; }
+    .btn-small { padding: 8px 32px; font-size: 14px; }
     .controls { text-align: center; margin: 20px 0; }
     .calibration-panel { display: none; margin-top: 20px; }
-    .leg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+    .leg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 200px; margin-top: 20px; }
     @media (max-width: 768px) { .leg-grid { grid-template-columns: 1fr; } }
-    .leg-column { display: flex; flex-direction: column; gap: 20px; }
+    .leg-column { display: flex; flex-direction: column; gap: 10px; }
     .leg-card {
       background-color: #16213e;
       padding: 20px;
       border-radius: 10px;
-      border: 2px solid #00d9ff;
+      border: 2px solid #8b5cf6;
     }
-    .leg-title { color: #00d9ff; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
-    .joint-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
-    .joint-label { font-weight: bold; min-width: 80px; }
+    .leg-title { color: #bb86fc; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+    .joint-row { display: flex; align-items: center; margin: 0 0; }
+    .joint-label { font-weight: bold; min-width: 80px; flex-shrink: 0;  }
     input[type="number"] {
-      width: 80px;
+      width: 150px;
       padding: 8px;
       background-color: #0f3460;
       color: #eee;
-      border: 1px solid #00d9ff;
+      border: 1px solid #a78bfa;
       border-radius: 5px;
       font-size: 16px;
+      margin-right: auto;
     }
-    .status { text-align: center; margin-top: 20px; font-size: 18px; color: #00d9ff; }
+    .btn-small { margin-left: 5px; }
+    .status { text-align: center; margin-top: 20px; font-size: 18px; color: #bb86fc; }
+    .reminder {
+      background-color: #e65100;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid #ff6f00;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+      border-top: 1px solid #333;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Hexapod Robot Calibration</h1>
+    <h1>Hexapod Calibration</h1>
     <div class="controls">
       <button class="btn" id="calibModeBtn" onclick="toggleCalibrationMode()">Enter Calibration Mode</button>
     </div>
     <div class="status" id="status"></div>
     <div class="calibration-panel" id="calibPanel">
-      <h2>Servo Offset Adjustments (Ticks)</h2>
+      <h2>Servo Offset Adjustments (Ticks, 1 tick ≈ 0.44°)</h2>
       <div class="leg-grid" id="legGrid"></div>
-      <div class="controls">
-        <button class="btn" onclick="applyAndSaveOffsets()">Apply & Save Offsets</button>
+      <div class="reminder">
+        ⚠️ Remember to click "Save Offsets" button below to permanently save your calibration to EEPROM!
       </div>
+      <div class="controls">
+        <button class="btn" onclick="saveOffsets()">Save Offsets</button>
+      </div>
+    </div>
+    <div class="footer">
+      © 2024 - PRESENT rookidroid.com
     </div>
   </div>
   <script>
@@ -434,7 +460,7 @@ const char index_html[] PROGMEM = R"rawliteral(
           displayOffsets();
           document.getElementById('calibPanel').style.display = 'block';
           document.getElementById('calibModeBtn').innerHTML = 'Exit Calibration Mode';
-          document.getElementById('status').innerHTML = 'Calibration mode active';
+          document.getElementById('status').innerHTML = 'Calibration mode active - Adjust offsets and click Save Offsets when done';
           isCalibrationMode = true;
           applyOffsets();
         })
@@ -516,8 +542,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       });
     }
     
-    function applyAndSaveOffsets() {
-      document.getElementById('status').innerHTML = 'Applying and saving offsets...';
+    function saveOffsets() {
+      document.getElementById('status').innerHTML = 'Saving offsets...';
       fetch('/set_offsets', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -554,7 +580,8 @@ void setupWebServer()
                 { web_server.send(200, "text/html", index_html); });
 
   // Enter calibration mode and get current offset values
-  web_server.on("/enter_calibration", HTTP_GET, []() {
+  web_server.on("/enter_calibration", HTTP_GET, []()
+                {
     calibration_mode = true;
     Serial.println("Entered calibration mode");
     
@@ -579,15 +606,14 @@ void setupWebServer()
       if (i < 2) json += ",";
     }
     json += "]}";
-    web_server.send(200, "application/json", json);
-  });
+    web_server.send(200, "application/json", json); });
 
   // Exit calibration mode
-  web_server.on("/exit_calibration", HTTP_GET, []() {
+  web_server.on("/exit_calibration", HTTP_GET, []()
+                {
     calibration_mode = false;
     Serial.println("Exited calibration mode");
-    web_server.send(200, "text/plain", "Exited calibration mode");
-  });
+    web_server.send(200, "text/plain", "Exited calibration mode"); });
 
   // Get current offset values
   web_server.on("/get_offsets", HTTP_GET, []()
@@ -692,7 +718,7 @@ void setupWebServer()
     Serial.println(" };");
     Serial.println("==============================\n");
     
-    web_server.send(200, "text/plain", "Offsets saved to EEPROM and Serial Monitor!"); });
+    web_server.send(200, "text/plain", "Offsets saved to EEPROM!"); });
 
   // Start server
   web_server.begin();
