@@ -39,7 +39,7 @@
 #define SERVOMID 307  // Middle value, 90 deg
 #define SERVOMAX 512  // Maximum value, 180 deg
 
-#define DELAY_MS 30  // Servo delay
+#define DELAY_MS 20  // Servo delay
 
 // Servo connections to the PCA9685 driver
 // {{leg1_join1, leg1_join2, leg1_join3},
@@ -49,8 +49,8 @@ static int left_legs[3][3] = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 8, 10 } };
 static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 
 // Offset to correct the installation error. Offset value is the number of ticks
-static int left_offset_ticks[3][3] = { { 15, 10, 15 }, { 5, 10, 15 }, { -8, 5, -5 } };
-static int right_offset_ticks[3][3] = { { 0, 0, -5 }, { -5, -10, -10 }, { -5, -10, -15 } };
+static int left_offset_ticks[3][3] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
+static int right_offset_ticks[3][3] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
 
 /** WiFi Configurations */
 #ifndef APSSID
