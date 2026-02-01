@@ -396,20 +396,33 @@ const char index_html[] PROGMEM = R"rawliteral(
       font-size: 16px;
     }
     .status { text-align: center; margin-top: 20px; font-size: 18px; color: #00d9ff; }
+    .reminder {
+      background-color: #e65100;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid #ff6f00;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Hexapod Robot Calibration</h1>
+    <h1>Hexapod Calibration</h1>
     <div class="controls">
       <button class="btn" id="calibModeBtn" onclick="toggleCalibrationMode()">Enter Calibration Mode</button>
     </div>
     <div class="status" id="status"></div>
     <div class="calibration-panel" id="calibPanel">
-      <h2>Servo Offset Adjustments (Ticks)</h2>
+      <h2>Servo Offset Adjustments (Ticks, 1 tick ≈ 0.44°)</h2>
       <div class="leg-grid" id="legGrid"></div>
+      <div class="reminder">
+        ⚠️ Remember to click "Save Offsets" button below to permanently save your calibration to EEPROM!
+      </div>
       <div class="controls">
-        <button class="btn" onclick="applyAndSaveOffsets()">Apply & Save Offsets</button>
+        <button class="btn" onclick="saveOffsets()">Save Offsets</button>
       </div>
     </div>
   </div>
@@ -434,7 +447,7 @@ const char index_html[] PROGMEM = R"rawliteral(
           displayOffsets();
           document.getElementById('calibPanel').style.display = 'block';
           document.getElementById('calibModeBtn').innerHTML = 'Exit Calibration Mode';
-          document.getElementById('status').innerHTML = 'Calibration mode active';
+          document.getElementById('status').innerHTML = 'Calibration mode active - Adjust offsets and click Save Offsets when done';
           isCalibrationMode = true;
           applyOffsets();
         })
@@ -516,8 +529,8 @@ const char index_html[] PROGMEM = R"rawliteral(
       });
     }
     
-    function applyAndSaveOffsets() {
-      document.getElementById('status').innerHTML = 'Applying and saving offsets...';
+    function saveOffsets() {
+      document.getElementById('status').innerHTML = 'Saving offsets...';
       fetch('/set_offsets', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -692,7 +705,7 @@ void setupWebServer()
     Serial.println(" };");
     Serial.println("==============================\n");
     
-    web_server.send(200, "text/plain", "Offsets saved to EEPROM and Serial Monitor!"); });
+    web_server.send(200, "text/plain", "Offsets saved to EEPROM!"); });
 
   // Start server
   web_server.begin();
