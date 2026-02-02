@@ -15,6 +15,7 @@ This agile, 3D-printed hexapod robot is designed to work with either a Raspberry
 - **Robust, durable structure**: 3D-printed parts designed for strength and easy assembly
 - **WiFi-enabled remote control**: Control your hexapod wirelessly from your smartphone or computer
 - **Smooth, agile movement**: Advanced motion algorithms for natural walking patterns
+- **Web-based calibration interface**: Easy servo calibration through your browser with real-time adjustment
 - **Over-the-air (OTA) firmware updates**: Update firmware without cables for easy maintenance
 
 ### What You'll Build
@@ -60,6 +61,8 @@ Follow these steps in order for the best results:
 4. **Build legs** (joint → leg → foot for each leg)
 5. **Attach legs to body**
 6. **Wire and test** (connect servos, upload firmware, calibrate)
+
+**⚠️ Important:** Do NOT tighten the servo horn screws during assembly! Leave them loose to allow for rotation. You'll tighten them properly during the calibration process after adjusting each servo to its correct neutral position.
 
 ![whole_assembly](./images/assembly_whole.gif)
 
@@ -383,53 +386,60 @@ All servos should be at 90° (neutral position) when the legs are in the referen
 
 ### Calibration Procedure
 
+The hexapod now includes a **web-based calibration interface** that makes the calibration process much easier - no need to repeatedly edit code and re-upload firmware!
+
+#### Step 1: Access the Calibration Interface
+
 1. **Upload Firmware**: Flash the code to your controller with default offset values
+2. **Power On**: Connect batteries and turn on the hexapod
+3. **Connect to WiFi**: Join the hexapod's WiFi network (default SSID: `hexapod`)
+4. **Open Browser**: Navigate to `http://192.168.4.1`
 
-2. **Enable Calibration Function** (Optional):
-   - Open the `.ino` file for your controller
-   - Find the commented line `// posture_calibration();` in the `setup()` function
-   - Uncomment it to enable the calibration posture
-   - Re-upload the firmware
+![Calibration Web Interface](./images/calibration_page.jpg)
 
-3. **Power On**: Connect batteries and turn on the hexapod
-   - If you enabled the calibration function, all servos will move to 90° neutral position on boot
-   - Otherwise, the hexapod will boot into standby mode
+#### Step 2: Enter Calibration Mode
 
-4. **Check Leg Positions**: Compare each leg with the reference images below
+1. Click the **"Enter Calibration Mode"** button
+   - The hexapod will stop motion execution
+   - All current offset values will be loaded
+   - A grid showing all 6 legs (18 servos) will appear
+
+2. **Check Leg Positions**: Compare each leg with the reference images below
    - **Coxa (hip) joint**: Should be perpendicular to body
    - **Femur (thigh) joint**: Should be horizontal
    - **Tibia (shin) joint**: Should form 90° angle with femur
 
-5. **Measure Offsets**: For each misaligned servo:
-   - Note which leg (L0-L2 for left, R0-R2 for right)
-   - Note which joint (0=coxa, 1=femur, 2=tibia)
-   - Estimate angle difference in degrees
-   - Convert to ticks (0.44° ≈ 1 tick for most servos)
+#### Step 3: Adjust Offsets
 
-6. **Update config.h**: Edit the offset arrays in `config.h`:
+For each misaligned servo:
 
-   ```c
-   // Left side legs: [L0][L1][L2]
-   // Each leg has [coxa, femur, tibia] offsets
-   static int left_offset_ticks[3][3] = {
-     {-5, 10, 0},    // L0 (left front)
-     {-15, 5, -20},  // L1 (left middle)
-     {20, -10, 10}   // L2 (left rear)
-   };
-   
-   // Right side legs: [R0][R1][R2]
-   static int right_offset_ticks[3][3] = {
-     {20, -10, 0},   // R0 (right front)
-     {-15, 0, -5},   // R1 (right middle)
-     {-10, 0, -20}   // R2 (right rear)
-   };
-   ```
+1. **Locate the servo** in the web interface:
+   - Left column: Left Leg 1, 2, 3
+   - Right column: Right Leg 1, 2, 3
+   - Each leg has 3 joints: Joint 1 (coxa), Joint 2 (femur), Joint 3 (tibia)
 
-7. **Re-upload and Test**: Upload modified code and verify positions
+2. **Adjust the offset value**:
+   - Use **+** and **-** buttons for fine adjustment (±1 tick per click)
+   - Or type a value directly in the input field
+   - Changes apply immediately to the servo
+   - 1 tick ≈ 0.44° for most servos
 
-8. **Fine-tune**: Repeat steps 2-7 until all legs match reference positions
+3. **Observe the movement** and continue adjusting until the servo reaches the correct position
 
-9. **Disable Calibration Mode**: Once calibration is complete, comment out the `posture_calibration();` line again and upload final firmware
+#### Step 4: Save Your Calibration
+
+1. Once all servos are properly aligned, click **"Save Offsets"**
+   - Offset values are saved to **EEPROM** (persistent storage)
+   - Values are also printed to Serial Monitor as backup
+   - The hexapod will remember these values even after power cycles
+
+2. **Now tighten the servo horn screws** - With each servo in its correct neutral position, firmly tighten the small screws on each servo horn to secure them in place
+
+3. Click **"Exit Calibration Mode"** to resume normal operation
+
+#### Step 5: Test Walking
+
+Send a walking command to verify smooth motion. If adjustments are needed, simply re-enter calibration mode and fine-tune.
 
 ### Reference Images
 
@@ -443,25 +453,10 @@ All servos should be at 90° (neutral position) when the legs are in the referen
 
 ### Calibration Tips
 
+- **Use the web interface**: Much faster than editing code and re-uploading
 - **Start with one leg**: Calibrate completely before moving to the next
-- **Make small adjustments**: Change values by ±10-20 ticks at a time
-- **Document your values**: Keep a backup of working offset values
+- **Make small adjustments**: Use the +/- buttons for precise control (±1 tick per click)
+- **Real-time feedback**: Servos respond immediately as you adjust values
+- **Save your work**: Don't forget to click "Save Offsets" when done!
 - **Check screw tightness**: Loose servo horns will affect calibration
-- **Servo horn position**: If offsets exceed ±50 ticks, consider repositioning the servo horn
-
-### Common Calibration Issues
-
-**Leg wobbles during walking:**
-
-- Re-check femur and tibia joint calibration
-- Ensure all mechanical connections are tight
-
-**Hexapod tips to one side:**
-
-- Balance the offset values between left and right legs
-- Check battery placement and weight distribution
-
-**Jerky movements:**
-
-- Calibration likely OK - check power supply voltage
-- Verify servo horn screws are fully tightened
+- **Servo horn position**: If offsets exceed ±25 ticks, consider repositioning the servo horn physically
