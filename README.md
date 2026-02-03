@@ -2,9 +2,7 @@
 
 A 3D Printed Hexapod Robot
 
-**It is strongly recommended to start with Hexapod v2 rather than building Hexapod v1. Our experience has shown that MG90S servos used in Hexapod v1 frequently fail due to their inherent weaknesses and inconsistencies in quality.**
-
-<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="300"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="300"/>
+<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="400"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="400"/>
 
 ## Introduction
 
