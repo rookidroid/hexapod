@@ -54,7 +54,7 @@ static int right_offset_ticks[3][3] = { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } };
 
 /** WiFi Configurations */
 #ifndef APSSID
-#define APSSID "hexapod"
+#define APSSID "hexapod_macaroon"
 #define APPSK "hexapod_1234"
 #endif
 
