@@ -1,4 +1,4 @@
-# <img src="./images/hexapod-logo.svg" alt="logo" width="64"/> Hexapod
+# <img src="./images/hexapod-logo.svg" alt="logo" width="128"/> Hexapod
 
 A 3D Printed Hexapod Robot
 
