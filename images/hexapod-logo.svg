@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   viewBox="0 0 1280 1280"
+   viewBox="0 0 1082.4707 1082.4707"
    version="1.1"
    id="svg19"
    sodipodi0:docname="hexapod-logo.svg"
@@ -8,8 +8,8 @@
    inkscape:export-filename="hexapod-logo.png"
    inkscape:export-xdpi="38.400002"
    inkscape:export-ydpi="38.400002"
-   width="1280"
-   height="1280"
+   width="1082.4707"
+   height="1082.4707"
    sodipodi:docname="hexapod-logo.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,9 +25,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.50878543"
-     inkscape:cx="825.49534"
-     inkscape:cy="864.80464"
+     inkscape:zoom="1.0175709"
+     inkscape:cx="547.38203"
+     inkscape:cy="424.54046"
      inkscape:window-width="3840"
      inkscape:window-height="2054"
      inkscape:window-x="-11"
@@ -51,11 +51,12 @@
      id="bg"
      x="0"
      y="0"
-     width="1280"
-     height="1280"
+     width="1082.4707"
+     height="1082.4707"
      rx="192"
      ry="192"
-     fill="#ffffff" />
+     fill="#ffffff"
+     style="stroke-width:1" />
   <!-- ═══════════════════════════════════════════
        LEGS  (3 left, 3 right) drawn first so body sits on top
        Each leg: upper segment + lower segment + foot dot
@@ -86,339 +87,415 @@
        JOINT DOTS where legs meet body
        ═══════════════════════════════════════════ -->
   <g
-     id="g35"
-     transform="rotate(30,640,640)">
+     id="g1"
+     transform="rotate(-33.461603,859.22583,669.788)">
     <g
-       id="legs"
-       stroke-linecap="round"
-       stroke-linejoin="round">
-      <!-- ── RIGHT SIDE ── -->
-      <!-- R-Top leg  (upper-right, ~40° from horizontal) -->
+       id="g2"
+       transform="rotate(-38.658359,984.76362,530.17218)">
       <line
-         x1="807"
-         y1="510"
-         x2="950"
-         y2="370"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line1" />
-      <line
-         x1="950"
-         y1="370"
-         x2="1060"
-         y2="295"
+         x1="1043.4679"
+         y1="561.17316"
+         x2="1176.2307"
+         y2="551.22125"
          stroke="#1565c0"
          stroke-width="44"
-         id="line2" />
+         id="line2"
+         style="stroke-linecap:round;stroke-linejoin:round" />
       <circle
-         cx="1065"
-         cy="291"
+         cx="1299.2562"
+         cy="-114.74374"
          r="34"
          fill="#19b5ff"
-         id="circle2" />
-      <!-- R-Mid leg  (right, horizontal) -->
-      <line
-         x1="848"
-         y1="640"
-         x2="1010"
-         y2="640"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line3" />
-      <line
-         x1="1010"
-         y1="640"
-         x2="1130"
-         y2="590"
-         stroke="#1565c0"
-         stroke-width="44"
-         id="line4" />
-      <circle
-         cx="1138"
-         cy="587"
-         r="34"
-         fill="#19b5ff"
-         id="circle4" />
-      <!-- R-Bot leg  (lower-right, ~40° below horizontal) -->
-      <line
-         x1="807"
-         y1="770"
-         x2="950"
-         y2="910"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line5" />
-      <line
-         x1="950"
-         y1="910"
-         x2="1060"
-         y2="985"
-         stroke="#1565c0"
-         stroke-width="44"
-         id="line6" />
-      <circle
-         cx="1065"
-         cy="989"
-         r="34"
-         fill="#19b5ff"
-         id="circle6" />
-      <!-- ── LEFT SIDE ── -->
-      <!-- L-Top leg -->
-      <line
-         x1="473"
-         y1="510"
-         x2="330"
-         y2="370"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line7" />
-      <line
-         x1="330"
-         y1="370"
-         x2="220"
-         y2="295"
-         stroke="#1565c0"
-         stroke-width="44"
-         id="line8" />
-      <circle
-         cx="215"
-         cy="291"
-         r="34"
-         fill="#19b5ff"
-         id="circle8" />
-      <!-- L-Mid leg -->
-      <line
-         x1="432"
-         y1="640"
-         x2="270"
-         y2="640"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line9" />
-      <line
-         x1="270"
-         y1="640"
-         x2="150"
-         y2="590"
-         stroke="#1565c0"
-         stroke-width="44"
-         id="line10" />
-      <circle
-         cx="142"
-         cy="587"
-         r="34"
-         fill="#19b5ff"
-         id="circle10" />
-      <!-- L-Bot leg -->
-      <line
-         x1="473"
-         y1="770"
-         x2="330"
-         y2="910"
-         stroke="#0d47a1"
-         stroke-width="56"
-         id="line11" />
-      <line
-         x1="330"
-         y1="910"
-         x2="220"
-         y2="985"
-         stroke="#1565c0"
-         stroke-width="44"
-         id="line12" />
-      <circle
-         cx="215"
-         cy="989"
-         r="34"
-         fill="#19b5ff"
-         id="circle12" />
+         id="circle2"
+         transform="rotate(30)"
+         style="stroke-linecap:round;stroke-linejoin:round" />
     </g>
-    <circle
-       id="body-shadow"
-       cx="640"
-       cy="648"
-       r="222"
-       fill="#0a3a7a"
-       opacity="0.35" />
-    <circle
-       id="body-main"
-       cx="640"
-       cy="640"
-       r="222"
-       fill="#0f5fab" />
-    <circle
-       cx="640"
-       cy="640"
-       r="168"
-       fill="#ffffff"
-       id="circle13" />
-    <circle
-       cx="640"
-       cy="640"
-       r="152"
-       fill="#e3f2fd"
-       id="circle14" />
-    <circle
-       id="body-core"
-       cx="640"
-       cy="640"
-       r="108"
-       fill="#7b1fa2" />
+  </g>
+  <g
+     id="g4"
+     transform="rotate(81.15669,1056.5158,658.026)">
     <line
-       x1="540"
-       y1="618"
-       x2="740"
-       y2="618"
-       stroke="#ce93d8"
-       stroke-width="14"
-       stroke-linecap="round"
-       id="line14" />
+       x1="960.42938"
+       y1="825"
+       x2="1089.3524"
+       y2="841.69873"
+       stroke="#1565c0"
+       stroke-width="44"
+       id="line4"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+    <circle
+       cx="1372.2562"
+       cy="181.25626"
+       r="34"
+       fill="#19b5ff"
+       id="circle4"
+       transform="rotate(30)"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+  </g>
+  <g
+     id="g11"
+     transform="rotate(70.809223,860.55775,927.06534)">
     <line
-       x1="540"
-       y1="640"
-       x2="740"
-       y2="640"
-       stroke="#ce93d8"
-       stroke-width="14"
-       stroke-linecap="round"
-       id="line15" />
+       x1="773.4679"
+       y1="1028.8269"
+       x2="831.23065"
+       y2="1148.7788"
+       stroke="#1565c0"
+       stroke-width="44"
+       id="line6"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+    <circle
+       cx="1299.2562"
+       cy="583.25629"
+       r="34"
+       fill="#19b5ff"
+       id="circle6"
+       transform="rotate(30)"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+  </g>
+  <g
+     id="g3"
+     transform="rotate(94.122771,519.38189,166.38991)">
     <line
-       x1="540"
-       y1="662"
-       x2="740"
-       y2="662"
-       stroke="#ce93d8"
-       stroke-width="14"
-       stroke-linecap="round"
-       id="line16" />
-    <rect
-       id="sensor-base"
-       x="580"
-       y="398"
-       width="120"
-       height="30"
-       rx="15"
-       ry="15"
-       fill="#0d47a1" />
+       x1="506.53214"
+       y1="251.17314"
+       x2="448.76932"
+       y2="131.22124"
+       stroke="#1565c0"
+       stroke-width="44"
+       id="line8"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="640"
-       cy="410"
-       r="22"
-       fill="#ff4081"
-       id="circle16" />
+       cx="449.25626"
+       cy="-114.74374"
+       r="34"
+       fill="#19b5ff"
+       id="circle8"
+       transform="rotate(30)"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+  </g>
+  <g
+     id="g7"
+     transform="rotate(-58.520751,153.92412,390.79593)">
+    <line
+       x1="319.57059"
+       y1="455"
+       x2="240.64755"
+       y2="351.69873"
+       stroke="#1565c0"
+       stroke-width="44"
+       id="line10"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="640"
-       cy="410"
-       r="12"
-       fill="#ff80ab"
-       id="circle17" />
+       cx="376.25626"
+       cy="181.25626"
+       r="34"
+       fill="#19b5ff"
+       id="circle10"
+       transform="rotate(30)"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+  </g>
+  <g
+     id="g9"
+     transform="rotate(-55.381485,34.742791,727.35998)">
+    <line
+       x1="236.53212"
+       y1="718.82684"
+       x2="103.76933"
+       y2="728.77875"
+       stroke="#1565c0"
+       stroke-width="44"
+       id="line12"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="576"
-       cy="472"
-       r="18"
-       fill="#00e676"
-       id="circle18" />
+       cx="449.25626"
+       cy="583.25629"
+       r="34"
+       fill="#19b5ff"
+       id="circle12"
+       transform="rotate(30)"
+       style="stroke-linecap:round;stroke-linejoin:round" />
+  </g>
+  <circle
+     id="body-shadow"
+     cx="739.34125"
+     cy="206.10588"
+     r="222"
+     fill="#0a3a7a"
+     opacity="0.35"
+     transform="rotate(30)" />
+  <circle
+     id="body-main"
+     cx="739.34125"
+     cy="198.10588"
+     r="222"
+     fill="#0f5fab"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="198.10588"
+     r="168"
+     fill="#ffffff"
+     id="circle13"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="198.10588"
+     r="152"
+     fill="#e3f2fd"
+     id="circle14"
+     transform="rotate(30)" />
+  <circle
+     id="body-core"
+     cx="739.34125"
+     cy="198.10588"
+     r="108"
+     fill="#7b1fa2"
+     transform="rotate(30)" />
+  <line
+     x1="465.63281"
+     y1="472.1828"
+     x2="638.83789"
+     y2="572.1828"
+     stroke="#ce93d8"
+     stroke-width="14"
+     stroke-linecap="round"
+     id="line14" />
+  <line
+     x1="443.63281"
+     y1="510.2879"
+     x2="616.83789"
+     y2="610.2879"
+     stroke="#ce93d8"
+     stroke-width="14"
+     stroke-linecap="round"
+     id="line16" />
+  <rect
+     id="sensor-base"
+     x="679.34125"
+     y="-43.894112"
+     width="120"
+     height="30"
+     rx="15"
+     ry="15"
+     fill="#0d47a1"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="-31.894112"
+     r="22"
+     fill="#ff4081"
+     id="circle16"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="-31.894112"
+     r="12"
+     fill="#ff80ab"
+     id="circle17"
+     transform="rotate(30)" />
+  <circle
+     cx="675.34125"
+     cy="30.105886"
+     r="18"
+     fill="#00e676"
+     id="circle18"
+     transform="rotate(30)" />
+  <circle
+     cx="675.34125"
+     cy="30.105886"
+     r="9"
+     fill="#b9f6ca"
+     id="circle19"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="13.105889"
+     r="18"
+     fill="#ffea00"
+     id="circle20"
+     transform="rotate(30)" />
+  <circle
+     cx="739.34125"
+     cy="13.105889"
+     r="9"
+     fill="#fff9c4"
+     id="circle21"
+     transform="rotate(30)" />
+  <circle
+     cx="803.34125"
+     cy="30.105886"
+     r="18"
+     fill="#00e5ff"
+     id="circle22"
+     transform="rotate(30)" />
+  <circle
+     cx="803.34125"
+     cy="30.105886"
+     r="9"
+     fill="#e0f7fa"
+     id="circle23"
+     transform="rotate(30)" />
+  <g
+     id="g13"
+     transform="translate(-108.96521,-123.43006)">
+    <line
+       x1="849.62622"
+       y1="610.91669"
+       x2="1043.4679"
+       y2="561.17316"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line1"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="576"
-       cy="472"
-       r="9"
-       fill="#b9f6ca"
-       id="circle19" />
-    <circle
-       cx="640"
-       cy="455"
-       r="18"
-       fill="#ffea00"
-       id="circle20" />
-    <circle
-       cx="640"
-       cy="455"
-       r="9"
-       fill="#fff9c4"
-       id="circle21" />
-    <circle
-       cx="704"
-       cy="472"
-       r="18"
-       fill="#00e5ff"
-       id="circle22" />
-    <circle
-       cx="704"
-       cy="472"
-       r="9"
-       fill="#e0f7fa"
-       id="circle23" />
-    <circle
-       cx="807"
-       cy="510"
+       cx="1041.2562"
+       cy="104.25626"
        r="38"
        fill="#1976d2"
-       id="circle24" />
+       id="circle24"
+       transform="rotate(30)" />
     <circle
-       cx="807"
-       cy="510"
+       cx="1041.2562"
+       cy="104.25626"
        r="20"
        fill="#64b5f6"
-       id="circle25" />
+       id="circle25"
+       transform="rotate(30)" />
+  </g>
+  <g
+     id="g5"
+     transform="rotate(-48.516546,656.46687,799.71488)">
+    <line
+       x1="820.1333"
+       y1="744"
+       x2="960.42938"
+       y2="825"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line3"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="848"
-       cy="640"
+       cx="1082.2562"
+       cy="234.25626"
        r="38"
        fill="#1976d2"
-       id="circle26" />
+       id="circle26"
+       transform="rotate(30)" />
     <circle
-       cx="848"
-       cy="640"
+       cx="1082.2562"
+       cy="234.25626"
        r="20"
        fill="#64b5f6"
-       id="circle27" />
+       id="circle27"
+       transform="rotate(30)" />
+  </g>
+  <g
+     id="g10"
+     transform="rotate(-32.371773,495.28954,1018.3925)">
+    <line
+       x1="719.62622"
+       y1="836.08331"
+       x2="773.4679"
+       y2="1028.8269"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line5"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="807"
-       cy="770"
+       cx="1041.2562"
+       cy="364.25626"
        r="38"
        fill="#1976d2"
-       id="circle28" />
+       id="circle28"
+       transform="rotate(30)" />
     <circle
-       cx="807"
-       cy="770"
+       cx="1041.2562"
+       cy="364.25626"
        r="20"
        fill="#64b5f6"
-       id="circle29" />
+       id="circle29"
+       transform="rotate(30)" />
+  </g>
+  <g
+     id="g12"
+     transform="translate(-70.790259,-103.69513)">
+    <line
+       x1="560.37378"
+       y1="443.91669"
+       x2="506.53214"
+       y2="251.17314"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line7"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="473"
-       cy="510"
+       cx="707.25629"
+       cy="104.25626"
        r="38"
        fill="#1976d2"
-       id="circle30" />
+       id="circle30"
+       transform="rotate(30)" />
     <circle
-       cx="473"
-       cy="510"
+       cx="707.25629"
+       cy="104.25626"
        r="20"
        fill="#64b5f6"
-       id="circle31" />
+       id="circle31"
+       transform="rotate(30)" />
+  </g>
+  <g
+     id="g6"
+     transform="rotate(33.717928,591.0744,328.7811)">
+    <line
+       x1="459.86673"
+       y1="536"
+       x2="319.57059"
+       y2="455"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line9"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="432"
-       cy="640"
+       cx="666.25629"
+       cy="234.25626"
        r="38"
        fill="#1976d2"
-       id="circle32" />
+       id="circle32"
+       transform="rotate(30)" />
     <circle
-       cx="432"
-       cy="640"
+       cx="666.25629"
+       cy="234.25626"
        r="20"
        fill="#64b5f6"
-       id="circle33" />
+       id="circle33"
+       transform="rotate(30)" />
+  </g>
+  <g
+     id="g8"
+     transform="rotate(24.366616,565.48921,419.54619)">
+    <line
+       x1="430.37375"
+       y1="669.08331"
+       x2="236.53212"
+       y2="718.82684"
+       stroke="#0d47a1"
+       stroke-width="56"
+       id="line11"
+       style="stroke-linecap:round;stroke-linejoin:round" />
     <circle
-       cx="473"
-       cy="770"
+       cx="707.25629"
+       cy="364.25626"
        r="38"
        fill="#1976d2"
-       id="circle34" />
+       id="circle34"
+       transform="rotate(30)" />
     <circle
-       cx="473"
-       cy="770"
+       cx="707.25629"
+       cy="364.25626"
        r="20"
        fill="#64b5f6"
-       id="circle35" />
+       id="circle35"
+       transform="rotate(30)" />
   </g>
 </svg>
