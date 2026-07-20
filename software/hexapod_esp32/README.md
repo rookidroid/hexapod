@@ -5,6 +5,8 @@ Arduino-based firmware for the ESP32-powered hexapod robot controller. Supports 
 ## Features
 
 - **WiFi Control**: Access Point mode with UDP command interface
+- **Web Calibration Interface**: Browser-based UI to adjust and save servo offsets to EEPROM
+- **Binary UDP Protocol**: Fast and efficient binary packet structure for motion control
 - **18-Servo Control**: Dual PCA9685 PWM drivers (I2C) for coordinated leg movement
 - **OTA Updates**: Wireless firmware updates over WiFi
 - **Motion Library**: Pre-programmed gaits and movements
@@ -26,6 +28,8 @@ Install these libraries through Arduino Library Manager:
 | Adafruit_PWMServoDriver | PCA9685 control | [Arduino Library](https://docs.arduino.cc/libraries/adafruit-pwm-servo-driver-library/) |
 | AsyncUDP | Non-blocking UDP | Included with arduino-esp32 |
 | ArduinoOTA | OTA updates | Included with arduino-esp32 |
+| EEPROM | Calibration storage | Included with arduino-esp32 |
+| WebServer | Calibration UI | Included with arduino-esp32 |
 
 ## Quick Start
 
@@ -43,10 +47,6 @@ Edit `config.h` to match your hardware:
 // Servo pin mappings
 static int left_legs[3][3] = {{1, 2, 3}, {5, 6, 7}, {9, 8, 10}};
 static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
-
-// Calibration offsets (adjust to compensate for mechanical assembly)
-static int left_offset_ticks[3][3] = {{-10, 0, 0}, {5, -5, 0}, {5, 15, 0}};
-static int right_offset_ticks[3][3] = {{5, -10, 0}, {0, 0, 5}, {15, 0, 5}};
 
 // WiFi credentials
 #define APSSID "hexapod"
@@ -67,30 +67,54 @@ static int right_offset_ticks[3][3] = {{5, -10, 0}, {0, 0, 5}, {15, 0, 5}};
 2. Robot will automatically perform boot sequence when client connects
 3. Send UDP commands to `192.168.4.1:1234`
 
+## How to Calibrate
+
+The firmware includes a web-based calibration interface to easily adjust servo offsets without recompiling code. These offsets are saved directly to the ESP32's EEPROM.
+
+![Calibration Interface](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/mochi/images/calibration_page.jpg)
+
+### Calibration Steps:
+
+1. Power on the hexapod and connect your device to its WiFi network (`hexapod`).
+2. Open a web browser and navigate to `http://192.168.4.1/`.
+3. Click the **Enter Calibration Mode** button. The robot will move to its neutral calibration posture.
+4. Use the `+` and `-` buttons for each joint on the web interface to fine-tune the positions.
+   - The goal is to align the legs such that the coxa (shoulder) is parallel to the body, the femur (thigh) is horizontal, and the tibia (calf) is vertical.
+   - Adjust the offsets until all legs are perfectly aligned and the robot stands evenly.
+5. Once satisfied with the posture, click **Save Offsets**. This will permanently save the calibration values to the EEPROM.
+
+*Note: You no longer need to manually edit offsets in `config.h`. If you wish to backup your offsets, the web interface will print the configured arrays to the Serial Monitor when you click save.*
+
 ## UDP Command Reference
 
-Send ASCII commands via UDP to control the robot. Commands should be wrapped with `:` delimiters (e.g., `:walk0:`):
+Send a 6-byte binary structure (little-endian) to control the robot over UDP:
+- **Byte 0**: Magic number (`0xA5`)
+- **Byte 1**: Command ID (see enum below)
+- **Bytes 2-5**: Sequence number (32-bit unsigned integer)
 
-| Command | Description |
-|---------|-------------|
-| `:standby:` | Stop and hold position |
-| `:walk0:` | Walk forward |
-| `:walk180:` | Walk backward |
-| `:walkr45:` / `:walkr90:` / `:walkr135:` | Walk right (45°/90°/135°) |
-| `:walkl45:` / `:walkl90:` / `:walkl135:` | Walk left (45°/90°/135°) |
-| `:fastforward:` / `:fastbackward:` | Fast walk |
-| `:turnleft:` / `:turnright:` | Rotate in place |
-| `:climbforward:` / `:climbbackward:` | Climbing gait |
-| `:rotatex:` / `:rotatey:` / `:rotatez:` | Body rotation (pitch/roll/yaw) |
-| `:twist:` | Body twist motion |
+| Command ID | Action |
+|------------|--------|
+| 0 | Standby |
+| 1 | Walk forward |
+| 2 | Walk backward |
+| 3-5 | Walk right (45°/90°/135°) |
+| 6-8 | Walk left (45°/90°/135°) |
+| 9-10 | Fast walk (forward/backward) |
+| 11-12 | Rotate in place (left/right) |
+| 13-14 | Climbing gait (forward/backward) |
+| 15-17 | Body rotation (pitch/roll/yaw) |
+| 18 | Body twist motion |
 
-### Example (Python)
+#### Example (Python)
 
 ```python
 import socket
+import struct
 
+# 0xA5 (magic), 1 (Walk forward), 0 (sequence)
+packet = struct.pack("<BB I", 0xA5, 1, 0)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.sendto(b":walk0:", ("192.168.4.1", 1234))
+sock.sendto(packet, ("192.168.4.1", 1234))
 ```
 
 ## OTA Updates

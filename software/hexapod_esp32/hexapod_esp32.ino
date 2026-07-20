@@ -55,6 +55,36 @@
 /** Motion Path LUT */
 #include "motion.h"
 
+enum RobotCommand : uint8_t {
+  CMD_STANDBY = 0,
+  CMD_WALK_0 = 1,
+  CMD_WALK_180 = 2,
+  CMD_WALK_R45 = 3,
+  CMD_WALK_R90 = 4,
+  CMD_WALK_R135 = 5,
+  CMD_WALK_L45 = 6,
+  CMD_WALK_L90 = 7,
+  CMD_WALK_L135 = 8,
+  CMD_FAST_FORWARD = 9,
+  CMD_FAST_BACKWARD = 10,
+  CMD_TURN_LEFT = 11,
+  CMD_TURN_RIGHT = 12,
+  CMD_CLIMB_FORWARD = 13,
+  CMD_CLIMB_BACKWARD = 14,
+  CMD_ROTATE_X = 15,
+  CMD_ROTATE_Y = 16,
+  CMD_ROTATE_Z = 17,
+  CMD_TWIST = 18
+};
+
+#pragma pack(push, 1)
+struct UdpControlPacket {
+  uint8_t magic;      // 0xA5
+  RobotCommand cmd;
+  uint32_t seq_num;
+};
+#pragma pack(pop)
+
 /**
  * @brief Unified motion configuration structure
  *
@@ -159,6 +189,8 @@ bool boot_sequence_executed = false; // Boot sequence completion flag
 volatile bool trigger_boot_sequence =
     false;                     // Boot trigger from WiFi event (volatile for ISR)
 bool calibration_mode = false; // Calibration mode flag
+
+unsigned long last_udp_packet_time = 0; // Tracks last UDP packet for failsafe
 
 // Forward declarations
 void parseCommand(char *data, size_t length);
@@ -274,6 +306,8 @@ void setup()
       Serial.println();
       // reply to the client
       packet.printf("Got %u bytes of data", packet.length());
+      // Update failsafe timestamp
+      last_udp_packet_time = millis();
       // Parse command from packet
       parseCommand((char*)packet.data(), packet.length()); });
   }
@@ -327,6 +361,11 @@ void loop()
 
   if (!calibration_mode)
   {
+    // Safety failsafe: if no UDP packet received for >500ms, go to standby
+    if (last_udp_packet_time > 0 && (millis() - last_udp_packet_time > 500)) {
+      next_motion_idx = CMD_STANDBY;
+    }
+
     // Execute motion based on next_motion_idx
     exec_motion(motion_config[next_motion_idx].length,
                 motion_config[next_motion_idx].lut);
@@ -1004,6 +1043,18 @@ void parseCommand(char *data, size_t length)
   if (length == 0)
     return;
 
+  // Check for binary struct packet
+  if (length == sizeof(UdpControlPacket)) {
+    UdpControlPacket* packet = (UdpControlPacket*)data;
+    if (packet->magic == 0xA5) {
+      if (packet->cmd < sizeof(motion_config) / sizeof(motion_config[0])) {
+        next_motion_idx = packet->cmd;
+        return;
+      }
+    }
+  }
+
+  // Fallback to legacy string parsing
   // Command buffer with space for null terminator
   char command[32] = {0};
   size_t cmd_len = 0;
