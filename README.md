@@ -1,12 +1,8 @@
-# <img src="./images/hexapod-logo.svg" alt="logo" width="64"/> Hexapod
+# <img src="./images/hexapod-logo.svg" alt="logo" width="128"/> Hexapod
 
 A 3D Printed Hexapod Robot
 
-**It is strongly recommended to start with Hexapod v2 rather than building Hexapod v1. Our experience has shown that MG90S servos used in Hexapod v1 frequently fail due to their inherent weaknesses and inconsistencies in quality.**
-
-<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="300"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="300"/>
-
-<img src="./images/hexapod_lego_1.jpg" alt="hexapod_photo" width="300"/><img src="./images/hexapod_lego_2.jpg" alt="hexapod_photo" width="300"/>
+<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="400"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="400"/>
 
 ## Introduction
 
@@ -105,11 +101,11 @@ _Refer to the fully assembled robot images for correct joint orientations_
 
 ![joint_assembly](./images/assembly_joint.gif)
 
-| Filename     | Thumbnail                                                             | Required # | Note |
-| ------------ | --------------------------------------------------------------------- | ---------- | ---- |
-| joint_bottom | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="400"/> | 12         |      |
-| joint_cross  | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>   | 6          |      |
-| joint_top    | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12         |      |
+| Filename     | Thumbnail                                                             | Required # |
+| ------------ | --------------------------------------------------------------------- | ---------- |
+| joint_bottom | <img src="./images/joint_bottom.jpg" alt="joint_bottom" width="400"/> | 12         |
+| joint_cross  | <img src="./images/joint_cross.jpg" alt="joint_cross" width="400"/>   | 6          |
+| joint_top    | <img src="./images/joint_top.jpg" alt="joint_top" width="400"/>       | 12         |
 
 #### Step 1.3: Leg Components (x6)
 
@@ -138,12 +134,12 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 ![foot_assembly](./images/assembly_foot.gif)
 
-| Filename    | Thumbnail                                                           | Required # | Note |
-| ----------- | ------------------------------------------------------------------- | ---------- | ---- |
-| foot_bottom | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="400"/> | 6          |      |
-| foot_top    | <img src="./images/foot_top.jpg" alt="foot_top" width="400"/>       | 6          |      |
-| foot_ground | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/> | 6          |      |
-| foot_tip    | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>       | 6          |      |
+| Filename    | Thumbnail                                                           | Required # | Note                        |
+| ----------- | ------------------------------------------------------------------- | ---------- | --------------------------- |
+| foot_bottom | <img src="./images/foot_bottom.jpg" alt="foot_bottom" width="400"/> | 6          |                             |
+| foot_top    | <img src="./images/foot_top.jpg" alt="foot_top" width="400"/>       | 6          |                             |
+| foot_ground | <img src="./images/foot_ground.jpg" alt="foot_ground" width="400"/> | 6          |                             |
+| foot_tip    | <img src="./images/foot_tip.jpg" alt="foot_tip" width="400"/>       | 6          | Recommend to print with TPU |
 
 ### Step 2: Hardware Components
 
