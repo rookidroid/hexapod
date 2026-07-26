@@ -165,7 +165,7 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 ### Step-by-Step Installation
 
-#### Option 1: ESP32 Setup
+#### ESP32 Setup
 
 1. **Install Arduino IDE** from [arduino.cc](https://www.arduino.cc/en/software)
 
@@ -214,29 +214,6 @@ _Refer to the fully assembled robot images for correct foot orientations_
    - Click Upload button
    - Open Serial Monitor (115200 baud) to see the WiFi AP IP address (default: 192.168.4.1)
 
-#### Option 2: Raspberry Pi Pico Setup
-
-1. **Install Arduino IDE and Arduino-Pico Core**:
-   - Install [Arduino IDE](https://www.arduino.cc/en/software)
-   - Follow [arduino-pico installation guide](https://github.com/earlephilhower/arduino-pico)
-   - Add board manager URL: `https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json`
-
-2. **Configure Board Settings**:
-   - Board: "Raspberry Pi Pico W" (or "Raspberry Pi Pico 2W")
-   - **Flash Size: Must select option with "FS: 1MB"** (e.g., "2MB (Sketch: 1MB, FS: 1MB)")
-   - Upload Method: "Default (UF2)"
-
-3. **Open and Configure Code**:
-   - Open `./software/hexapod_pico/hexapod_pico.ino`
-   - Edit `config.h` for WiFi credentials (default: SSID="hexapod", password="hexapod_1234")
-   - Configure servo pin mappings and calibration offsets as needed
-
-4. **Upload Firmware**:
-   - Hold BOOTSEL button while connecting Pico via USB
-   - Release button when Pico appears as mass storage device
-   - Select the Pico board and upload through Arduino IDE
-   - Robot will perform boot-up sequence after upload
-
 ### Project File Structure
 
 **ESP32 Version** (`./software/hexapod_esp32/`):
@@ -245,14 +222,6 @@ _Refer to the fully assembled robot images for correct foot orientations_
 - `config.h`: WiFi credentials, servo pin mappings, and calibration offsets
 - `motion.h`: Pre-generated motion look-up tables for smooth walking
 - `README.md`: ESP32-specific documentation
-
-**Pico Version** (`./software/hexapod_pico/`):
-
-- `hexapod_pico.ino`: Main sketch optimized for RP2040
-- `config.h`: Configuration settings
-- `motion.h`: Motion look-up tables
-- `PicoPWM.cpp/h`: Custom PWM library for precise servo control
-- `README.md`: Pico-specific documentation
 
 **Path Tool** (`./software/path_tool/`):
 
@@ -269,7 +238,7 @@ _Refer to the fully assembled robot images for correct foot orientations_
    - SSID: `hexapod` (default)
    - Password: `hexapod_1234` (default)
    - The hexapod creates its own Access Point
-3. **Default IP**: `192.168.4.1` (for both ESP32 and Pico)
+3. **Default IP**: `192.168.4.1`
 4. **UDP Port**: `1234`
 
 #### Sending UDP Commands
@@ -302,7 +271,7 @@ sock.sendto(b":walk0:", ("192.168.4.1", 1234))
 
 ### Over-The-Air (OTA) Updates
 
-Both ESP32 and Pico support wireless firmware updates:
+ESP32 supports wireless firmware updates:
 
 1. **Power on** the robot and **connect** to its WiFi network
 2. In Arduino IDE, go to **Tools → Port → Network Ports**
@@ -312,7 +281,6 @@ Both ESP32 and Pico support wireless firmware updates:
 **Important Notes:**
 
 - For ESP32: OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
-- For Pico: Ensure Flash Size includes "FS: 1MB" in board settings for OTA to work.
 
 ### Troubleshooting
 
@@ -344,7 +312,6 @@ Both ESP32 and Pico support wireless firmware updates:
 - For ESP32: OTA only works before the first motion command - reboot to re-enable
 - Ensure you're connected to the hexapod's WiFi network
 - Check firewall settings on your computer
-- For Pico: Verify Flash Size setting includes "FS: 1MB"
 
 ### Android App
 
