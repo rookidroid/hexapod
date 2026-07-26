@@ -6,7 +6,7 @@ A 3D Printed Hexapod Robot
 
 ## Introduction
 
-This agile, 3D-printed hexapod robot is designed to work with either a Raspberry Pi PICO or an ESP32, providing flexibility and enhanced performance. Equipped with stronger and faster 21G servos, it offers a range of advanced features, including:
+This agile, 3D-printed hexapod robot is designed to work with an ESP32, providing flexibility and enhanced performance. Equipped with stronger 25kg servos, it offers a range of advanced features, including:
 
 - **Robust, durable structure**: 3D-printed parts designed for strength and easy assembly
 - **WiFi-enabled remote control**: Control your hexapod wirelessly from your smartphone or computer
