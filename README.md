@@ -29,21 +29,17 @@ This project will guide you through building a fully functional hexapod robot wi
 
 | Name                 | Thumbnail                                                                                                                                                    | Required # | Specifications | Note                                                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="300"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="300"/> | 1          | ESP32 or Raspberry Pi Pico W/2W | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) or [RPi Pico version](https://rookidroid.com/product/hexapod-controller-board-pico/). |
-| MG92B Servo            | <img src="./images/mg92b.jpg" alt="mg92b" width="200"/>                                                                                          | 18         | 180° rotation | Ensure all servos are from the same batch for consistency                                                                                                                                                  |
+| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="300"/> | 1          | ESP32 | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) |
+| 25kg Servo            | <img src="./images/25kg_servo.jpg" alt="25kg_servo" width="200"/>                                                                                          | 18         | 180° rotation | Ensure all servos are from the same batch for consistency                                                                                                                                                  |
 | Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          | SPST, 6mm diameter |                                                                                                                                                                               |
-| 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 2          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                                                                                               |
-| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          | 2-cell holder with wire leads |                                                                                                                                                                               |
+| 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 4          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                                                                                               |
+| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          | 4-cell holder with wire leads |                                                                                                                                                                               |
 
 ### Connection Diagram
 
 #### ESP32
 
 ![diagram_esp32](./images/pcb_diagram_esp32.jpg)
-
-#### Respberry Pi Pico W/2W
-
-![diagram_pico](./images/pcb_diagram_pico.jpg)
 
 ## Assembly Instructions
 
@@ -166,7 +162,6 @@ _Refer to the fully assembled robot images for correct foot orientations_
 - **Required Libraries** (install via Arduino Library Manager):
   - ESP32: `Adafruit_PWMServoDriver` (for PCA9685 control)
   - ESP32: `AsyncUDP` and `ArduinoOTA` (included with arduino-esp32)
-  - Pico: No additional libraries needed (uses custom PicoPWM)
 
 ### Step-by-Step Installation
 
