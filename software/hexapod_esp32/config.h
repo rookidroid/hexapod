@@ -41,6 +41,15 @@
 
 #define DELAY_MS 12  // Servo delay
 
+/** Real-time pose streaming */
+// Control cycle period while streaming poses (ms). 20 ms -> 50 Hz.
+#define REALTIME_PERIOD_MS 20
+// Drop out of real-time mode if no packet arrives within this window (ms).
+#define REALTIME_TIMEOUT_MS 1000
+// Default per-joint slew limit, in ticks per control cycle. Caps how fast a
+// streamed pose can be chased so a large jump cannot slam the servos.
+#define REALTIME_DEFAULT_MAX_STEP 8
+
 // Servo connections to the PCA9685 driver
 // {{leg1_join1, leg1_join2, leg1_join3},
 //  {leg2_join1, leg2_join2, leg2_join3},

@@ -87,7 +87,20 @@ The firmware includes a web-based calibration interface to easily adjust servo o
 
 ## UDP Command Reference
 
-Send a 6-byte binary structure (little-endian) to control the robot over UDP:
+Three binary packet types share port 1234. The **first byte selects the
+protocol**, so the firmware dispatches on the magic number before it checks the
+length (the motion and session packets are both 6 bytes).
+
+| Magic | Packet | Size | Purpose |
+|-------|--------|------|---------|
+| `0xA5` | Motion command | 6 B | Play one of the built-in gait LUTs |
+| `0xA6` | Real-time pose | 44 B | Stream raw servo positions for all 18 joints |
+| `0xA7` | Session control | 6 B | Enter/leave real-time mode, relax, keep-alive |
+
+All packets are little-endian and unpadded (`#pragma pack(1)`).
+
+### Motion command (`0xA5`)
+
 - **Byte 0**: Magic number (`0xA5`)
 - **Byte 1**: Command ID (see enum below)
 - **Bytes 2-5**: Sequence number (32-bit unsigned integer)
@@ -116,6 +129,73 @@ packet = struct.pack("<BB I", 0xA5, 1, 0)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto(packet, ("192.168.4.1", 1234))
 ```
+
+### Real-time pose (`0xA6`)
+
+Streams servo positions directly, bypassing the motion LUTs. Used by the
+[hexapod-robot-simulator](https://github.com/rookidroid/hexapod-robot-simulator)
+to drive the robot live, from a single joint up to a whole-body pose.
+
+| Offset | Type | Field | Notes |
+|--------|------|-------|-------|
+| 0 | `uint8` | magic | `0xA6` |
+| 1 | `uint8` | flags | bit 0: snap immediately instead of obeying the slew limit |
+| 2 | `uint16` | max_step | Per-joint slew limit in ticks per 20 ms cycle (0 = default, 8) |
+| 4 | `uint32` | seq_num | Sequence number |
+| 8 | `int16[6][3]` | ticks | Servo ticks, leg-major |
+
+Leg order matches the motion LUTs: right front, right middle, right back, left
+front, left middle, left back. Joint order is coxa, femur, tibia. Ticks use the
+same scale as the LUTs (`SERVOMIN` 102 … `SERVOMAX` 512, mid 307) and are
+clamped to that range on arrival, then clamped again after the calibration
+offset is applied.
+
+Receiving a pose packet implicitly enters real-time mode from the standby
+posture. Each control cycle every joint moves toward its target by at most
+`max_step` ticks, so a large jump becomes a controlled slew rather than a step
+input to 18 servos at once.
+
+**Failsafe:** if no packet arrives for 1 s the robot eases back to standby at
+the slew limit and returns to LUT control. Send a keep-alive (below) while idle.
+
+### Session control (`0xA7`)
+
+| Offset | Type | Field |
+|--------|------|-------|
+| 0 | `uint8` | magic (`0xA7`) |
+| 1 | `uint8` | action |
+| 2 | `uint32` | seq_num |
+
+| Action | Name | Effect |
+|--------|------|--------|
+| 0 | Exit | Leave real-time mode, resume LUT playback from standby |
+| 1 | Enter | Enter real-time mode, holding the standby posture |
+| 2 | Relax | Disable both PWM drivers so the servos go limp |
+| 3 | Ping | Keep-alive; resets the failsafe timer |
+
+Sending a motion command (`0xA5`) also leaves real-time mode, so the two control
+styles cannot fight over the servos.
+
+#### Example (Python)
+
+```python
+import socket
+import struct
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+addr = ("192.168.4.1", 1234)
+
+# Enter real-time mode
+sock.sendto(struct.pack("<BBI", 0xA7, 1, 0), addr)
+
+# Hold the standby posture (matches lut_standby)
+ticks = [307, 239, 273] * 3 + [307, 375, 341] * 3
+sock.sendto(struct.pack("<BBHI" + "h" * 18, 0xA6, 0, 8, 1, *ticks), addr)
+```
+
+> **Note:** unlike motion commands, pose packets are not echoed or logged to
+> serial. At 50 Hz the logging would saturate the serial port and stall the UDP
+> task.
 
 ## OTA Updates
 

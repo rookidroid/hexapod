@@ -77,13 +77,54 @@ enum RobotCommand : uint8_t {
   CMD_TWIST = 18
 };
 
+// Packet discriminators. The first byte of every binary packet selects the
+// protocol, so new packet types can be added without disturbing old clients.
+const uint8_t MAGIC_MOTION = 0xA5;  // Pre-programmed motion command (legacy)
+const uint8_t MAGIC_POSE = 0xA6;    // Real-time 18-servo pose
+const uint8_t MAGIC_SESSION = 0xA7; // Real-time session control
+
+// Actions carried by a session packet
+enum RealtimeAction : uint8_t {
+  RT_EXIT = 0,  // Leave real-time mode, hand back to the motion LUT engine
+  RT_ENTER = 1, // Enter real-time mode, holding the standby posture
+  RT_RELAX = 2, // Cut PWM drive so the servos go limp
+  RT_PING = 3   // No-op; keeps the failsafe timer alive while idle
+};
+
 #pragma pack(push, 1)
 struct UdpControlPacket {
   uint8_t magic;      // 0xA5
   RobotCommand cmd;
   uint32_t seq_num;
 };
+
+// Real-time pose: raw servo ticks for all 18 joints.
+// Leg order matches the motion LUTs: right front/middle/back, then left
+// front/middle/back. Joint order is coxa, femur, tibia.
+struct UdpPosePacket {
+  uint8_t magic;      // 0xA6
+  uint8_t flags;      // bit0: 1 = snap immediately, 0 = obey the slew limit
+  uint16_t max_step;  // Per-joint slew limit in ticks/cycle (0 = use default)
+  uint32_t seq_num;
+  int16_t ticks[6][3];
+};
+
+struct UdpSessionPacket {
+  uint8_t magic;       // 0xA7
+  RealtimeAction action;
+  uint32_t seq_num;
+};
 #pragma pack(pop)
+
+// Bit values for UdpPosePacket::flags
+const uint8_t POSE_FLAG_SNAP = 0x01;
+
+// Wire-format guarantees the host-side client depends on. Note that the motion
+// and session packets are the same length, so parseCommand() must dispatch on
+// the magic byte before it looks at the length.
+static_assert(sizeof(UdpControlPacket) == 6, "control packet must be 6 bytes");
+static_assert(sizeof(UdpPosePacket) == 44, "pose packet must be 44 bytes");
+static_assert(sizeof(UdpSessionPacket) == 6, "session packet must be 6 bytes");
 
 /**
  * @brief Unified motion configuration structure
@@ -192,12 +233,37 @@ bool calibration_mode = false; // Calibration mode flag
 
 unsigned long last_udp_packet_time = 0; // Tracks last UDP packet for failsafe
 
+// ----------------------------------------------------------------------------
+// Real-time pose streaming state
+// ----------------------------------------------------------------------------
+// Pose packets are parsed inside the AsyncUDP task while the main loop drives
+// the servos, so every shared field below is written under `realtime_mux`.
+// Without it a pose could be torn across two packets, which would show up as a
+// violent servo jump.
+portMUX_TYPE realtime_mux = portMUX_INITIALIZER_UNLOCKED;
+
+// These mirror the motion LUT element type (int) so poses can be copied to and
+// from the LUTs directly. The wire format is int16_t and is widened on receipt.
+bool realtime_mode = false;              // Streaming poses instead of LUTs
+int realtime_target[6][3];               // Latest commanded pose (ticks)
+int realtime_current[6][3];              // Pose actually written to the servos
+uint16_t realtime_max_step = REALTIME_DEFAULT_MAX_STEP; // Slew limit
+bool realtime_snap = false;              // Skip the slew limit for one cycle
+bool realtime_returning = false;         // Easing back to standby after a dropout
+unsigned long realtime_last_packet_time = 0;
+
 // Forward declarations
 void parseCommand(char *data, size_t length);
 void setAllServos(int positions[][3]);
 void WiFiEvent(arduino_event_id_t event);
 void loadOffsetsFromEEPROM();
 void saveOffsetsToEEPROM();
+void enterRealtimeMode();
+void exitRealtimeMode();
+void serviceRealtimePose();
+void setPwmEnabled(bool enabled);
+void copyPose(int src[6][3], int dst[6][3]);
+bool posesEqual(int a[6][3], int b[6][3]);
 
 /**
    @brief Initialize system: WiFi AP, OTA, PWM drivers, and UDP server.
@@ -286,26 +352,33 @@ void setup()
     // Register callback for incoming UDP packets
     udp_socket.onPacket([](AsyncUDPPacket packet)
                         {
-      // Log packet details for debugging
-      Serial.print("UDP Packet Type: ");
-      Serial.print(packet.isBroadcast()   ? "Broadcast"
-                   : packet.isMulticast() ? "Multicast"
-                                          : "Unicast");
-      Serial.print(", From: ");
-      Serial.print(packet.remoteIP());
-      Serial.print(":");
-      Serial.print(packet.remotePort());
-      Serial.print(", To: ");
-      Serial.print(packet.localIP());
-      Serial.print(":");
-      Serial.print(packet.localPort());
-      Serial.print(", Length: ");
-      Serial.print(packet.length());
-      Serial.print(", Data: ");
-      Serial.write(packet.data(), packet.length());
-      Serial.println();
-      // reply to the client
-      packet.printf("Got %u bytes of data", packet.length());
+      // Pose packets arrive at the control rate (50 Hz). Logging and echoing
+      // each one would saturate the serial port and stall the UDP task, so
+      // chatter is limited to the low-rate packet types.
+      const bool is_stream = packet.length() > 0 && packet.data()[0] == MAGIC_POSE;
+
+      if (!is_stream)
+      {
+        // Log packet details for debugging
+        Serial.print("UDP Packet Type: ");
+        Serial.print(packet.isBroadcast()   ? "Broadcast"
+                     : packet.isMulticast() ? "Multicast"
+                                            : "Unicast");
+        Serial.print(", From: ");
+        Serial.print(packet.remoteIP());
+        Serial.print(":");
+        Serial.print(packet.remotePort());
+        Serial.print(", To: ");
+        Serial.print(packet.localIP());
+        Serial.print(":");
+        Serial.print(packet.localPort());
+        Serial.print(", Length: ");
+        Serial.print(packet.length());
+        Serial.println();
+        // reply to the client
+        packet.printf("Got %u bytes of data", packet.length());
+      }
+
       // Update failsafe timestamp
       last_udp_packet_time = millis();
       // Parse command from packet
@@ -356,6 +429,36 @@ void loop()
       ArduinoOTA.handle();
       delay(10);
     }
+    return;
+  }
+
+  // Real-time streaming takes priority over the LUT engine. exec_motion()
+  // blocks for a whole gait cycle, which would add seconds of latency, so the
+  // streaming path returns early and never reaches it.
+  if (realtime_mode && !calibration_mode)
+  {
+    if (!realtime_returning &&
+        (millis() - realtime_last_packet_time > REALTIME_TIMEOUT_MS))
+    {
+      // Stream dropped. Ease back to standby rather than freezing mid-pose or
+      // snapping, then hand control back to the motion LUT engine.
+      Serial.println("Real-time stream lost, returning to standby");
+      realtime_returning = true;
+      portENTER_CRITICAL(&realtime_mux);
+      copyPose(lut_standby[0], realtime_target);
+      realtime_snap = false;
+      portEXIT_CRITICAL(&realtime_mux);
+    }
+
+    serviceRealtimePose();
+
+    if (realtime_returning && posesEqual(realtime_current, lut_standby[0]))
+    {
+      exitRealtimeMode();
+    }
+
+    web_server.handleClient();
+    delay(REALTIME_PERIOD_MS);
     return;
   }
 
@@ -1025,12 +1128,159 @@ void setAllServos(int positions[][3])
   {
     for (int joint_idx = 0; joint_idx < 3; joint_idx++)
     {
+      // Clamp after adding the calibration offset. LUT values are in range by
+      // construction, but streamed poses are not, and an out-of-range tick
+      // drives the servo into its mechanical stop where it stalls and heats.
       right_pwm.setPWM(right_legs[leg_idx][joint_idx], 0,
-                       positions[leg_idx][joint_idx] + right_offset_ticks[leg_idx][joint_idx]);
+                       constrain(positions[leg_idx][joint_idx] +
+                                     right_offset_ticks[leg_idx][joint_idx],
+                                 SERVOMIN, SERVOMAX));
       left_pwm.setPWM(left_legs[leg_idx][joint_idx], 0,
-                      positions[leg_idx + 3][joint_idx] + left_offset_ticks[leg_idx][joint_idx]);
+                      constrain(positions[leg_idx + 3][joint_idx] +
+                                    left_offset_ticks[leg_idx][joint_idx],
+                                SERVOMIN, SERVOMAX));
     }
   }
+}
+
+/**
+   @brief Copy a 6x3 pose.
+*/
+void copyPose(int src[6][3], int dst[6][3])
+{
+  for (int leg_idx = 0; leg_idx < 6; leg_idx++)
+  {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++)
+    {
+      dst[leg_idx][joint_idx] = src[leg_idx][joint_idx];
+    }
+  }
+}
+
+/**
+   @brief Compare two 6x3 poses for exact equality.
+*/
+bool posesEqual(int a[6][3], int b[6][3])
+{
+  for (int leg_idx = 0; leg_idx < 6; leg_idx++)
+  {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++)
+    {
+      if (a[leg_idx][joint_idx] != b[leg_idx][joint_idx])
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+/**
+   @brief Enable or disable both PWM drivers (enable pins are active LOW).
+*/
+void setPwmEnabled(bool enabled)
+{
+  digitalWrite(LEFT_PWM_ENABLE_PIN, enabled ? LOW : HIGH);
+  digitalWrite(RIGHT_PWM_ENABLE_PIN, enabled ? LOW : HIGH);
+}
+
+/**
+   @brief Enter real-time pose streaming mode.
+
+   Seeds the working pose from standby so the first streamed pose is reached by
+   a rate-limited slew from a known posture instead of an unpredictable jump.
+*/
+void enterRealtimeMode()
+{
+  if (realtime_mode)
+  {
+    return;
+  }
+
+  setPwmEnabled(true);
+
+  portENTER_CRITICAL(&realtime_mux);
+  copyPose(lut_standby[0], realtime_current);
+  copyPose(lut_standby[0], realtime_target);
+  realtime_snap = false;
+  realtime_returning = false;
+  realtime_mode = true;
+  portEXIT_CRITICAL(&realtime_mux);
+
+  realtime_last_packet_time = millis();
+
+  // The streaming loop must not be delayed by OTA polling.
+  ota_mode = false;
+
+  Serial.println("Entered real-time mode");
+}
+
+/**
+   @brief Leave real-time mode and hand control back to the motion LUT engine.
+*/
+void exitRealtimeMode()
+{
+  if (!realtime_mode)
+  {
+    return;
+  }
+
+  portENTER_CRITICAL(&realtime_mux);
+  realtime_mode = false;
+  realtime_returning = false;
+  portEXIT_CRITICAL(&realtime_mux);
+
+  // The LUT engine resumes from standby, which is the posture we eased into.
+  current_motion_idx = CMD_STANDBY;
+  next_motion_idx = CMD_STANDBY;
+  last_udp_packet_time = millis();
+
+  Serial.println("Exited real-time mode");
+}
+
+/**
+   @brief Advance the streamed pose by one control cycle and drive the servos.
+
+   Each joint moves toward its target by at most `realtime_max_step` ticks, so
+   a large jump in the commanded pose becomes a controlled slew rather than a
+   step input to 18 servos at once.
+*/
+void serviceRealtimePose()
+{
+  int target[6][3];
+  uint16_t step;
+  bool snap;
+
+  portENTER_CRITICAL(&realtime_mux);
+  copyPose(realtime_target, target);
+  step = realtime_max_step;
+  snap = realtime_snap;
+  realtime_snap = false; // One-shot
+  portEXIT_CRITICAL(&realtime_mux);
+
+  if (step == 0)
+  {
+    step = REALTIME_DEFAULT_MAX_STEP;
+  }
+
+  for (int leg_idx = 0; leg_idx < 6; leg_idx++)
+  {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++)
+    {
+      int diff = target[leg_idx][joint_idx] - realtime_current[leg_idx][joint_idx];
+
+      if (snap || abs(diff) <= (int)step)
+      {
+        realtime_current[leg_idx][joint_idx] = target[leg_idx][joint_idx];
+      }
+      else
+      {
+        realtime_current[leg_idx][joint_idx] += (diff > 0) ? (int)step : -(int)step;
+      }
+    }
+  }
+
+  setAllServos(realtime_current);
 }
 
 /**
@@ -1043,15 +1293,77 @@ void parseCommand(char *data, size_t length)
   if (length == 0)
     return;
 
-  // Check for binary struct packet
-  if (length == sizeof(UdpControlPacket)) {
+  // Binary packets are selected by their first byte, then validated by length.
+  const uint8_t magic = (uint8_t)data[0];
+
+  // Pre-programmed motion command
+  if (magic == MAGIC_MOTION && length == sizeof(UdpControlPacket)) {
     UdpControlPacket* packet = (UdpControlPacket*)data;
-    if (packet->magic == 0xA5) {
-      if (packet->cmd < sizeof(motion_config) / sizeof(motion_config[0])) {
-        next_motion_idx = packet->cmd;
-        return;
+    if (packet->cmd < sizeof(motion_config) / sizeof(motion_config[0])) {
+      // A motion command implies the operator wants LUT playback, not streaming.
+      exitRealtimeMode();
+      next_motion_idx = packet->cmd;
+    }
+    return;
+  }
+
+  // Real-time pose
+  if (magic == MAGIC_POSE && length == sizeof(UdpPosePacket)) {
+    UdpPosePacket* packet = (UdpPosePacket*)data;
+
+    // A pose arriving while idle implicitly opens a streaming session.
+    if (!realtime_mode) {
+      enterRealtimeMode();
+    }
+
+    portENTER_CRITICAL(&realtime_mux);
+    for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
+      for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+        realtime_target[leg_idx][joint_idx] =
+            constrain((int)packet->ticks[leg_idx][joint_idx], SERVOMIN, SERVOMAX);
       }
     }
+    if (packet->max_step > 0) {
+      realtime_max_step = packet->max_step;
+    }
+    if (packet->flags & POSE_FLAG_SNAP) {
+      realtime_snap = true;
+    }
+    // A fresh pose cancels an in-progress return to standby.
+    realtime_returning = false;
+    portEXIT_CRITICAL(&realtime_mux);
+
+    realtime_last_packet_time = millis();
+    return;
+  }
+
+  // Real-time session control
+  if (magic == MAGIC_SESSION && length == sizeof(UdpSessionPacket)) {
+    UdpSessionPacket* packet = (UdpSessionPacket*)data;
+
+    switch (packet->action) {
+    case RT_ENTER:
+      enterRealtimeMode();
+      break;
+    case RT_EXIT:
+      exitRealtimeMode();
+      break;
+    case RT_RELAX:
+      // Drop PWM drive so the servos go limp. Recovering requires an explicit
+      // re-entry, which re-enables the drivers from the standby posture.
+      exitRealtimeMode();
+      setPwmEnabled(false);
+      Serial.println("Servos relaxed");
+      break;
+    case RT_PING:
+      realtime_last_packet_time = millis();
+      break;
+    default:
+      Serial.print("Unknown session action: ");
+      Serial.println(packet->action);
+      break;
+    }
+    return;
   }
 
   // Fallback to legacy string parsing
