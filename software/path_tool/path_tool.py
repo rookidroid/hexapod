@@ -473,46 +473,42 @@ def gen_standup_path(standby_coordinate, laydown_coordinate, steps=28):
     z_offset = radius * np.sin(angle)
     x_offset = radius * np.cos(angle) - radius
 
-    r_leg2_offset = np.zeros((adjust_leg_size, 3))
-    r_leg2_offset[:, 0] = x_offset
-    r_leg2_offset[:, 2] = z_offset
+    center_offset = np.zeros((adjust_leg_size, 3))
+    center_offset[:, 0] = x_offset
+    center_offset[:, 2] = z_offset
 
-    r_leg1_offset = path_rotate_z(r_leg2_offset, 45)
-    r_leg3_offset = path_rotate_z(r_leg2_offset, -45)
+    # `center_offset` is the reposition arc for the centre-right leg, which lies
+    # along +x; every other leg needs the same arc turned into its own radial
+    # direction. The azimuth is read off the standby stance rather than
+    # hardcoded: these used to be spelled 45 / -45 / 135 / 180 / -135, which is
+    # right only for a body whose corner legs sit on the diagonals
+    # (legMountX[0] == legMountY[0]). Both robots have
+    # legMountY[0] == legMountX[0] * tan(60deg), putting the corners at 60deg,
+    # and the 15deg misaim landed every corner foot 9.4mm (mochi) to 13.5mm
+    # (macaroon) away from its standby spot -- 12 servo ticks of coxia, which
+    # the legs then snapped across the first time anything was commanded after
+    # the boot sequence. Same stale-45deg assumption gen_turn_path carried.
+    #
+    # The magnitude is shared rather than derived per leg, which is exact here:
+    # gen_posture extends every leg from its own mount by the same distance, so
+    # laydown and standby differ by the same radial travel on all six.
+    azimuths = np.degrees(
+        np.arctan2(standby_coordinate[:, 1], standby_coordinate[:, 0])
+    )
+    leg_offset = np.array(
+        [np.asarray(path_rotate_z(center_offset, azimuth)) for azimuth in azimuths]
+    )
 
-    l_leg1_offset = path_rotate_z(r_leg2_offset, 135)
-    l_leg2_offset = path_rotate_z(r_leg2_offset, 180)
-    l_leg3_offset = path_rotate_z(r_leg2_offset, -135)
-
-    for idx in range(0, adjust_leg_size):
-        lut_standup[idx + lift_up_size, :, :] = lut_standup[lift_up_size - 1, :, :]
-        lut_standup[idx + lift_up_size, 3, :] = (
-            lut_standup[idx + lift_up_size, 3, :] + l_leg1_offset[idx, :]
-        )
-        lut_standup[idx + lift_up_size, 1, :] = (
-            lut_standup[idx + lift_up_size, 1, :] + r_leg2_offset[idx, :]
-        )
-        lut_standup[idx + lift_up_size, 5, :] = (
-            lut_standup[idx + lift_up_size, 5, :] + l_leg3_offset[idx, :]
-        )
-
-    for idx in range(0, adjust_leg_size):
-        lut_standup[idx + lift_up_size + adjust_leg_size, :, :] = lut_standup[
-            lift_up_size + adjust_leg_size - 1, :, :
-        ]
-
-        lut_standup[idx + lift_up_size + adjust_leg_size, 0, :] = (
-            lut_standup[idx + lift_up_size + adjust_leg_size, 0, :]
-            + r_leg1_offset[idx, :]
-        )
-        lut_standup[idx + lift_up_size + adjust_leg_size, 4, :] = (
-            lut_standup[idx + lift_up_size + adjust_leg_size, 4, :]
-            + l_leg2_offset[idx, :]
-        )
-        lut_standup[idx + lift_up_size + adjust_leg_size, 2, :] = (
-            lut_standup[idx + lift_up_size + adjust_leg_size, 2, :]
-            + r_leg3_offset[idx, :]
-        )
+    # The two tripods reposition in turn, each holding still while the other
+    # moves, so a tripod's run starts from the pose the previous one left.
+    start = lift_up_size
+    for tripod in ((3, 1, 5), (0, 4, 2)):
+        base = lut_standup[start - 1, :, :].copy()
+        for idx in range(0, adjust_leg_size):
+            lut_standup[start + idx, :, :] = base
+            for leg_id in tripod:
+                lut_standup[start + idx, leg_id, :] += leg_offset[leg_id, idx, :]
+        start += adjust_leg_size
 
     return lut_standup
 
