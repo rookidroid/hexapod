@@ -212,15 +212,27 @@ After initial USB upload, use OTA for wireless updates:
 
 ```text
 hexapod_esp32/
-├── hexapod_esp32.ino    # Main firmware (WiFi, OTA, motion control)
+├── hexapod_esp32.ino    # setup() / loop() and the shared system state
+├── motion_control.ino   # PWM drivers, LUT playback, every write to a servo
+├── realtime.ino         # Real-time pose streaming and its slew limiter
+├── network.ino          # WiFi AP, OTA, UDP endpoint and packet parsing
+├── calibration.ino      # Servo offsets loaded from / saved to EEPROM
+├── web_ui.ino           # HTTP routes for the calibration interface
+├── hexapod.h            # Shared state and module interfaces
+├── protocol.h           # UDP packet layouts and magic numbers
+├── web_page.h           # Calibration page served from flash
 ├── config.h             # Hardware config, pin mappings, calibration
 ├── motion.h             # Motion lookup tables (generated from path_tool)
 └── README.md            # This file
 ```
 
+The `.ino` files are Arduino sketch tabs: the build concatenates them into one
+translation unit, so the `static` tables in `config.h` and `motion.h` exist once
+and every module sees the same calibration offsets.
+
 ## Configuration Parameters
 
-Key constants in `hexapod_esp32.ino`:
+Key constants in `config.h`:
 
 ```cpp
 // Servo timing
