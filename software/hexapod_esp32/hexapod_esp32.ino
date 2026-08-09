@@ -1317,10 +1317,20 @@ void parseCommand(char *data, size_t length)
     }
 
     portENTER_CRITICAL(&realtime_mux);
-    for (int leg_idx = 0; leg_idx < 6; leg_idx++) {
+    for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
+        // Streamed poses are uncalibrated, so bound each joint to the window
+        // that lands inside [SERVOMIN, SERVOMAX] once setAllServos() adds its
+        // offset. Clamping against the raw range instead would cost the joint
+        // |offset| ticks of travel at one end.
+        const int right_offset = right_offset_ticks[leg_idx][joint_idx];
+        const int left_offset = left_offset_ticks[leg_idx][joint_idx];
         realtime_target[leg_idx][joint_idx] =
-            constrain((int)packet->ticks[leg_idx][joint_idx], SERVOMIN, SERVOMAX);
+            constrain((int)packet->ticks[leg_idx][joint_idx],
+                      SERVOMIN - right_offset, SERVOMAX - right_offset);
+        realtime_target[leg_idx + 3][joint_idx] =
+            constrain((int)packet->ticks[leg_idx + 3][joint_idx],
+                      SERVOMIN - left_offset, SERVOMAX - left_offset);
       }
     }
     if (packet->max_step > 0) {

@@ -146,9 +146,11 @@ to drive the robot live, from a single joint up to a whole-body pose.
 
 Leg order matches the motion LUTs: right front, right middle, right back, left
 front, left middle, left back. Joint order is coxa, femur, tibia. Ticks use the
-same scale as the LUTs (`SERVOMIN` 102 … `SERVOMAX` 512, mid 307) and are
-clamped to that range on arrival, then clamped again after the calibration
-offset is applied.
+same scale as the LUTs (`SERVOMIN` 102 … `SERVOMAX` 512, mid 307), before
+calibration: the saved per-joint offset is added on the robot, exactly as it is
+for LUT playback. Ticks are clamped on arrival to the window that stays within
+`SERVOMIN`…`SERVOMAX` after that offset, so calibration never costs a joint any
+travel.
 
 Receiving a pose packet implicitly enters real-time mode from the standby
 posture. Each control cycle every joint moves toward its target by at most
