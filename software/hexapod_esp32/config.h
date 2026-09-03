@@ -93,7 +93,7 @@ const uint16_t EEPROM_ADDR_RIGHT = 20;  // Address for right offsets (after 18 b
 
 /** WiFi Configurations */
 #ifndef APSSID
-#define APSSID "hexapod"
+#define APSSID "hexapod_nougat"
 #define APPSK "hexapod_1234"
 #endif
 
