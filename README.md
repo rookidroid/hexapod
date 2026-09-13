@@ -29,7 +29,7 @@ This project will guide you through building a fully functional hexapod robot wi
 
 | Name                 | Thumbnail                                                                                                                                    | Required # | Specifications                    | Note                                                                                                                                                                          |
 | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controller Board     | <img src="./images/controller_1.jpg" alt="controller_board" width="300"/> <img src="./images/controller_2.jpg" alt="controller_board_esp32" width="300"/> | 1          | ESP32 or Raspberry Pi Pico W/2W   | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) or [RPi Pico version](https://rookidroid.com/product/hexapod-controller-board-pico/). |
+| Controller Board     | <img src="./images/controller_2.jpg" alt="controller_board" width="300"/>  | 1          | ESP32   | Purchase [Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/). |
 | 21G Servo            | <img src="./images/21g.jpg" alt="21g_servo" width="200"/>                                                                                    | 18         | 180° rotation, digital            | Ensure all servos are from the same batch for consistency                                                                                                                     |
 | Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                    | 1          | SPST, 6mm diameter                |                                                                                                                                                                               |
 | 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                  | 2          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                                                        |
@@ -37,13 +37,7 @@ This project will guide you through building a fully functional hexapod robot wi
 
 ### Connection Diagram
 
-#### ESP32
-
-![diagram_esp32](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/mochi/images/pcb_diagram_esp32.jpg)
-
-#### Raspberry Pi Pico W/2W
-
-![diagram_pico](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/mochi/images/pcb_diagram_pico.jpg)
+![diagram_esp32](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/nougat/images/controller_connections.jpg)
 
 ## Assembly Instructions
 
