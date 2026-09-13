@@ -25,7 +25,7 @@ Install these libraries through Arduino Library Manager:
 | Library | Purpose | Link |
 |---------|---------|------|
 | arduino-esp32 | ESP32 board support | [GitHub](https://github.com/espressif/arduino-esp32) |
-| Adafruit_PWMServoDriver | PCA9685 control | [Arduino Library](https://docs.arduino.cc/libraries/adafruit-pwm-servo-driver-library/) |
+| Adafruit_PWMServoDriver | PCA9685 control | [GitHub](https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library) |
 | AsyncUDP | Non-blocking UDP | Included with arduino-esp32 |
 | ArduinoOTA | OTA updates | Included with arduino-esp32 |
 | EEPROM | Calibration storage | Included with arduino-esp32 |
@@ -71,7 +71,7 @@ static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
 
 The firmware includes a web-based calibration interface to easily adjust servo offsets without recompiling code. These offsets are saved directly to the ESP32's EEPROM.
 
-![Calibration Interface](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/mochi/images/calibration_page.jpg)
+![Calibration Interface](../../images/calibration_page.jpg)
 
 ### Calibration Steps:
 
