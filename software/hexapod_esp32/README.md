@@ -25,7 +25,7 @@ Install these libraries through Arduino Library Manager:
 | Library | Purpose | Link |
 |---------|---------|------|
 | arduino-esp32 | ESP32 board support | [GitHub](https://github.com/espressif/arduino-esp32) |
-| Adafruit_PWMServoDriver | PCA9685 control | [Arduino Library](https://docs.arduino.cc/libraries/adafruit-pwm-servo-driver-library/) |
+| Adafruit_PWMServoDriver | PCA9685 control | [GitHub](https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library) |
 | AsyncUDP | Non-blocking UDP | Included with arduino-esp32 |
 | ArduinoOTA | OTA updates | Included with arduino-esp32 |
 | EEPROM | Calibration storage | Included with arduino-esp32 |
@@ -45,11 +45,11 @@ Edit `config.h` to match your hardware:
 
 ```cpp
 // Servo pin mappings
-static int left_legs[3][3] = {{1, 2, 3}, {5, 6, 7}, {9, 8, 10}};
-static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
+static int left_legs[3][3] = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 8, 10 } };
+static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 
 // WiFi credentials
-#define APSSID "hexapod"
+#define APSSID "hexapod_macaroon"
 #define APPSK "hexapod_1234"
 ```
 
@@ -63,7 +63,7 @@ static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
 
 ### 4. Control the Robot
 
-1. Connect to WiFi network `hexapod` (password: `hexapod_1234`)
+1. Connect to WiFi network `hexapod_macaroon` (password: `hexapod_1234`)
 2. Robot will automatically perform boot sequence when client connects
 3. Send UDP commands to `192.168.4.1:1234`
 
@@ -71,11 +71,11 @@ static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
 
 The firmware includes a web-based calibration interface to easily adjust servo offsets without recompiling code. These offsets are saved directly to the ESP32's EEPROM.
 
-![Calibration Interface](https://raw.githubusercontent.com/rookidroid/hexapod/refs/heads/mochi/images/calibration_page.jpg)
+![Calibration Interface](../../images/calibration_page.jpg)
 
 ### Calibration Steps:
 
-1. Power on the hexapod and connect your device to its WiFi network (`hexapod`).
+1. Power on the hexapod and connect your device to its WiFi network (`hexapod_macaroon`).
 2. Open a web browser and navigate to `http://192.168.4.1/`.
 3. Click the **Enter Calibration Mode** button. The robot will move to its neutral calibration posture.
 4. Use the `+` and `-` buttons for each joint on the web interface to fine-tune the positions.
@@ -204,7 +204,7 @@ sock.sendto(struct.pack("<BBHI" + "h" * 18, 0xA6, 0, 8, 1, *ticks), addr)
 After initial USB upload, use OTA for wireless updates:
 
 1. Power on robot and connect to its WiFi
-2. In Arduino IDE: **Tools → Port → Network Ports → hexapod**
+2. In Arduino IDE: **Tools → Port → Network Ports**, then select the ESP32
 3. Upload as normal
 4. Note: OTA is disabled after first motion command (reboot to re-enable)
 
@@ -270,12 +270,12 @@ const uint8_t RIGHT_PWM_ENABLE_PIN = 26;     // Right driver enable (active LOW)
 
 ## Adding Custom Motions
 
-1. Generate motion LUT using `path_tool` (see `../path_tool/`)
+1. Generate motion LUT using `path_tool` (see [`../path_tool/`](../path_tool/))
 2. Add LUT arrays to `motion.h`
-3. Add command mapping to `motion_config[]` in `hexapod_esp32.ino`:
+3. Add command mapping to `motion_config[]` in `motion_control.ino`:
 
 ```cpp
-static const MotionConfig motion_config[] = {
+const MotionConfig motion_config[] = {
   // ... existing motions ...
   { "mymotion", lut_mymotion_length, lut_mymotion }
 };

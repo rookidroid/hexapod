@@ -2,7 +2,7 @@
 
 A 3D Printed Hexapod Robot
 
-<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="400"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="400"/>
+<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="600"/>
 
 ## Introduction
 
@@ -12,6 +12,7 @@ This agile, 3D-printed hexapod robot is designed to work with an ESP32, providin
 - **WiFi-enabled remote control**: Control your hexapod wirelessly from your smartphone or computer
 - **Smooth, agile movement**: Advanced motion algorithms for natural walking patterns
 - **Web-based calibration interface**: Easy servo calibration through your browser with real-time adjustment
+- **Real-time pose streaming**: Drive all 18 servos live from a computer over UDP
 - **Over-the-air (OTA) firmware updates**: Update firmware without cables for easy maintenance
 
 ### What You'll Build
@@ -27,17 +28,15 @@ This project will guide you through building a fully functional hexapod robot wi
 
 ### Electronics Components
 
-| Name                 | Thumbnail                                                                                                                                                    | Required # | Specifications | Note                                                                                                                                                                          |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="300"/> | 1          | ESP32 | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) |
-| 25kg Servo            | <img src="./images/25kg_servo.jpg" alt="25kg_servo" width="200"/>                                                                                          | 18         | 180° rotation | Ensure all servos are from the same batch for consistency                                                                                                                                                  |
-| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          | SPST, 6mm diameter |                                                                                                                                                                               |
-| 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 4          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                                                                                               |
-| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          | 4-cell holder with wire leads |                                                                                                                                                                               |
+| Name                 | Thumbnail                                                                     | Required # | Specifications                    | Note                                                                                                                                             |
+| -------------------- | ----------------------------------------------------------------------------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_board" width="300"/> | 1          | ESP32                             | Purchase [Controller Board](https://rookidroid.com/product/hexapod-controller-board-esp32/).                                                     |
+| 25kg Servo           | <img src="./images/25kg_servo.jpg" alt="25kg_servo" width="200"/>             | 18         | 180° rotation                     | Ensure all servos are from the same batch for consistency                                                                                        |
+| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                     | 1          | SPST, 6mm diameter                |                                                                                                                                                  |
+| 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                   | 4          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                           |
+| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="battery_holder" width="300"/>     | 1          | 4-cell (2S2P) holder with wire leads | A 3D-printable holder is available [here](./3d%20print/battery_holder/18650%20battery%20holder%202S2P.stl)                                    |
 
 ### Connection Diagram
-
-#### ESP32
 
 ![diagram_esp32](./images/pcb_diagram_esp32.jpg)
 
@@ -60,6 +59,8 @@ Follow these steps in order for the best results:
 
 ### Step 1: 3D-Printed Parts
 
+All STL files are located in the [`3d print`](./3d%20print/) folder. Ready-to-print Bambu Studio projects (`bambu_studio_*.3mf`) are included as well.
+
 **Print Settings Recommendations:**
 
 - Layer height: 0.2mm
@@ -77,14 +78,14 @@ Follow these steps in order for the best results:
 
 ![body_assembly](./images/assembly_body.gif)
 
-| Filename         | Thumbnail                                                                     | Required # |
-| ---------------- | ----------------------------------------------------------------------------- | ---------- |
-| body_base        | <img src="./images/body_base.jpg" alt="body_base" width="400"/>               | 1          |
-| body_side        | <img src="./images/body_side.jpg" alt="body_side" width="400"/>               | 6          |
-| body_top         | <img src="./images/body_top.jpg" alt="body_top" width="400"/>                 | 1          |
-| body_head   | <img src="./images/body_head.jpg" alt="body_head" width="400"/>     | 1          |
-| body_battery_top     | <img src="./images/body_battery.jpg" alt="body_battery_top" width="400"/>         | 1          |
-| body_servo_side | <img src="./images/body_servo_side.jpg" alt="body_servo_side" width="400"/> | 12          |
+| Filename        | Thumbnail                                                                   | Required # |
+| --------------- | --------------------------------------------------------------------------- | ---------- |
+| body_base       | <img src="./images/body_base.jpg" alt="body_base" width="400"/>             | 1          |
+| body_side       | <img src="./images/body_side.jpg" alt="body_side" width="400"/>             | 6          |
+| body_top        | <img src="./images/body_top.jpg" alt="body_top" width="400"/>               | 1          |
+| body_head       | <img src="./images/body_head.jpg" alt="body_head" width="400"/>             | 1          |
+| body_battery    | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>       | 1          |
+| body_servo_side | <img src="./images/body_servo_side.jpg" alt="body_servo_side" width="400"/> | 12         |
 
 #### Step 1.2: Joint Components (x6 total: 3 standard + 3 mirrored)
 
@@ -141,13 +142,13 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 **Pro Tip:** Organize all hardware into labeled containers before assembly to save time!
 
-| Name      | Spec                                  | Required # | Usage                          |
-| --------- | ------------------------------------- | ---------- | ------------------------------ |
-| Screw     | M2 × 6mm hex socket                   | 36         | Servo mounting                 |
-| Screw     | M2 × 12mm countersunk                 | 180        | General assembly               |
-| Nuts      | M2 hex nut                            | 216        | Securing screws                |
-| Pin       | M4 × 6mm stainless steel (304)        | 18         | Joint pivots                   |
-| Bearing   | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18         | Smooth joint rotation          |
+| Name    | Spec                                  | Required # | Usage                 |
+| ------- | ------------------------------------- | ---------- | --------------------- |
+| Screw   | M2 × 6mm hex socket                   | 36         | Servo mounting        |
+| Screw   | M2 × 12mm countersunk                 | 180        | General assembly      |
+| Nuts    | M2 hex nut                            | 216        | Securing screws       |
+| Pin     | M4 × 6mm stainless steel (304)        | 18         | Joint pivots          |
+| Bearing | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18         | Smooth joint rotation |
 
 **Where to Buy:** These are standard metric hardware available from Amazon, AliExpress, or local hardware stores.
 
@@ -160,12 +161,10 @@ _Refer to the fully assembled robot images for correct foot orientations_
 - **Arduino IDE** (version 2.x recommended)
 - **USB cable** compatible with your controller board
 - **Required Libraries** (install via Arduino Library Manager):
-  - ESP32: `Adafruit_PWMServoDriver` (for PCA9685 control)
-  - ESP32: `AsyncUDP` and `ArduinoOTA` (included with arduino-esp32)
+  - `Adafruit_PWMServoDriver` (for PCA9685 control)
+  - `AsyncUDP`, `ArduinoOTA`, `EEPROM` and `WebServer` (included with arduino-esp32)
 
 ### Step-by-Step Installation
-
-#### ESP32 Setup
 
 1. **Install Arduino IDE** from [arduino.cc](https://www.arduino.cc/en/software)
 
@@ -191,22 +190,22 @@ _Refer to the fully assembled robot images for correct foot orientations_
    - Partition Scheme: "Default 4MB with spiffs"
 
 5. **Open and Configure Code**:
-   - Open `./software/hexapod_esp32/hexapod_esp32.ino`
-   - Edit `config.h` to set your WiFi credentials (default: SSID="hexapod", password="hexapod_1234"):
+   - Open [`./software/hexapod_esp32/hexapod_esp32.ino`](./software/hexapod_esp32/hexapod_esp32.ino)
+   - Edit [`config.h`](./software/hexapod_esp32/config.h) to set your WiFi credentials (default: SSID="hexapod_macaroon", password="hexapod_1234"):
 
      ```cpp
-     #define APSSID "hexapod"
+     #define APSSID "hexapod_macaroon"
      #define APPSK "hexapod_1234"
      ```
 
    - Configure servo pin mappings if using custom wiring:
 
      ```cpp
-     static int left_legs[3][3] = {{1, 2, 3}, {5, 6, 7}, {9, 8, 10}};
-     static int right_legs[3][3] = {{10, 9, 8}, {13, 14, 15}, {7, 6, 5}};
+     static int left_legs[3][3] = { { 1, 2, 3 }, { 5, 6, 7 }, { 9, 8, 10 } };
+     static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
      ```
 
-   - Adjust calibration offset values after assembly (see Calibration section)
+   - Calibration offsets are set through the web interface after assembly (see Calibration section)
 
 6. **Upload Firmware**:
    - Connect ESP32 via USB
@@ -216,18 +215,25 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 ### Project File Structure
 
-**ESP32 Version** (`./software/hexapod_esp32/`):
+**ESP32 Firmware** ([`./software/hexapod_esp32/`](./software/hexapod_esp32/)):
 
-- `hexapod_esp32.ino`: Main Arduino sketch with control logic
-- `config.h`: WiFi credentials, servo pin mappings, and calibration offsets
+- `hexapod_esp32.ino`: Main sketch with `setup()` / `loop()` and the shared system state
+- `motion_control.ino`: PWM drivers and motion look-up table playback
+- `realtime.ino`: Real-time pose streaming and its slew limiter
+- `network.ino`: WiFi AP, OTA, UDP endpoint and packet parsing
+- `calibration.ino`: Servo offsets loaded from / saved to EEPROM
+- `web_ui.ino` / `web_page.h`: Web calibration interface
+- `hexapod.h` / `protocol.h`: Shared state and UDP packet layouts
+- `config.h`: WiFi credentials, servo pin mappings, and hardware settings
 - `motion.h`: Pre-generated motion look-up tables for smooth walking
-- `README.md`: ESP32-specific documentation
+- [`README.md`](./software/hexapod_esp32/README.md): ESP32-specific documentation
 
-**Path Tool** (`./software/path_tool/`):
+**Path Tool** ([`./software/path_tool/`](./software/path_tool/)):
 
 - `path_tool.py`: Tool for generating custom walking patterns
 - `lut_generator.ipynb`: Jupyter notebook for motion path visualization
 - `path_lib.py`: Library for inverse kinematics calculations
+- `config.json`: Robot dimensions and gait parameters
 
 ### Control Interface
 
@@ -235,7 +241,7 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 1. **Power on the hexapod** - Connect batteries and turn on
 2. **Connect to WiFi** - Join the hexapod's WiFi network:
-   - SSID: `hexapod` (default)
+   - SSID: `hexapod_macaroon` (default)
    - Password: `hexapod_1234` (default)
    - The hexapod creates its own Access Point
 3. **Default IP**: `192.168.4.1`
@@ -243,7 +249,7 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 #### Sending UDP Commands
 
-The hexapod accepts motion commands via UDP packets on port 1234. Commands must be wrapped with `:` delimiters (e.g., `:walk0:`).
+The hexapod accepts motion commands via UDP packets on port 1234. Text commands must be wrapped with `:` delimiters (e.g., `:walk0:`).
 
 **Available Commands:**
 
@@ -267,20 +273,20 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto(b":walk0:", ("192.168.4.1", 1234))
 ```
 
+The firmware additionally supports a binary protocol for motion commands and real-time pose streaming of all 18 servos. See the [ESP32 UDP command reference](./software/hexapod_esp32/README.md#udp-command-reference) for details.
+
 **Boot Behavior:** The robot automatically performs a boot sequence (stands up) when a client connects to its WiFi network.
 
 ### Over-The-Air (OTA) Updates
 
-ESP32 supports wireless firmware updates:
+The ESP32 supports wireless firmware updates:
 
 1. **Power on** the robot and **connect** to its WiFi network
 2. In Arduino IDE, go to **Tools → Port → Network Ports**
 3. Select the hexapod from network ports
 4. Click **Upload** as normal
 
-**Important Notes:**
-
-- For ESP32: OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
+**Important Note:** OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
 
 ### Troubleshooting
 
@@ -289,27 +295,27 @@ ESP32 supports wireless firmware updates:
 - Check USB cable (must support data transfer)
 - Try different USB port
 - Ensure correct board and port selected
-- For ESP32: Hold BOOT button during upload
+- Hold BOOT button during upload
 
 **Servos not responding:**
 
 - Verify battery voltage (should be 7.4V nominal for 2S Li-ion setup)
 - Check all servo connections match the wiring diagram
-- For ESP32: Verify PCA9685 I2C addresses (default: 0x40 left, 0x41 right)
-- For ESP32: Check enable pins (GPIO 19 for left, GPIO 26 for right)
+- Verify PCA9685 I2C addresses (default: 0x40 left, 0x41 right)
+- Check enable pins (GPIO 19 for left, GPIO 26 for right)
 - Test individual servos using `posture_calibration()` function
 - Confirm servo pin mappings in `config.h` match your wiring
 
 **WiFi connection issues:**
 
-- Verify SSID and password in `config.h` (default: hexapod/hexapod_1234)
+- Verify SSID and password in `config.h` (default: hexapod_macaroon/hexapod_1234)
 - The hexapod creates an **Access Point** - connect to it, don't look for it on your router
 - Ensure your device supports 2.4GHz WiFi (5GHz not supported)
 - Default IP is always `192.168.4.1` when connected to the hexapod's AP
 
 **OTA not working:**
 
-- For ESP32: OTA only works before the first motion command - reboot to re-enable
+- OTA only works before the first motion command - reboot to re-enable
 - Ensure you're connected to the hexapod's WiFi network
 - Check firewall settings on your computer
 
@@ -332,7 +338,7 @@ The app provides an intuitive interface to:
 
 ### Desktop Control Software
 
-_Work in progress - Check repository for updates_
+The [hexapod-robot-simulator](https://github.com/rookidroid/hexapod-robot-simulator) can drive the robot live through the real-time pose streaming protocol.
 
 ## Calibration Guide
 
@@ -344,13 +350,13 @@ All servos should be at 90° (neutral position) when the legs are in the referen
 
 ### Calibration Procedure
 
-The hexapod now includes a **web-based calibration interface** that makes the calibration process much easier - no need to repeatedly edit code and re-upload firmware!
+The firmware includes a **web-based calibration interface** that makes the calibration process much easier - no need to repeatedly edit code and re-upload firmware!
 
 #### Step 1: Access the Calibration Interface
 
 1. **Upload Firmware**: Flash the code to your controller with default offset values
 2. **Power On**: Connect batteries and turn on the hexapod
-3. **Connect to WiFi**: Join the hexapod's WiFi network (default SSID: `hexapod`)
+3. **Connect to WiFi**: Join the hexapod's WiFi network (default SSID: `hexapod_macaroon`)
 4. **Open Browser**: Navigate to `http://192.168.4.1`
 
 ![Calibration Web Interface](./images/calibration_page.jpg)
