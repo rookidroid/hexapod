@@ -493,7 +493,7 @@ The app provides an intuitive interface to:
 
 ### Desktop Control Software
 
-The [hexapod-robot-simulator](https://github.com/rookidroid/hexapod-robot-simulator) can drive the ESP32 version live through the real-time pose streaming protocol.
+The [Hexapod Link](https://github.com/rookidroid/hexapod-link) can drive the ESP32 version live through the real-time pose streaming protocol.
 
 ## Calibration Guide
 
@@ -586,7 +586,7 @@ Send a walking command to verify smooth motion. If adjustments are needed, simpl
 
 | Project | What it is |
 | ------- | ---------- |
-| [hexapod-robot-simulator](https://github.com/rookidroid/hexapod-robot-simulator) | Simulator that can drive the ESP32 version live over the real-time pose protocol |
+| [Hexapod Link](https://github.com/rookidroid/hexapod-link) | Desktop application that drives the robot live over the real-time pose protocol |
 | [Hexapod Android app](https://play.google.com/store/apps/details?id=com.rookiedev.hexapod) | Phone controller for the built-in gaits |
 | [Hexapod Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/) | The ESP32 controller board this build is designed around |
 | [ESP32 firmware README](./software/hexapod_esp32/README.md) · [Pico firmware README](./software/hexapod_pico/README.md) | Firmware internals and the full UDP protocol reference |
