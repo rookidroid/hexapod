@@ -89,21 +89,15 @@ This project will guide you through building a fully functional hexapod robot wi
 
 | Name                 | Thumbnail                                                                                                                                                    | Required # | Specifications | Note                                                                                                                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_esp32" width="300"/> or <img src="./images/controller_pico.png" alt="controller_pico" width="300"/> | 1          | ESP32 or Raspberry Pi Pico W/2W | Purchase [ESP32 version](https://rookidroid.com/product/hexapod-controller-board-esp32/) or [RPi Pico version](https://rookidroid.com/product/hexapod-controller-board-pico/). |
+| Controller Board     | <img src="./images/controller_2.jpg" alt="controller_board" width="300"/>  | 1          | ESP32   | Purchase [Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/). |
 | MG92B Servo            | <img src="./images/mg92b.jpg" alt="mg92b" width="200"/>                                                                                          | 18         | 180° rotation | Ensure all servos are from the same batch for consistency                                                                                                                                                  |
-| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                                    | 1          | SPST, 6mm diameter |                                                                                                                                                                               |
+| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                                                                                    | 1          | SPST, 12mm diameter                |   Purchase together with the [Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/).                                                                                                                                                                             |
 | 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                                                                                                  | 2          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                                                                                               |
-| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="batter_holder" width="300"/>                                                                                     | 1          | 2-cell holder with wire leads |                                                                                                                                                                               |
+| 18650 Battery Holder | <img src="./images/battery_box.jpg" alt="battery_holder" width="300"/>                                                                       | 1          | 2-cell holder with wire leads     | A 3D-printable holder is available [here](https://rookidroid.com/product/18650-battery-holder/), or purchase together with the [Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/).                                     |
 
 ### Connection Diagram
 
-#### ESP32
-
-![diagram_esp32](./images/pcb_diagram_esp32.jpg)
-
-#### Respberry Pi Pico W/2W
-
-![diagram_pico](./images/pcb_diagram_pico.jpg)
+![diagram_esp32](./images/controller_connections.jpg)
 
 ## Assembly Instructions
 
@@ -592,7 +586,7 @@ Send a walking command to verify smooth motion. If adjustments are needed, simpl
 | ------- | ---------- |
 | [Hexapod Link](https://github.com/rookidroid/hexapod-link) | Desktop application that drives the robot live over the real-time pose protocol |
 | [Hexapod Android app](https://play.google.com/store/apps/details?id=com.rookiedev.hexapod) | Phone controller for the built-in gaits |
-| [Controller Board (ESP32)](https://rookidroid.com/product/hexapod-controller-board-esp32/) · [Controller Board (Pico)](https://rookidroid.com/product/hexapod-controller-board-pico/) | The two controller boards this build is designed around |
+| [Hexapod Controller Board](https://rookidroid.com/product/hexapod-controller-board-mochi-esp32/) | The ESP32 controller board this build is designed around |
 | [ESP32 firmware README](./software/hexapod_esp32/README.md) · [Pico firmware README](./software/hexapod_pico/README.md) | Firmware internals and the full UDP protocol reference |
 
 ## Contributing
