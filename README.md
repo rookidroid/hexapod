@@ -88,6 +88,7 @@ All STL files are located in the [`3d print`](./3d%20print/) folder. Ready-to-pr
 | body_head       | <img src="./images/body_head.jpg" alt="body_head" width="400"/>             | 1          |
 | body_battery    | <img src="./images/body_battery.jpg" alt="body_battery" width="400"/>       | 1          |
 | body_servo_side | <img src="./images/body_servo_side.jpg" alt="body_servo_side" width="400"/> | 12         |
+| fence           | <img src="./images/fence.jpg" alt="fence" width="400"/>                     | 1 (optional) |
 
 #### Step 1.2: Joint Components (x6 total: 3 standard + 3 mirrored)
 
@@ -251,31 +252,70 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 #### Sending UDP Commands
 
-The hexapod accepts motion commands via UDP packets on port 1234. Text commands must be wrapped with `:` delimiters (e.g., `:walk0:`).
+The hexapod listens on UDP port `1234`. Three binary packet types share that port, and the **first byte selects the protocol** — the firmware dispatches on the magic number before it checks the length (the motion and session packets are both 6 bytes). All packets are little-endian and unpadded.
 
-**Available Commands:**
+| Magic  | Packet          | Size | Purpose                                       |
+| ------ | --------------- | ---- | --------------------------------------------- |
+| `0xA5` | Motion command  | 6 B  | Play one of the built-in gait look-up tables   |
+| `0xA6` | Real-time pose  | 44 B | Stream raw servo positions for all 18 joints   |
+| `0xA7` | Session control | 6 B  | Enter/leave real-time mode, relax, keep-alive  |
 
-- `:standby:` - Stop and hold position
-- `:walk0:` - Walk forward
-- `:walk180:` - Walk backward
-- `:walkr45:` / `:walkr90:` / `:walkr135:` - Walk right at 45°/90°/135°
-- `:walkl45:` / `:walkl90:` / `:walkl135:` - Walk left at 45°/90°/135°
-- `:turnleft:` / `:turnright:` - Rotate in place
-- `:fastforward:` / `:fastbackward:` - Fast walking
-- `:climbforward:` / `:climbbackward:` - Climbing gait
-- `:rotatex:` / `:rotatey:` / `:rotatez:` - Body rotation (pitch/roll/yaw)
-- `:twist:` - Body twist motion
+##### Motion Commands (`0xA5`)
+
+Byte 0 is the magic number, byte 1 the command ID, and bytes 2-5 a 32-bit sequence number.
+
+| ID  | Action                  | Legacy text command |
+| --- | ----------------------- | ------------------- |
+| 0   | Stop and hold position  | `standby`           |
+| 1   | Walk forward            | `walk0`             |
+| 2   | Walk backward           | `walk180`           |
+| 3   | Walk right at 45°       | `walkr45`           |
+| 4   | Walk right at 90°       | `walkr90`           |
+| 5   | Walk right at 135°      | `walkr135`          |
+| 6   | Walk left at 45°        | `walkl45`           |
+| 7   | Walk left at 90°        | `walkl90`           |
+| 8   | Walk left at 135°       | `walkl135`          |
+| 9   | Fast walk forward       | `fastforward`       |
+| 10  | Fast walk backward      | `fastbackward`      |
+| 11  | Turn left in place      | `turnleft`          |
+| 12  | Turn right in place     | `turnright`         |
+| 13  | Climbing gait forward   | `climbforward`      |
+| 14  | Climbing gait backward  | `climbbackward`     |
+| 15  | Body rotation — pitch   | `rotatex`           |
+| 16  | Body rotation — roll    | `rotatey`           |
+| 17  | Body rotation — yaw     | `rotatez`           |
+| 18  | Body twist motion       | `twist`             |
 
 **Example (Python):**
 
 ```python
 import socket
+import struct
 
+# 0xA5 (magic), 1 (Walk forward), 0 (sequence number)
+packet = struct.pack("<BBI", 0xA5, 1, 0)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.sendto(b":walk0:", ("192.168.4.1", 1234))
+sock.sendto(packet, ("192.168.4.1", 1234))
 ```
 
-The firmware additionally supports a binary protocol for motion commands and real-time pose streaming of all 18 servos. See the [ESP32 UDP command reference](./software/hexapod_esp32/README.md#udp-command-reference) for details.
+##### Session Control (`0xA7`)
+
+Same 6-byte layout as a motion command, with an action in byte 1:
+
+| Action | Name  | Effect                                                 |
+| ------ | ----- | ------------------------------------------------------ |
+| 0      | Exit  | Leave real-time mode, resume LUT playback from standby |
+| 1      | Enter | Enter real-time mode, holding the standby posture      |
+| 2      | Relax | Disable both PWM drivers so the servos go limp         |
+| 3      | Ping  | Keep-alive; resets the failsafe timer                  |
+
+##### Real-Time Pose (`0xA6`)
+
+A 44-byte packet carrying raw servo ticks for all 18 joints, which bypasses the motion look-up tables entirely. Receiving one implicitly enters real-time mode, and each joint then slews toward its target by at most `max_step` ticks per 20 ms cycle. If no packet arrives for 1 second the robot eases back to standby and returns to LUT control — send a ping while idle. Sending a motion command (`0xA5`) also leaves real-time mode, so the two control styles cannot fight over the servos.
+
+See the [ESP32 UDP command reference](./software/hexapod_esp32/README.md#udp-command-reference) for the full field layout, tick scale, and a streaming example.
+
+**Legacy text commands:** the firmware still falls back to parsing plain command strings (the `Legacy text command` column above) when a packet matches none of the binary layouts, e.g. `sock.sendto(b":walk0:", ...)`. The `:` delimiters are optional — leading delimiters are skipped and the command ends at the first one. New clients should use the binary protocol.
 
 **Boot Behavior:** The robot automatically performs a boot sequence (stands up) when a client connects to its WiFi network.
 
@@ -288,7 +328,7 @@ The ESP32 supports wireless firmware updates:
 3. Select the hexapod from network ports
 4. Click **Upload** as normal
 
-**Important Note:** OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
+**Important Note:** OTA is disabled once the robot enters real-time mode or receives a legacy text command — binary motion commands (`0xA5`) leave it enabled. Reboot the robot to re-enable OTA.
 
 ### Troubleshooting
 
@@ -317,7 +357,7 @@ The ESP32 supports wireless firmware updates:
 
 **OTA not working:**
 
-- OTA only works before the first motion command - reboot to re-enable
+- OTA is turned off by real-time mode and by legacy text commands - reboot to re-enable
 - Ensure you're connected to the hexapod's WiFi network
 - Check firewall settings on your computer
 
@@ -340,7 +380,7 @@ The app provides an intuitive interface to:
 
 ### Desktop Control Software
 
-The [hexapod-robot-simulator](https://github.com/rookidroid/hexapod-robot-simulator) can drive the robot live through the real-time pose streaming protocol.
+The [Hexapod Link](https://github.com/rookidroid/hexapod-link) can drive the robot live through the real-time pose streaming protocol.
 
 ## Calibration Guide
 
