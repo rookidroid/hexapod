@@ -1,18 +1,77 @@
-# <img src="./images/hexapod-logo.svg" alt="logo" width="128"/> Hexapod
+# <img src="./images/hexapod-logo.svg" alt="logo" width="128"/> Hexapod Mochi
 
-A 3D Printed Hexapod Robot
+An 18-DOF, 3D-printed hexapod robot that runs on either an ESP32 or a Raspberry Pi Pico W — walk it from your phone over WiFi, or stream poses to it live from a computer.
+
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-blue.svg)](./LICENSE)
+[![Platform](https://img.shields.io/badge/platform-ESP32%20%7C%20Pico%20W-black.svg)](https://www.espressif.com/en/products/socs/esp32)
+[![Website](https://img.shields.io/badge/web-rookidroid.com-ff7f2a.svg)](https://rookidroid.com/)
 
 <img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="400"/><img src="./images/hexapod_photo_battery.jpg" alt="hexapod_photo" width="400"/>
 
+**Jump to:** [Bill of Materials](#bill-of-materials-bom) · [Assembly](#assembly-instructions) · [Software Setup](#software-setup) · [Control Interface](#control-interface) · [Calibration](#calibration-guide) · [Troubleshooting](#troubleshooting)
+
+<details>
+<summary><b>Table of Contents</b></summary>
+
+- [Introduction](#introduction)
+  - [Specifications](#specifications)
+  - [What You'll Build](#what-youll-build)
+  - [Skill Level](#skill-level)
+- [Bill of Materials (BOM)](#bill-of-materials-bom)
+  - [Electronics Components](#electronics-components)
+  - [Connection Diagram](#connection-diagram)
+- [Assembly Instructions](#assembly-instructions)
+  - [Overview](#overview)
+  - [Safety Notes](#safety-notes)
+  - [Step 1: 3D-Printed Parts](#step-1-3d-printed-parts)
+  - [Step 2: Hardware Components](#step-2-hardware-components)
+- [Software Setup](#software-setup)
+  - [Prerequisites](#prerequisites)
+  - [Step-by-Step Installation](#step-by-step-installation)
+  - [Repository Layout](#repository-layout)
+  - [Project File Structure](#project-file-structure)
+  - [Control Interface](#control-interface)
+  - [Over-The-Air (OTA) Updates](#over-the-air-ota-updates)
+  - [Troubleshooting](#troubleshooting)
+  - [Android App](#android-app)
+  - [Desktop Control Software](#desktop-control-software)
+- [Calibration Guide](#calibration-guide)
+  - [Understanding Servo Positions](#understanding-servo-positions)
+  - [Calibration Procedure](#calibration-procedure)
+  - [Reference Images](#reference-images)
+  - [Calibration Tips](#calibration-tips)
+- [Related Projects](#related-projects)
+- [Contributing](#contributing)
+- [License](#license)
+- [Support](#support)
+
+</details>
+
 ## Introduction
 
-This agile, 3D-printed hexapod robot is designed to work with either a Raspberry Pi PICO or an ESP32, providing flexibility and enhanced performance. Equipped with stronger and faster 21G servos, it offers a range of advanced features, including:
+This agile, 3D-printed hexapod robot is designed to work with either a Raspberry Pi PICO or an ESP32, providing flexibility and enhanced performance. Equipped with stronger and faster MG92B servos, it offers a range of advanced features, including:
 
 - **Robust, durable structure**: 3D-printed parts designed for strength and easy assembly
 - **WiFi-enabled remote control**: Control your hexapod wirelessly from your smartphone or computer
 - **Smooth, agile movement**: Advanced motion algorithms for natural walking patterns
-- **Web-based calibration interface**: Easy servo calibration through your browser with real-time adjustment
+- **Web-based calibration interface**: Easy servo calibration through your browser with real-time adjustment (ESP32)
+- **Real-time pose streaming**: Drive all 18 servos live from a computer over UDP (ESP32)
 - **Over-the-air (OTA) firmware updates**: Update firmware without cables for easy maintenance
+
+### Specifications
+
+| Item | Value |
+| ---- | ----- |
+| **Degrees of freedom** | 18 (6 legs × 3 joints: coxa, femur, tibia) |
+| **Actuators** | 18 × MG92B micro servos, 180° travel |
+| **Controller** | ESP32 with dual PCA9685 PWM drivers (I²C `0x40` / `0x41`), or Raspberry Pi Pico W/2W driving the servos through PicoPWM |
+| **Power** | 2 × 18650 Li-ion in series (2S) — 7.4 V nominal, 8.4 V fully charged |
+| **Connectivity** | 2.4 GHz WiFi Access Point (the robot hosts its own network) |
+| **Control** | UDP on `192.168.4.1:1234` — binary protocol on the ESP32, text commands on both boards |
+| **Web interface** | Servo calibration at `http://192.168.4.1` (ESP32 firmware) |
+| **Real-time streaming** | All 18 joints at 50 Hz, with per-joint slew limiting and a 1 s failsafe (ESP32 firmware) |
+| **Firmware updates** | USB or over-the-air (OTA) over WiFi |
+| **Resolution** | ~0.44° per servo tick (410 ticks over 180°) |
 
 ### What You'll Build
 
@@ -20,8 +79,9 @@ This project will guide you through building a fully functional hexapod robot wi
 
 ### Skill Level
 
-- **Beginner-Intermediate**: Basic soldering and mechanical assembly skills required
-- **Tools needed**: Soldering iron, hex key set, wire cutters/strippers
+- **Beginner-Intermediate**: Mechanical assembly skills required. No soldering is needed with a pre-assembled Controller Board ([ESP32](https://rookidroid.com/product/hexapod-controller-board-esp32/) or [Pico](https://rookidroid.com/product/hexapod-controller-board-pico/)) — the servos, switch and battery leads plug straight in.
+- **Tools needed**: Hex key set and a small screwdriver
+- **Only if you build your own wiring harness**: soldering iron, wire cutters/strippers
 
 ## Bill of Materials (BOM)
 
@@ -62,14 +122,25 @@ Follow these steps in order for the best results:
 
 ![whole_assembly](./images/assembly_whole.gif)
 
+### Safety Notes
+
+- **Check battery polarity twice** before the first power-up — reversed polarity will destroy the controller board.
+- **Keep fingers clear of the joints when powered.** Eighteen servos have enough torque between them to pinch hard.
+- **Support the robot on the first power-on.** It runs its stand-up sequence automatically as soon as a client joins its WiFi network, so hold it or stand it on a box with the legs free.
+- **Treat the Li-ion pack with respect**: protected cells only, a proper 2S charger, and never charge unattended.
+- If a leg moves somewhere unexpected, **cut power with the toggle switch** rather than trying to hold the leg back.
+
 ### Step 1: 3D-Printed Parts
+
+All STL files are located in the [`3d print`](./3d%20print/) folder, along with a ready-to-print Bambu Studio project (`hexapod_mochi.3mf`).
 
 **Print Settings Recommendations:**
 
-- Layer height: 0.2mm
+- Layer height: 0.2 mm
 - Infill: 20-30%
-- Material: PLA or PETG
+- Material: PLA or PETG for the structure, TPU for the foot tips
 - Supports: Required for some parts (check STL orientation)
+- Print one leg's worth of parts first and test-fit it before committing to all six
 
 #### Step 1.1: Body Components (x1 complete body)
 
@@ -147,11 +218,11 @@ _Refer to the fully assembled robot images for correct foot orientations_
 
 | Name      | Spec                                  | Required # | Usage                          |
 | --------- | ------------------------------------- | ---------- | ------------------------------ |
-| Screw     | M2 × 6mm hex socket                   | 36         | Servo mounting                 |
-| Screw     | M2 × 12mm countersunk                 | 180        | General assembly               |
+| Screw     | M2 × 6 mm hex socket                  | 36         | Servo mounting                 |
+| Screw     | M2 × 12 mm countersunk                | 180        | General assembly               |
 | Nuts      | M2 hex nut                            | 216        | Securing screws                |
-| Pin       | M4 × 6mm stainless steel (304)        | 18         | Joint pivots                   |
-| Bearing   | MR74-2RS (4mm ID, 7mm OD, 2.5mm Bore) | 18         | Smooth joint rotation          |
+| Pin       | M4 × 6 mm stainless steel (304)       | 18         | Joint pivots                   |
+| Bearing   | MR74-2RS (4 mm ID × 7 mm OD × 2.5 mm width) | 18   | Smooth joint rotation          |
 
 **Where to Buy:** These are standard metric hardware available from Amazon, AliExpress, or local hardware stores.
 
@@ -242,66 +313,124 @@ _Refer to the fully assembled robot images for correct foot orientations_
    - Select the Pico board and upload through Arduino IDE
    - Robot will perform boot-up sequence after upload
 
+### Repository Layout
+
+```text
+hexapod/
+├── 3d print/            # STL files, plus a ready-to-print Bambu Studio project
+├── images/              # Photos, assembly animations and wiring diagrams
+└── software/
+    ├── hexapod_esp32/   # ESP32 firmware (Arduino sketch)
+    ├── hexapod_pico/    # Raspberry Pi Pico W/2W firmware
+    └── path_tool/       # Python gait generator that produces motion.h
+```
+
 ### Project File Structure
 
-**ESP32 Version** (`./software/hexapod_esp32/`):
+**ESP32 Version** ([`./software/hexapod_esp32/`](./software/hexapod_esp32/)):
 
-- `hexapod_esp32.ino`: Main Arduino sketch with control logic
-- `config.h`: WiFi credentials, servo pin mappings, and calibration offsets
+- `hexapod_esp32.ino`: Main sketch with `setup()` / `loop()` and the shared system state
+- `motion_control.ino`: PWM drivers and motion look-up table playback
+- `realtime.ino`: Real-time pose streaming and its slew limiter
+- `network.ino`: WiFi AP, OTA, UDP endpoint and packet parsing
+- `calibration.ino`: Servo offsets loaded from / saved to EEPROM
+- `web_ui.ino` / `web_page.h`: Web calibration interface
+- `hexapod.h` / `protocol.h`: Shared state and UDP packet layouts
+- `config.h`: WiFi credentials, servo pin mappings, and hardware settings
 - `motion.h`: Pre-generated motion look-up tables for smooth walking
-- `README.md`: ESP32-specific documentation
+- [`README.md`](./software/hexapod_esp32/README.md): ESP32-specific documentation
 
-**Pico Version** (`./software/hexapod_pico/`):
+**Pico Version** ([`./software/hexapod_pico/`](./software/hexapod_pico/)):
 
-- `hexapod_pico.ino`: Main sketch optimized for RP2040
-- `config.h`: Configuration settings
-- `motion.h`: Motion look-up tables
+- `hexapod_pico.ino`: Main sketch optimized for the RP2040
 - `PicoPWM.cpp/h`: Custom PWM library for precise servo control
-- `README.md`: Pico-specific documentation
+- `config.h`: WiFi credentials, servo pin mappings, and calibration offsets
+- `motion.h`: Motion look-up tables
+- [`README.md`](./software/hexapod_pico/README.md): Pico-specific documentation
 
-**Path Tool** (`./software/path_tool/`):
+**Path Tool** ([`./software/path_tool/`](./software/path_tool/)):
 
-- `path_tool.py`: Tool for generating custom walking patterns
-- `lut_generator.ipynb`: Jupyter notebook for motion path visualization
-- `path_lib.py`: Library for inverse kinematics calculations
+- `lut_generator.ipynb`: Jupyter notebook that builds every gait and writes `motion.h`
+- `path_tool.py`: Path generators for walking, fast walking, turning, climbing, body rotations and the stand-up sequence
+- `path_lib.py`: Inverse kinematics and path primitives
+- `config.json`: Leg mount positions, link lengths and other robot dimensions
+
+#### Regenerating the Motion Tables
+
+The gaits shipped in `motion.h` are generated, not hand-written. To change one:
+
+1. Install Python with `numpy` and Jupyter, then open `lut_generator.ipynb` from the `path_tool` folder.
+2. Adjust the parameters (or add a generator in `path_tool.py`) and run all cells — the last cell writes a new `motion.h` next to the notebook.
+3. Copy that `motion.h` into the firmware folder you use ([`hexapod_esp32`](./software/hexapod_esp32/) or [`hexapod_pico`](./software/hexapod_pico/)) and re-upload.
+4. A brand-new table also needs an entry in `motion_config[]` in `motion_control.ino` — see [Adding Custom Motions](./software/hexapod_esp32/README.md#adding-custom-motions).
+
+If you change the frame or leg dimensions, update `config.json` first: every look-up table is derived from it.
 
 ### Control Interface
 
 #### Connection
 
-1. **Power on the hexapod** - Connect batteries and turn on
-2. **Connect to WiFi** - Join the hexapod's WiFi network:
-   - SSID: `hexapod` (default)
-   - Password: `hexapod_1234` (default)
-   - The hexapod creates its own Access Point
-3. **Default IP**: `192.168.4.1` (for both ESP32 and Pico)
-4. **UDP Port**: `1234`
+The robot hosts its own Access Point — connect your phone or computer to it directly; it never joins your home router.
+
+| Setting | Default | Where to change it |
+| ------- | ------- | ------------------ |
+| WiFi SSID | `hexapod` | `APSSID` in `config.h` |
+| WiFi password | `hexapod_1234` | `APPSK` in `config.h` |
+| Robot IP | `192.168.4.1` | Fixed by the board's AP (ESP32 and Pico alike) |
+| UDP port | `1234` | `UDP_PORT` in `config.h` |
+| Web interface | `http://192.168.4.1` | ESP32 firmware only |
+
+1. **Power on the hexapod** - connect the batteries and flip the toggle switch
+2. **Join its WiFi network** - the robot runs its stand-up sequence as soon as a client connects
+3. **Send commands** to `192.168.4.1:1234`, or open `http://192.168.4.1` for the calibration interface
 
 #### Sending UDP Commands
 
-The hexapod accepts motion commands via UDP packets on port 1234. Commands must be wrapped with `:` delimiters (e.g., `:walk0:`).
+The hexapod listens on UDP port `1234`. The ESP32 firmware speaks a binary protocol in which the **first byte selects the packet type**; the Pico firmware and older clients use the plain-text commands below.
 
-**Available Commands:**
+| Magic  | Packet          | Size | Purpose                                      |
+| ------ | --------------- | ---- | -------------------------------------------- |
+| `0xA5` | Motion command  | 6 B  | Play one of the built-in gait look-up tables |
+| `0xA6` | Real-time pose  | 44 B | Stream raw servo positions for all 18 joints |
+| `0xA7` | Session control | 6 B  | Enter/leave real-time mode, relax, keep-alive |
 
-- `:standby:` - Stop and hold position
-- `:walk0:` - Walk forward
-- `:walk180:` - Walk backward
-- `:walkr45:` / `:walkr90:` / `:walkr135:` - Walk right at 45°/90°/135°
-- `:walkl45:` / `:walkl90:` / `:walkl135:` - Walk left at 45°/90°/135°
-- `:turnleft:` / `:turnright:` - Rotate in place
-- `:fastforward:` / `:fastbackward:` - Fast walking
-- `:climbforward:` / `:climbbackward:` - Climbing gait
-- `:rotatex:` / `:rotatey:` / `:rotatez:` - Body rotation (pitch/roll/yaw)
-- `:twist:` - Body twist motion
-
-**Example (Python):**
+A motion command is the magic byte, a command ID, and a 32-bit sequence number — little-endian and unpadded:
 
 ```python
 import socket
+import struct
 
+# 0xA5 (magic), 1 (Walk forward), 0 (sequence number)
+packet = struct.pack("<BBI", 0xA5, 1, 0)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.sendto(b":walk0:", ("192.168.4.1", 1234))
+sock.sendto(packet, ("192.168.4.1", 1234))
 ```
+
+| ID  | Action                  | Text command    |
+| --- | ----------------------- | --------------- |
+| 0   | Stop and hold position  | `standby`       |
+| 1   | Walk forward            | `walk0`         |
+| 2   | Walk backward           | `walk180`       |
+| 3   | Walk right at 45°       | `walkr45`       |
+| 4   | Walk right at 90°       | `walkr90`       |
+| 5   | Walk right at 135°      | `walkr135`      |
+| 6   | Walk left at 45°        | `walkl45`       |
+| 7   | Walk left at 90°        | `walkl90`       |
+| 8   | Walk left at 135°       | `walkl135`      |
+| 9   | Fast walk forward       | `fastforward`   |
+| 10  | Fast walk backward      | `fastbackward`  |
+| 11  | Turn left in place      | `turnleft`      |
+| 12  | Turn right in place     | `turnright`     |
+| 13  | Climbing gait forward   | `climbforward`  |
+| 14  | Climbing gait backward  | `climbbackward` |
+| 15  | Body rotation — pitch   | `rotatex`       |
+| 16  | Body rotation — roll    | `rotatey`       |
+| 17  | Body rotation — yaw     | `rotatez`       |
+| 18  | Body twist motion       | `twist`         |
+
+The real-time pose (`0xA6`) and session control (`0xA7`) packets, their field layouts and the failsafe behaviour are documented in the [ESP32 UDP command reference](./software/hexapod_esp32/README.md#udp-command-reference).
+
+**Text commands:** both firmwares accept plain command strings (the `Text command` column above), e.g. `sock.sendto(b":walk0:", ("192.168.4.1", 1234))`. The `:` delimiters are optional — leading delimiters are skipped and the command ends at the first one. This is the only interface on the Pico; new ESP32 clients should use the binary protocol.
 
 **Boot Behavior:** The robot automatically performs a boot sequence (stands up) when a client connects to its WiFi network.
 
@@ -316,7 +445,7 @@ Both ESP32 and Pico support wireless firmware updates:
 
 **Important Notes:**
 
-- For ESP32: OTA is disabled after the first motion command. Reboot the robot to re-enable OTA.
+- For ESP32: OTA survives binary motion commands (`0xA5`), but is switched off once the robot enters real-time mode or receives a text command. Reboot to re-enable it.
 - For Pico: Ensure Flash Size includes "FS: 1MB" in board settings for OTA to work.
 
 ### Troubleshooting
@@ -346,7 +475,7 @@ Both ESP32 and Pico support wireless firmware updates:
 
 **OTA not working:**
 
-- For ESP32: OTA only works before the first motion command - reboot to re-enable
+- For ESP32: real-time mode and text commands turn OTA off - reboot to re-enable
 - Ensure you're connected to the hexapod's WiFi network
 - Check firewall settings on your computer
 - For Pico: Verify Flash Size setting includes "FS: 1MB"
@@ -370,7 +499,7 @@ The app provides an intuitive interface to:
 
 ### Desktop Control Software
 
-_Work in progress - Check repository for updates_
+[Hexapod Link](https://github.com/rookidroid/hexapod-link) drives the robot live through the real-time pose streaming protocol (ESP32 firmware).
 
 ## Calibration Guide
 
@@ -456,3 +585,32 @@ Send a walking command to verify smooth motion. If adjustments are needed, simpl
 - **Save your work**: Don't forget to click "Save Offsets" when done!
 - **Check screw tightness**: Loose servo horns will affect calibration
 - **Servo horn position**: If offsets exceed ±25 ticks, consider repositioning the servo horn physically
+
+## Related Projects
+
+| Project | What it is |
+| ------- | ---------- |
+| [Hexapod Link](https://github.com/rookidroid/hexapod-link) | Desktop application that drives the robot live over the real-time pose protocol |
+| [Hexapod Android app](https://play.google.com/store/apps/details?id=com.rookiedev.hexapod) | Phone controller for the built-in gaits |
+| [Controller Board (ESP32)](https://rookidroid.com/product/hexapod-controller-board-esp32/) · [Controller Board (Pico)](https://rookidroid.com/product/hexapod-controller-board-pico/) | The two controller boards this build is designed around |
+| [ESP32 firmware README](./software/hexapod_esp32/README.md) · [Pico firmware README](./software/hexapod_pico/README.md) | Firmware internals and the full UDP protocol reference |
+
+## Contributing
+
+Issues and pull requests are welcome — bug reports, print-setting tweaks, new gaits and documentation fixes all help. A few things that make a pull request easy to merge:
+
+- Say which hardware you tested on (controller board, servo model, firmware branch).
+- Match the existing style of the Arduino sketch tabs in `software/hexapod_esp32/` and `software/hexapod_pico/`.
+- Regenerate `motion.h` with the path tool instead of hand-editing the look-up tables.
+
+## License
+
+This project is licensed under the **GNU General Public License v3.0** — see [LICENSE](./LICENSE) for the full text.
+
+Copyright (C) 2024 - PRESENT rookidroid.com
+
+## Support
+
+- Website: [rookidroid.com](https://rookidroid.com/)
+- Email: [info@rookidroid.com](mailto:info@rookidroid.com)
+- Bugs and build questions: [GitHub Issues](https://github.com/rookidroid/hexapod/issues)
