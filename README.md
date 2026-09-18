@@ -30,15 +30,17 @@ This project will guide you through building a fully functional hexapod robot wi
 
 | Name                 | Thumbnail                                                                     | Required # | Specifications                    | Note                                                                                                                                             |
 | -------------------- | ----------------------------------------------------------------------------- | ---------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Controller Board     | <img src="./images/controller_esp32.png" alt="controller_board" width="300"/> | 1          | ESP32                             | Purchase [Controller Board](https://rookidroid.com/product/hexapod-controller-board-esp32/).                                                     |
-| 25kg Servo           | <img src="./images/25kg_servo.jpg" alt="25kg_servo" width="200"/>             | 18         | 180° rotation                     | Ensure all servos are from the same batch for consistency                                                                                        |
-| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                     | 1          | SPST, 6mm diameter                |                                                                                                                                                  |
+| Controller Board     | <img src="./images/macaroon_controller_1.jpg" alt="controller_board" width="300"/> | 1          | Servos are directly driven by the batteries                             | Purchase [Controller Board](https://rookidroid.com/product/hexapod-controller-board-macaroon-esp32/).                                                     |
+| 25kg Servo           | <img src="./images/25kg_servo.jpg" alt="25kg_servo" width="200"/>             | 18         | 180° rotation                     | **Support 8.4v supply voltage**. Ensure all servos are from the same batch for consistency                                                                                        |
+| Toggle Switch        | <img src="./images/switch.jpg" alt="switch" width="300"/>                     | 1          | SPST, 12 mm diameter                |  Purchase together with the [Controller Board](https://rookidroid.com/product/hexapod-controller-board-macaroon-esp32/).                                                                                                                                                |
 | 18650 Battery        | <img src="./images/battery.jpg" alt="battery" width="300"/>                   | 4          | 3.7V Li-ion, 2000mAh+ recommended | **Use protected batteries for safety**                                                                                                           |
-| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="battery_holder" width="300"/>     | 1          | 4-cell (2S2P) holder with wire leads | A 3D-printable holder is available [here](./3d%20print/battery_holder/18650%20battery%20holder%202S2P.stl)                                    |
+| 18650 Battery Holder | <img src="./images/battery_holder.jpg" alt="battery_holder" width="300"/>     | 1          | 4-cell (2S2P) holder with wire leads | A 3D-printable holder is available [here](./3d%20print/battery_holder/18650%20battery%20holder%202S2P.stl), or purchase together with the [Controller Board](https://rookidroid.com/product/hexapod-controller-board-macaroon-esp32/).                                  |
 
 ### Connection Diagram
 
-![diagram_esp32](./images/pcb_diagram_esp32.jpg)
+![diagram_1](./images/macaroon_connection_1.jpg)
+
+![diagram_2](./images/macaroon_connection_2.jpg)
 
 ## Assembly Instructions
 
