@@ -6,7 +6,8 @@ An 18-DOF, 3D-printed hexapod robot powered by an ESP32 — walk it from your ph
 [![Platform: ESP32](https://img.shields.io/badge/platform-ESP32-black.svg)](https://www.espressif.com/en/products/socs/esp32)
 [![Website](https://img.shields.io/badge/web-rookidroid.com-ff7f2a.svg)](https://rookidroid.com/)
 
-<img src="./images/hexapod_photo.jpg" alt="hexapod_photo" width="600"/>
+<img src="./images/hexapod-macaroon.jpg" alt="hexapod_photo1" width="400"/>
+<img src="./images/hexapod_photo.jpg" alt="hexapod_photo2" width="400"/>
 
 **Jump to:** [Bill of Materials](#bill-of-materials-bom) · [Assembly](#assembly-instructions) · [Software Setup](#software-setup) · [Control Interface](#control-interface) · [Calibration](#calibration-guide) · [Troubleshooting](#troubleshooting)
 
