@@ -37,11 +37,12 @@
 
 #include <Arduino.h>
 
+// Robot-specific settings (DELAY_MS, APSSID) come from the robot picked here
+#include "robot.h"
+
 #define SERVOMIN 102  // Minimum value, 0 deg
 #define SERVOMID 307  // Middle value, 90 deg
 #define SERVOMAX 512  // Maximum value, 180 deg
-
-#define DELAY_MS 25  // Servo delay
 
 /** Real-time pose streaming */
 // Control cycle period while streaming poses (ms). 20 ms -> 50 Hz.
@@ -92,8 +93,8 @@ const uint16_t EEPROM_ADDR_LEFT = 2;    // Address for left offsets
 const uint16_t EEPROM_ADDR_RIGHT = 20;  // Address for right offsets (after 18 bytes)
 
 /** WiFi Configurations */
-#ifndef APSSID
-#define APSSID "hexapod_macaroon"
+// The access point name (APSSID) is set per robot in src/robots/<name>/robot_config.h
+#ifndef APPSK
 #define APPSK "hexapod_1234"
 #endif
 
