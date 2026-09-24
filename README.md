@@ -47,10 +47,6 @@ hexapod/
 
 The [ESP32 firmware README](./software/hexapod_esp32/README.md) covers setup, the UDP protocol and OTA updates. The [path tool README](./software/path_tool/README.md) explains how the motion tables are generated and how to add a new robot.
 
-## Earlier Versions
-
-Each robot used to live on its own branch (`nougat`, `mochi`, `macaroon`), and the original design is on `v1`. Those branches are kept for reference and are no longer updated.
-
 ## License
 
 [GPL-3.0](./LICENSE)
