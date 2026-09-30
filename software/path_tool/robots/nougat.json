@@ -67,7 +67,7 @@
     "legRootToJoint1": 0,
     "legJoint1ToJoint2": 38.0,
     "legJoint2ToJoint3": 54.06,
-    "legJoint3ToTip": 97.0,
+    "legJoint3ToTip": 93.53,
     "servoMin": 102,
     "servoMax": 512,
     "standbyPosture": [
