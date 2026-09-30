@@ -85,7 +85,7 @@
         25
     ],
     "gait": {
-        "walk_radius": 30,
+        "walk_radius": 40,
         "fastwalk_y_radius": 50,
         "fastwalk_z_radius": 40,
         "fastwalk_x_radius": 15,
