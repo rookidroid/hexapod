@@ -8,8 +8,9 @@
 
   This firmware drives every hexapod in the family. Pick the robot you built
   by leaving exactly one of the defines below uncommented. The choice selects
-  the robot's settings (src/robots/<name>/robot_config.h) and its motion LUTs
-  (src/robots/<name>/motion.h).
+  the robot's settings (src/robots/<name>/robot_config.h), its motion LUTs
+  (src/robots/<name>/motion.h) and the geometry served at GET /robot_config
+  (src/robots/<name>/robot_geometry.h).
 
   The robot can also be picked from the command line without editing this
   file, e.g. arduino-cli compile --build-property "compiler.cpp.extra_flags=-DROBOT_MOCHI"

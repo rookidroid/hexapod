@@ -13,6 +13,10 @@
 
 #include <Arduino.h>
 
+// Version of the host-facing protocol (UDP packets and HTTP routes), reported
+// by GET /robot_config. Bump it when a client would need to change.
+#define PROTOCOL_VERSION 1
+
 enum RobotCommand : uint8_t {
   CMD_STANDBY = 0,
   CMD_WALK_0 = 1,

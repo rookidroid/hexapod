@@ -1,5 +1,6 @@
 {
     "name": "mochi",
+    "label": "Mochi",
     "legNames": [
         "front_right",
         "center_right",
@@ -70,6 +71,11 @@
     "legJoint3ToTip": 85.22,
     "servoMin": 102,
     "servoMax": 512,
+    "jointLimits": {
+        "coxia": 45,
+        "femur": 75,
+        "tibia": 75
+    },
     "standbyPosture": [
         60,
         75

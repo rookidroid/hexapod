@@ -11,6 +11,7 @@
 #include <WebServer.h>
 
 #include "hexapod.h"
+#include "robot_geometry.h"
 #include "web_page.h"
 
 // Web server for calibration interface
@@ -47,6 +48,40 @@ static String offsetsJson()
   appendOffsetArray(json, left_offset_ticks);
   json += ",\"right\":";
   appendOffsetArray(json, right_offset_ticks);
+  json += "}";
+  return json;
+}
+
+/**
+   @brief Everything a client needs to model and drive this robot, so it does
+   not have to carry its own copy of each robot's config.
+
+   `commands` lists the motion names in RobotCommand order, so a name's index
+   is the command ID to send. `geometry` is the robot's path_tool config.
+*/
+static String robotConfigJson()
+{
+  String json = "{\"protocol\":" + String(PROTOCOL_VERSION);
+  json += ",\"name\":\"" ROBOT_NAME "\"";
+  json += ",\"ssid\":\"" APSSID "\"";
+  json += ",\"delay_ms\":" + String(DELAY_MS);
+  json += ",\"servo\":{\"min\":" + String(SERVOMIN) +
+          ",\"mid\":" + String(SERVOMID) +
+          ",\"max\":" + String(SERVOMAX) + "}";
+  json += ",\"speed\":{\"min\":" + String(MOTION_SPEED_MIN_PCT) +
+          ",\"max\":100,\"default\":" + String(MOTION_SPEED_DEFAULT_PCT) +
+          ",\"current\":" + String(motion_speed_pct) + "}";
+  json += ",\"commands\":[";
+  for (size_t i = 0; i < motion_config_count; i++)
+  {
+    if (i > 0)
+      json += ",";
+    json += "\"";
+    json += motion_config[i].cmd;
+    json += "\"";
+  }
+  json += "],\"geometry\":";
+  json += ROBOT_GEOMETRY_JSON;
   json += "}";
   return json;
 }
@@ -124,10 +159,10 @@ static void printOffsetsForConfig()
 */
 void setupWebServer()
 {
-  // Serve main page with calibration button
+  // Serve the calibration page. send_P streams it from flash rather than
+  // copying it into a String on the heap first.
   web_server.on("/", HTTP_GET, []()
-                { web_server.send(200, "text/html", index_html); });
-
+                { web_server.send_P(200, "text/html", index_html); });
   // Enter calibration mode and get current offset values
   web_server.on("/enter_calibration", HTTP_GET, []()
                 {
@@ -194,6 +229,10 @@ void setupWebServer()
     } else {
       web_server.send(500, "text/plain", "Failed to save offsets");
     } });
+
+  // Describe this robot: identity, geometry, servo range, speed and commands
+  web_server.on("/robot_config", HTTP_GET, []()
+                { web_server.send(200, "application/json", robotConfigJson()); });
 
   // Get the LUT playback speed
   web_server.on("/get_speed", HTTP_GET, []()

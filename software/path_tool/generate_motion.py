@@ -2,13 +2,18 @@
 Generate the motion LUT header (motion.h) for one or more hexapod robots.
 
 Each robot is described by a JSON file in ./robots/ (geometry, servo range,
-postures and gait parameters). The generated header is written into the
-firmware sketch, at ../hexapod_esp32/src/robots/<name>/motion.h.
+postures and gait parameters). Two headers are written into the firmware
+sketch, under ../hexapod_esp32/src/robots/<name>/:
+
+- motion.h, the motion path LUTs
+- robot_geometry.h, the JSON config itself, which the firmware serves at
+  GET /robot_config so clients can model the robot without a copy of it
 
 Usage:
     python generate_motion.py macaroon
     python generate_motion.py nougat mochi
     python generate_motion.py --all
+    python generate_motion.py --all --geometry-only
 
 - Copyright (C) 2024 - PRESENT  rookidroid.com
 - E-mail: info@rookidroid.com
@@ -151,16 +156,55 @@ def format_motion_header(luts, config):
     return "".join(lines)
 
 
+def format_geometry_header(config):
+    """Render the robot's JSON config as a C string for the firmware to serve."""
+    geometry = json.dumps(config, separators=(",", ":"))
+    return "".join(
+        [
+            "/**\n",
+            " * This is an automatically generated header, which includes the robot's\n",
+            " * config from software/path_tool/robots/<name>.json. The firmware serves it\n",
+            " * at GET /robot_config.\n",
+            " * \n",
+            " * - Copyright (C) 2024 - PRESENT  rookidroid.com\n",
+            " * - E-mail: info@rookidroid.com\n",
+            " * - Website: https://rookidroid.com/\n",
+            " */\n\n",
+            "#ifndef ROBOT_GEOMETRY_H\n",
+            "#define ROBOT_GEOMETRY_H\n\n",
+            'static const char ROBOT_GEOMETRY_JSON[] = R"json(' + geometry + ')json";\n\n',
+            "#endif // ROBOT_GEOMETRY_H\n",
+        ]
+    )
+
+
+def _write(path, text):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8", newline="\n") as fp:
+        fp.write(text)
+    return path
+
+
+def generate_geometry(robot):
+    """Generate robot_geometry.h for a robot and return the path it was written to."""
+    return _write(
+        FIRMWARE_ROBOTS_DIR / robot / "robot_geometry.h",
+        format_geometry_header(load_config(robot)),
+    )
+
+
 def generate(robot, output=None):
-    """Generate motion.h for a robot and return the path it was written to."""
+    """Generate motion.h for a robot and return the path it was written to.
+
+    robot_geometry.h is refreshed alongside it, unless `output` sends the LUTs
+    somewhere other than the firmware sketch.
+    """
     config = load_config(robot)
     if output is None:
         output = FIRMWARE_ROBOTS_DIR / robot / "motion.h"
-    output = Path(output)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    with open(output, "w", encoding="utf-8", newline="\n") as fp:
-        fp.write(format_motion_header(gen_luts(config), config))
-    return output
+        generate_geometry(robot)
+    return _write(output, format_motion_header(gen_luts(config), config))
 
 
 def main():
@@ -169,6 +213,11 @@ def main():
     parser.add_argument("--all", action="store_true", help="generate for every robot")
     parser.add_argument(
         "-o", "--output", help="output file (only with a single robot); default is the firmware sketch"
+    )
+    parser.add_argument(
+        "--geometry-only",
+        action="store_true",
+        help="only write robot_geometry.h, leaving the motion LUTs untouched",
     )
     args = parser.parse_args()
 
@@ -180,9 +229,14 @@ def main():
         parser.error("unknown robot(s): " + ", ".join(unknown))
     if args.output and len(robots) > 1:
         parser.error("--output can only be used with a single robot")
+    if args.output and args.geometry_only:
+        parser.error("--output cannot be combined with --geometry-only")
 
     for robot in robots:
-        print(robot + ": " + str(generate(robot, args.output)))
+        if args.geometry_only:
+            print(robot + ": " + str(generate_geometry(robot)))
+        else:
+            print(robot + ": " + str(generate(robot, args.output)))
 
 
 if __name__ == "__main__":
