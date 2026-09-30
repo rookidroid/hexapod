@@ -121,7 +121,7 @@ length (the motion and session packets are both 6 bytes).
 
 | Magic | Packet | Size | Purpose |
 |-------|--------|------|---------|
-| `0xA5` | Motion command | 6 B | Play one of the built-in gait LUTs |
+| `0xA5` | Motion command | 6 or 7 B | Play one of the built-in gait LUTs, optionally at a set speed |
 | `0xA6` | Real-time pose | 44 B | Stream raw servo positions for all 18 joints |
 | `0xA7` | Session control | 6 B | Enter/leave real-time mode, relax, keep-alive |
 
@@ -132,6 +132,7 @@ All packets are little-endian and unpadded (`#pragma pack(1)`).
 - **Byte 0**: Magic number (`0xA5`)
 - **Byte 1**: Command ID (see enum below)
 - **Bytes 2-5**: Sequence number (32-bit unsigned integer)
+- **Byte 6** *(optional)*: Playback speed in percent (see [Motion speed](#motion-speed))
 
 | Command ID | Action |
 |------------|--------|
@@ -152,14 +153,30 @@ All packets are little-endian and unpadded (`#pragma pack(1)`).
 Gaits change only at the start or midpoint of a cycle, and always pass through
 the standby posture on the way to the next gait.
 
+#### Motion speed
+
+The 7-byte form appends a speed byte that sets how fast the gait LUTs play, as a
+percentage of the robot's tuned frame rate (`DELAY_MS`). Values are clamped to
+20-100 %; slower speeds stretch the frame period, so a gait at 50 % takes twice
+as long per cycle. `0` leaves the speed unchanged, and the 6-byte form never
+touches it. Only gait playback follows the speed: the transitions between gaits
+keep their pace so the robot still stops promptly.
+
+The speed starts at **60 %** after boot (`MOTION_SPEED_DEFAULT_PCT` in
+`config.h`), so clients that only send the 6-byte form walk at 60 % unless the
+speed is raised. It can also be set from the **Motion Speed** slider on the web
+page at `http://192.168.4.1/`; a client sending 7-byte packets, such as the
+[arcade remote](https://github.com/rookidroid/remote-arcade), overrides it with
+every packet. The setting is not saved across reboots.
+
 #### Example (Python)
 
 ```python
 import socket
 import struct
 
-# 0xA5 (magic), 1 (Walk forward), 0 (sequence)
-packet = struct.pack("<BB I", 0xA5, 1, 0)
+# 0xA5 (magic), 1 (Walk forward), 0 (sequence), 60 (speed %)
+packet = struct.pack("<BBIB", 0xA5, 1, 0, 60)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto(packet, ("192.168.4.1", 1234))
 ```

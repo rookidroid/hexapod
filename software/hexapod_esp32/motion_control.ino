@@ -374,7 +374,10 @@ static unsigned long tickPeriod()
   {
     return DELAY_MS / 2;
   }
-  return DELAY_MS;
+  // Only gait playback follows the speed setting; transitions keep their pace
+  // so stopping and changing gait stay responsive.
+  const unsigned long speed_pct = motion_speed_pct;
+  return (unsigned long)DELAY_MS * 100 / speed_pct;
 }
 
 /**

@@ -61,6 +61,10 @@ extern bool calibration_mode;             // Calibration mode flag (main loop on
 
 extern volatile int next_motion_idx;      // Motion requested over UDP
 extern volatile unsigned long last_udp_packet_time; // Last UDP packet, for failsafe
+extern volatile uint8_t motion_speed_pct; // LUT playback speed (percent)
+
+// Clamp `pct` to [MOTION_SPEED_MIN_PCT, 100] and make it the playback speed.
+void setMotionSpeed(int pct);
 
 // ============================================================================
 // Servos and motion playback (motion_control.ino)

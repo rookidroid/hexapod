@@ -57,6 +57,15 @@ struct UdpControlPacket {
   uint32_t seq_num;
 };
 
+// Motion command with a playback speed. Same layout as UdpControlPacket plus
+// one trailing byte; the plain 6-byte form leaves the speed unchanged.
+struct UdpControlSpeedPacket {
+  uint8_t magic;      // 0xA5
+  RobotCommand cmd;
+  uint32_t seq_num;
+  uint8_t speed_pct;  // LUT playback speed in percent (0 = leave unchanged)
+};
+
 // Real-time pose: raw servo ticks for all 18 joints.
 // Leg order matches the motion LUTs: right front/middle/back, then left
 // front/middle/back. Joint order is coxa, femur, tibia.
@@ -82,6 +91,7 @@ const uint8_t POSE_FLAG_SNAP = 0x01;
 // and session packets are the same length, so parseCommand() must dispatch on
 // the magic byte before it looks at the length.
 static_assert(sizeof(UdpControlPacket) == 6, "control packet must be 6 bytes");
+static_assert(sizeof(UdpControlSpeedPacket) == 7, "speed control packet must be 7 bytes");
 static_assert(sizeof(UdpPosePacket) == 44, "pose packet must be 44 bytes");
 static_assert(sizeof(UdpSessionPacket) == 6, "session packet must be 6 bytes");
 

@@ -57,6 +57,10 @@
 // Fall back to standby if no UDP packet arrives within this window (ms). Clients
 // driving the LUT engine must repeat their motion command faster than this.
 #define MOTION_TIMEOUT_MS 500
+// LUT playback speed, as a percentage of the robot's tuned frame rate
+// (DELAY_MS). Slower speeds stretch the frame period; faster is not allowed.
+#define MOTION_SPEED_MIN_PCT 20
+#define MOTION_SPEED_DEFAULT_PCT 60
 
 /** Debugging */
 // 1 = log and echo every low-rate UDP packet on the serial port

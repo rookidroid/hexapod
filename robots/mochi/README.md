@@ -365,7 +365,7 @@ The hexapod listens on UDP port `1234`. The ESP32 firmware speaks a binary proto
 
 | Magic  | Packet          | Size | Purpose                                      |
 | ------ | --------------- | ---- | -------------------------------------------- |
-| `0xA5` | Motion command  | 6 B  | Play one of the built-in gait look-up tables |
+| `0xA5` | Motion command  | 6-7 B | Play one of the built-in gait look-up tables |
 | `0xA6` | Real-time pose  | 44 B | Stream raw servo positions for all 18 joints |
 | `0xA7` | Session control | 6 B  | Enter/leave real-time mode, relax, keep-alive |
 
@@ -380,6 +380,8 @@ packet = struct.pack("<BBI", 0xA5, 1, 0)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.sendto(packet, ("192.168.4.1", 1234))
 ```
+
+Append an optional seventh byte to set the gait speed, in percent of the tuned speed (20-100; `0` leaves it unchanged). The ESP32 firmware starts at **60 %**, so clients sending only the 6-byte form walk at 60 % unless the speed is raised from the **Motion Speed** slider at `http://192.168.4.1`. See the [firmware README](../../software/hexapod_esp32/README.md#motion-speed) for details.
 
 | ID  | Action                  | Text command    |
 | --- | ----------------------- | --------------- |

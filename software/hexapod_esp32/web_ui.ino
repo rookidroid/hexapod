@@ -195,6 +195,22 @@ void setupWebServer()
       web_server.send(500, "text/plain", "Failed to save offsets");
     } });
 
+  // Get the LUT playback speed
+  web_server.on("/get_speed", HTTP_GET, []()
+                { web_server.send(200, "application/json",
+                                  "{\"speed\":" + String(motion_speed_pct) + "}"); });
+
+  // Set the LUT playback speed (not saved; a connected remote overrides it)
+  web_server.on("/set_speed", HTTP_POST, []()
+                {
+    if (!web_server.hasArg("pct")) {
+      web_server.send(400, "text/plain", "Missing pct");
+      return;
+    }
+    setMotionSpeed(web_server.arg("pct").toInt());
+    web_server.send(200, "application/json",
+                    "{\"speed\":" + String(motion_speed_pct) + "}"); });
+
   // Start server
   web_server.begin();
   Serial.println("Web server started on port 80");

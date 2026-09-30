@@ -57,6 +57,18 @@ volatile int next_motion_idx = CMD_STANDBY; // Motion requested over UDP
 
 volatile unsigned long last_udp_packet_time = 0; // Tracks last UDP packet for failsafe
 
+volatile uint8_t motion_speed_pct = MOTION_SPEED_DEFAULT_PCT; // LUT playback speed
+
+/**
+   @brief Set the LUT playback speed. Called from the UDP task and the web
+   interface; a single byte, so the store is atomic.
+   @param pct Speed in percent of the tuned frame rate
+*/
+void setMotionSpeed(int pct)
+{
+  motion_speed_pct = constrain(pct, MOTION_SPEED_MIN_PCT, 100);
+}
+
 /**
    @brief Initialize system: WiFi AP, OTA, calibration, PWM drivers, UDP and
    the web interface.

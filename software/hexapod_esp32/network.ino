@@ -184,10 +184,17 @@ void parseCommand(char *data, size_t length)
   // Binary packets are selected by their first byte, then validated by length.
   const uint8_t magic = (uint8_t)data[0];
 
-  // Pre-programmed motion command
-  if (magic == MAGIC_MOTION && length == sizeof(UdpControlPacket)) {
+  // Pre-programmed motion command, optionally carrying a playback speed
+  if (magic == MAGIC_MOTION && (length == sizeof(UdpControlPacket) ||
+                                length == sizeof(UdpControlSpeedPacket))) {
     UdpControlPacket* packet = (UdpControlPacket*)data;
     if ((size_t)packet->cmd < motion_config_count) {
+      if (length == sizeof(UdpControlSpeedPacket)) {
+        const uint8_t speed_pct = ((UdpControlSpeedPacket*)data)->speed_pct;
+        if (speed_pct != 0) {
+          setMotionSpeed(speed_pct);
+        }
+      }
       selectMotion(packet->cmd);
     }
     return;

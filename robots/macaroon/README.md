@@ -335,13 +335,13 @@ The hexapod listens on UDP port `1234`. Three binary packet types share that por
 
 | Magic  | Packet          | Size | Purpose                                       |
 | ------ | --------------- | ---- | --------------------------------------------- |
-| `0xA5` | Motion command  | 6 B  | Play one of the built-in gait look-up tables   |
+| `0xA5` | Motion command  | 6-7 B | Play one of the built-in gait look-up tables  |
 | `0xA6` | Real-time pose  | 44 B | Stream raw servo positions for all 18 joints   |
 | `0xA7` | Session control | 6 B  | Enter/leave real-time mode, relax, keep-alive  |
 
 ##### Motion Commands (`0xA5`)
 
-Byte 0 is the magic number, byte 1 the command ID, and bytes 2-5 a 32-bit sequence number.
+Byte 0 is the magic number, byte 1 the command ID, and bytes 2-5 a 32-bit sequence number. An optional byte 6 sets the gait speed in percent of the tuned speed (20-100; `0` leaves it unchanged). The ESP32 firmware starts at **60 %**, so clients sending only the 6-byte form walk at 60 % unless the speed is raised from the **Motion Speed** slider at `http://192.168.4.1`. See the [firmware README](../../software/hexapod_esp32/README.md#motion-speed) for details.
 
 | ID  | Action                  | Legacy text command |
 | --- | ----------------------- | ------------------- |

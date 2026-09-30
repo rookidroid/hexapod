@@ -69,6 +69,20 @@ const char index_html[] PROGMEM = R"rawliteral(
       margin-right: auto;
     }
     .btn-small { margin-left: 5px; }
+    .speed-card {
+      background-color: #16213e;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #8b5cf6;
+      max-width: 500px;
+      margin: 20px auto;
+      text-align: center;
+    }
+    .speed-card h2 { margin-top: 0; }
+    .speed-row { display: flex; align-items: center; gap: 15px; }
+    .speed-row input[type="range"] { flex: 1; accent-color: #8b5cf6; }
+    .speed-value { font-size: 20px; font-weight: bold; min-width: 60px; }
+    .hint { color: #888; font-size: 14px; margin-top: 10px; }
     .status { text-align: center; margin-top: 20px; font-size: 18px; color: #bb86fc; }
     .reminder {
       background-color: #e65100;
@@ -97,6 +111,15 @@ const char index_html[] PROGMEM = R"rawliteral(
       <button class="btn" id="calibModeBtn" onclick="toggleCalibrationMode()">Enter Calibration Mode</button>
     </div>
     <div class="status" id="status"></div>
+    <div class="speed-card">
+      <h2>Motion Speed</h2>
+      <div class="speed-row">
+        <input type="range" id="speedSlider" min="20" max="100" step="20" value="60"
+               oninput="showSpeed(this.value)" onchange="setSpeed(this.value)">
+        <span class="speed-value" id="speedValue">60%</span>
+      </div>
+      <div class="hint">A connected remote overrides this.</div>
+    </div>
     <div class="calibration-panel" id="calibPanel">
       <h2>Servo Offset Adjustments (Ticks, 1 tick ≈ 0.44°, max ±100)</h2>
       <div class="leg-grid" id="legGrid"></div>
@@ -115,6 +138,31 @@ const char index_html[] PROGMEM = R"rawliteral(
     let offsets = { left: [[0,0,0],[0,0,0],[0,0,0]], right: [[0,0,0],[0,0,0],[0,0,0]] };
     let isCalibrationMode = false;
     
+    function showSpeed(value) {
+      document.getElementById('speedSlider').value = value;
+      document.getElementById('speedValue').innerHTML = value + '%';
+    }
+
+    function loadSpeed() {
+      fetch('/get_speed')
+        .then(response => response.json())
+        .then(data => showSpeed(data.speed))
+        .catch(error => {
+          document.getElementById('status').innerHTML = 'Error: ' + error;
+        });
+    }
+
+    function setSpeed(value) {
+      fetch('/set_speed?pct=' + value, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => showSpeed(data.speed))
+        .catch(error => {
+          document.getElementById('status').innerHTML = 'Error: ' + error;
+        });
+    }
+
+    loadSpeed();
+
     function toggleCalibrationMode() {
       if (isCalibrationMode) {
         exitCalibrationMode();
