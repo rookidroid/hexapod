@@ -12,7 +12,7 @@
   (src/robots/<name>/motion.h).
 
   The robot can also be picked from the command line without editing this
-  file, e.g. arduino-cli compile --build-property "build.extra_flags=-DROBOT_MOCHI"
+  file, e.g. arduino-cli compile --build-property "compiler.cpp.extra_flags=-DROBOT_MOCHI"
 
 */
 

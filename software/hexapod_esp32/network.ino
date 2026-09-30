@@ -21,6 +21,15 @@ AsyncUDP udp_socket;
 static const char *ssid = APSSID;
 static const char *password = APPSK;
 
+// Pose packets whose seq_num falls at most this far behind the newest one are
+// stale (UDP reordered them) and dropped. A bigger step back means the client
+// restarted its counter, so the packet is accepted.
+static const int32_t POSE_REORDER_WINDOW = 64;
+
+// Newest pose seq_num seen in the current streaming session (UDP task only)
+static uint32_t last_pose_seq = 0;
+static bool pose_seq_valid = false;
+
 /**
    @brief Start the WiFi access point clients connect to.
 */
@@ -51,9 +60,17 @@ void setupWiFi()
 */
 void setupOta()
 {
+  ArduinoOTA.setHostname("hexapod-" ROBOT_NAME);
+#ifdef OTA_PASSWORD
+  ArduinoOTA.setPassword(OTA_PASSWORD);
+#endif
+
   ArduinoOTA
       .onStart([]()
                {
+      // Go limp rather than hold a stale pose while the flash is rewritten.
+      setPwmEnabled(false);
+
       String type;
       if (ArduinoOTA.getCommand() == U_FLASH) {
         type = "sketch";
@@ -67,7 +84,7 @@ void setupOta()
       .onEnd([]()
              { Serial.println("\nEnd"); })
       .onProgress([](unsigned int progress, unsigned int total)
-                  { Serial.printf("Progress: %u%%\r", (progress / (total / 100))); })
+                  { Serial.printf("Progress: %u%%\r", total ? (unsigned)(progress * 100ULL / total) : 0u); })
       .onError([](ota_error_t error)
                {
       Serial.printf("Error[%u]: ", error);
@@ -84,7 +101,8 @@ void setupOta()
       } });
 
   ArduinoOTA.begin();
-  Serial.println("OTA update enabled");
+  Serial.print("OTA update enabled, hostname: hexapod-");
+  Serial.println(ROBOT_NAME);
 }
 
 /**
@@ -99,6 +117,7 @@ void setupUdp()
     // Register callback for incoming UDP packets
     udp_socket.onPacket([](AsyncUDPPacket packet)
                         {
+#if HEXAPOD_DEBUG
       // Pose packets arrive at the control rate (50 Hz). Logging and echoing
       // each one would saturate the serial port and stall the UDP task, so
       // chatter is limited to the low-rate packet types.
@@ -125,12 +144,31 @@ void setupUdp()
         // reply to the client
         packet.printf("Got %u bytes of data", packet.length());
       }
+#endif
 
       // Update failsafe timestamp
       last_udp_packet_time = millis();
       // Parse command from packet
       parseCommand((char*)packet.data(), packet.length()); });
   }
+}
+
+/**
+   @brief Switch to LUT playback of a motion (UDP task).
+
+   Shared by the binary and the legacy string commands, so both leave real-time
+   mode, wake relaxed servos and disable OTA the same way.
+   @param motion_idx Index into motion_config[]
+*/
+void selectMotion(int motion_idx)
+{
+  // A motion command implies the operator wants LUT playback, not streaming.
+  exitRealtimeMode();
+  relax_requested = false;
+  next_motion_idx = motion_idx;
+
+  // Disable OTA after first command for better performance
+  ota_mode = false;
 }
 
 /**
@@ -150,9 +188,7 @@ void parseCommand(char *data, size_t length)
   if (magic == MAGIC_MOTION && length == sizeof(UdpControlPacket)) {
     UdpControlPacket* packet = (UdpControlPacket*)data;
     if ((size_t)packet->cmd < motion_config_count) {
-      // A motion command implies the operator wants LUT playback, not streaming.
-      exitRealtimeMode();
-      next_motion_idx = packet->cmd;
+      selectMotion(packet->cmd);
     }
     return;
   }
@@ -163,14 +199,24 @@ void parseCommand(char *data, size_t length)
 
     // A pose arriving while idle implicitly opens a streaming session.
     if (!realtime_mode) {
-      enterRealtimeMode();
+      pose_seq_valid = false;
     }
+    enterRealtimeMode();
+
+    // Drop poses that UDP delivered out of order; applying them would make the
+    // legs twitch back to where they just were.
+    const int32_t behind = (int32_t)(last_pose_seq - packet->seq_num);
+    if (pose_seq_valid && behind >= 0 && behind < POSE_REORDER_WINDOW) {
+      return;
+    }
+    last_pose_seq = packet->seq_num;
+    pose_seq_valid = true;
 
     portENTER_CRITICAL(&realtime_mux);
     for (int leg_idx = 0; leg_idx < 3; leg_idx++) {
       for (int joint_idx = 0; joint_idx < 3; joint_idx++) {
         // Streamed poses are uncalibrated, so bound each joint to the window
-        // that lands inside [SERVOMIN, SERVOMAX] once setAllServos() adds its
+        // that lands inside [SERVOMIN, SERVOMAX] once writeServo() adds its
         // offset. Clamping against the raw range instead would cost the joint
         // |offset| ticks of travel at one end.
         const int right_offset = right_offset_ticks[leg_idx][joint_idx];
@@ -189,8 +235,7 @@ void parseCommand(char *data, size_t length)
     if (packet->flags & POSE_FLAG_SNAP) {
       realtime_snap = true;
     }
-    // A fresh pose cancels an in-progress return to standby.
-    realtime_returning = false;
+    realtime_target_valid = true;
     portEXIT_CRITICAL(&realtime_mux);
 
     realtime_last_packet_time = millis();
@@ -203,17 +248,17 @@ void parseCommand(char *data, size_t length)
 
     switch (packet->action) {
     case RT_ENTER:
+      pose_seq_valid = false;
       enterRealtimeMode();
       break;
     case RT_EXIT:
       exitRealtimeMode();
       break;
     case RT_RELAX:
-      // Drop PWM drive so the servos go limp. Recovering requires an explicit
-      // re-entry, which re-enables the drivers from the standby posture.
+      // Drop PWM drive so the servos go limp. Any motion command, pose or
+      // RT_ENTER re-enables the drivers.
       exitRealtimeMode();
-      setPwmEnabled(false);
-      Serial.println("Servos relaxed");
+      relax_requested = true;
       break;
     case RT_PING:
       realtime_last_packet_time = millis();
@@ -262,27 +307,20 @@ void parseCommand(char *data, size_t length)
     return;
 
   // Find matching command and set motion index
-  bool found = false;
   for (size_t i = 0; i < motion_config_count; i++)
   {
     if (strcmp(command, motion_config[i].cmd) == 0)
     {
-      next_motion_idx = i;
-      found = true;
-      break;
+      selectMotion(i);
+#if HEXAPOD_DEBUG
+      Serial.print("Command received: ");
+      Serial.println(command);
+#endif
+      return;
     }
   }
 
-  if (!found)
-  {
-    Serial.print("Unknown command: ");
-    Serial.println(command);
-    return;
-  }
-
-  // Disable OTA after first command for better performance
-  ota_mode = false;
-  Serial.print("Command received: ");
+  Serial.print("Unknown command: ");
   Serial.println(command);
 }
 

@@ -9,16 +9,16 @@
 #ifndef MOTION_H
 #define MOTION_H
 
-static int lut_standby_length = 1;
-static int lut_standby[1][6][3] = {{{307, 239, 273},
+static const int lut_standby_length = 1;
+static const int16_t lut_standby[1][6][3] = {{{307, 239, 273},
                                    {307, 239, 273},
                                    {307, 239, 273},
                                    {307, 375, 341},
                                    {307, 375, 341},
                                    {307, 375, 341}}};
 
-static int lut_walk_0_length = 28;
-static int lut_walk_0[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_0_length = 28;
+static const int16_t lut_walk_0[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -187,8 +187,8 @@ static int lut_walk_0[28][6][3] = {{{307, 145, 219},
                                    {316, 467, 394},
                                    {304, 378, 349}}};
 
-static int lut_walk_180_length = 28;
-static int lut_walk_180[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_180_length = 28;
+static const int16_t lut_walk_180[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -357,8 +357,8 @@ static int lut_walk_180[28][6][3] = {{{307, 145, 219},
                                    {298, 467, 394},
                                    {310, 372, 333}}};
 
-static int lut_walk_r45_length = 28;
-static int lut_walk_r45[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_r45_length = 28;
+static const int16_t lut_walk_r45[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -527,8 +527,8 @@ static int lut_walk_r45[28][6][3] = {{{307, 145, 219},
                                    {313, 457, 381},
                                    {309, 378, 350}}};
 
-static int lut_walk_r90_length = 28;
-static int lut_walk_r90[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_r90_length = 28;
+static const int16_t lut_walk_r90[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -697,8 +697,8 @@ static int lut_walk_r90[28][6][3] = {{{307, 145, 219},
                                    {307, 454, 376},
                                    {312, 377, 346}}};
 
-static int lut_walk_r135_length = 28;
-static int lut_walk_r135[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_r135_length = 28;
+static const int16_t lut_walk_r135[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -867,8 +867,8 @@ static int lut_walk_r135[28][6][3] = {{{307, 145, 219},
                                    {301, 457, 381},
                                    {313, 374, 339}}};
 
-static int lut_walk_l45_length = 28;
-static int lut_walk_l45[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_l45_length = 28;
+static const int16_t lut_walk_l45[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -1037,8 +1037,8 @@ static int lut_walk_l45[28][6][3] = {{{307, 145, 219},
                                    {314, 477, 407},
                                    {301, 376, 343}}};
 
-static int lut_walk_l90_length = 28;
-static int lut_walk_l90[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_l90_length = 28;
+static const int16_t lut_walk_l90[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -1207,8 +1207,8 @@ static int lut_walk_l90[28][6][3] = {{{307, 145, 219},
                                    {307, 481, 412},
                                    {302, 373, 336}}};
 
-static int lut_walk_l135_length = 28;
-static int lut_walk_l135[28][6][3] = {{{307, 145, 219},
+static const int lut_walk_l135_length = 28;
+static const int16_t lut_walk_l135[28][6][3] = {{{307, 145, 219},
                                    {307, 239, 273},
                                    {307, 145, 219},
                                    {307, 375, 341},
@@ -1377,8 +1377,8 @@ static int lut_walk_l135[28][6][3] = {{{307, 145, 219},
                                    {300, 477, 407},
                                    {306, 372, 332}}};
 
-static int lut_fast_forward_length = 28;
-static int lut_fast_forward[28][6][3] = {{{291, 161, 241},
+static const int lut_fast_forward_length = 28;
+static const int16_t lut_fast_forward[28][6][3] = {{{291, 161, 241},
                                    {307, 239, 273},
                                    {323, 161, 241},
                                    {307, 375, 341},
@@ -1547,8 +1547,8 @@ static int lut_fast_forward[28][6][3] = {{{291, 161, 241},
                                    {317, 438, 353},
                                    {303, 379, 352}}};
 
-static int lut_fast_backward_length = 28;
-static int lut_fast_backward[28][6][3] = {{{291, 161, 241},
+static const int lut_fast_backward_length = 28;
+static const int16_t lut_fast_backward[28][6][3] = {{{291, 161, 241},
                                    {307, 239, 273},
                                    {323, 161, 241},
                                    {307, 375, 341},
@@ -1717,8 +1717,8 @@ static int lut_fast_backward[28][6][3] = {{{291, 161, 241},
                                    {297, 438, 353},
                                    {311, 371, 330}}};
 
-static int lut_turn_left_length = 28;
-static int lut_turn_left[28][6][3] = {{{307, 128, 212},
+static const int lut_turn_left_length = 28;
+static const int16_t lut_turn_left[28][6][3] = {{{307, 128, 212},
                                    {307, 239, 273},
                                    {307, 128, 212},
                                    {307, 375, 341},
@@ -1887,8 +1887,8 @@ static int lut_turn_left[28][6][3] = {{{307, 128, 212},
                                    {296, 482, 400},
                                    {313, 374, 338}}};
 
-static int lut_turn_right_length = 28;
-static int lut_turn_right[28][6][3] = {{{307, 128, 212},
+static const int lut_turn_right_length = 28;
+static const int16_t lut_turn_right[28][6][3] = {{{307, 128, 212},
                                    {307, 239, 273},
                                    {307, 128, 212},
                                    {307, 375, 341},
@@ -2057,8 +2057,8 @@ static int lut_turn_right[28][6][3] = {{{307, 128, 212},
                                    {318, 482, 400},
                                    {300, 376, 344}}};
 
-static int lut_climb_forward_length = 28;
-static int lut_climb_forward[28][6][3] = {{{277, 135, 253},
+static const int lut_climb_forward_length = 28;
+static const int16_t lut_climb_forward[28][6][3] = {{{277, 135, 253},
                                    {307, 328, 354},
                                    {337, 135, 253},
                                    {307, 286, 260},
@@ -2227,8 +2227,8 @@ static int lut_climb_forward[28][6][3] = {{{277, 135, 253},
                                    {312, 447, 326},
                                    {305, 287, 266}}};
 
-static int lut_climb_backward_length = 28;
-static int lut_climb_backward[28][6][3] = {{{277, 135, 253},
+static const int lut_climb_backward_length = 28;
+static const int16_t lut_climb_backward[28][6][3] = {{{277, 135, 253},
                                    {307, 328, 354},
                                    {337, 135, 253},
                                    {307, 286, 260},
@@ -2397,8 +2397,8 @@ static int lut_climb_backward[28][6][3] = {{{277, 135, 253},
                                    {302, 447, 326},
                                    {309, 284, 254}}};
 
-static int lut_rotate_x_length = 28;
-static int lut_rotate_x[28][6][3] = {{{312, 166, 241},
+static const int lut_rotate_x_length = 28;
+static const int16_t lut_rotate_x[28][6][3] = {{{312, 166, 241},
                                    {321, 236, 272},
                                    {317, 311, 319},
                                    {302, 448, 373},
@@ -2567,8 +2567,8 @@ static int lut_rotate_x[28][6][3] = {{{312, 166, 241},
                                    {293, 377, 341},
                                    {298, 314, 305}}};
 
-static int lut_rotate_y_length = 28;
-static int lut_rotate_y[28][6][3] = {{{322, 279, 297},
+static const int lut_rotate_y_length = 28;
+static const int16_t lut_rotate_y[28][6][3] = {{{322, 279, 297},
                                    {307, 323, 328},
                                    {292, 279, 297},
                                    {317, 419, 362},
@@ -2737,8 +2737,8 @@ static int lut_rotate_y[28][6][3] = {{{322, 279, 297},
                                    {305, 447, 373},
                                    {297, 414, 362}}};
 
-static int lut_rotate_z_length = 28;
-static int lut_rotate_z[28][6][3] = {{{319, 272, 292},
+static const int lut_rotate_z_length = 28;
+static const int16_t lut_rotate_z[28][6][3] = {{{319, 272, 292},
                                    {307, 307, 316},
                                    {295, 272, 292},
                                    {316, 411, 358},
@@ -2907,8 +2907,8 @@ static int lut_rotate_z[28][6][3] = {{{319, 272, 292},
                                    {309, 442, 371},
                                    {301, 423, 363}}};
 
-static int lut_twist_length = 28;
-static int lut_twist[28][6][3] = {{{309, 217, 262},
+static const int lut_twist_length = 28;
+static const int16_t lut_twist[28][6][3] = {{{309, 217, 262},
                                    {311, 238, 273},
                                    {309, 260, 285},
                                    {305, 397, 352},
@@ -3077,8 +3077,8 @@ static int lut_twist[28][6][3] = {{{309, 217, 262},
                                    {288, 377, 341},
                                    {291, 342, 321}}};
 
-static int lut_standup_length = 28;
-static int lut_standup[28][6][3] = {{{307, 159, 307},
+static const int lut_standup_length = 28;
+static const int16_t lut_standup[28][6][3] = {{{307, 159, 307},
                                    {307, 159, 307},
                                    {307, 159, 307},
                                    {307, 455, 307},

@@ -32,7 +32,8 @@ enum RobotCommand : uint8_t {
   CMD_ROTATE_X = 15,
   CMD_ROTATE_Y = 16,
   CMD_ROTATE_Z = 17,
-  CMD_TWIST = 18
+  CMD_TWIST = 18,
+  CMD_COUNT // Number of commands; motion_config[] must have one entry each
 };
 
 // Packet discriminators. The first byte of every binary packet selects the

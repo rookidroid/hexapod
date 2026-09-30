@@ -5,11 +5,12 @@ Arduino-based firmware for the ESP32-powered hexapod robot controller, shared by
 ## Features
 
 - **WiFi Control**: Access Point mode with UDP command interface
-- **Web Calibration Interface**: Browser-based UI to adjust and save servo offsets to EEPROM
+- **Web Calibration Interface**: Browser-based UI to adjust and save servo offsets to flash
 - **Binary UDP Protocol**: Fast and efficient binary packet structure for motion control
 - **18-Servo Control**: Dual PCA9685 PWM drivers (I2C) for coordinated leg movement
 - **OTA Updates**: Wireless firmware updates over WiFi
 - **Motion Library**: Pre-programmed gaits and movements
+- **Non-blocking Motion Engine**: Gaits, streamed poses and every transition between them run from one tick-driven engine, so the web UI, OTA and failsafes stay responsive while walking
 - **Event-Driven Boot**: Automatic boot sequence when client connects
 
 ## Hardware Requirements
@@ -28,7 +29,8 @@ Install these libraries through Arduino Library Manager:
 | Adafruit_PWMServoDriver | PCA9685 control | [GitHub](https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library) |
 | AsyncUDP | Non-blocking UDP | Included with arduino-esp32 |
 | ArduinoOTA | OTA updates | Included with arduino-esp32 |
-| EEPROM | Calibration storage | Included with arduino-esp32 |
+| Preferences | Calibration storage (NVS) | Included with arduino-esp32 |
+| EEPROM | One-time import of older calibrations | Included with arduino-esp32 |
 | WebServer | Calibration UI | Included with arduino-esp32 |
 
 ## Quick Start
@@ -57,8 +59,13 @@ This picks the robot's motion tables and settings from `src/robots/<name>/`:
 | Mochi | `ROBOT_MOCHI` | `hexapod` | 12 |
 | Macaroon | `ROBOT_MACAROON` | `hexapod_macaroon` | 25 |
 
+`DELAY_MS` is the time between LUT frames. The frame period is now exactly
+`DELAY_MS`: earlier firmware also spent ~10 ms per frame on a 100 kHz I2C bus,
+so gaits play faster than before, most noticeably on Nougat and Mochi. Raise
+`DELAY_MS` in `src/robots/<name>/robot_config.h` if a gait feels rushed.
+
 With `arduino-cli`, you can pick the robot without editing the file:
-`arduino-cli compile --fqbn esp32:esp32:esp32 --build-property "build.extra_flags=-DROBOT_MOCHI"`.
+`arduino-cli compile --fqbn esp32:esp32:esp32 --build-property "compiler.cpp.extra_flags=-DROBOT_MOCHI"`.
 
 ### 3. Configure Hardware
 
@@ -89,7 +96,7 @@ static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 
 ## How to Calibrate
 
-The firmware includes a web-based calibration interface to easily adjust servo offsets without recompiling code. These offsets are saved directly to the ESP32's EEPROM.
+The firmware includes a web-based calibration interface to easily adjust servo offsets without recompiling code. These offsets are saved to the ESP32's flash (NVS). Calibrations saved by older firmware in EEPROM are imported automatically on first boot.
 
 ![Calibration Interface](../../images/calibration_page.jpg)
 
@@ -98,10 +105,11 @@ The firmware includes a web-based calibration interface to easily adjust servo o
 1. Power on the hexapod and connect your device to its WiFi network (see [Select Your Robot](#2-select-your-robot)).
 2. Open a web browser and navigate to `http://192.168.4.1/`.
 3. Click the **Enter Calibration Mode** button. The robot will move to its neutral calibration posture.
-4. Use the `+` and `-` buttons for each joint on the web interface to fine-tune the positions.
+4. Use the `+` and `-` buttons for each joint on the web interface to fine-tune the positions. Offsets are limited to ±100 ticks.
    - The goal is to align the legs such that the coxa (shoulder) is parallel to the body, the femur (thigh) is horizontal, and the tibia (calf) is vertical.
    - Adjust the offsets until all legs are perfectly aligned and the robot stands evenly.
-5. Once satisfied with the posture, click **Save Offsets**. This will permanently save the calibration values to the EEPROM.
+5. Once satisfied with the posture, click **Save Offsets**. This will permanently save the calibration values to flash.
+6. Click **Exit Calibration Mode**. The robot eases back to its standby posture.
 
 *Note: You no longer need to manually edit offsets in `config.h`. If you wish to backup your offsets, the web interface will print the configured arrays to the Serial Monitor when you click save.*
 
@@ -138,6 +146,12 @@ All packets are little-endian and unpadded (`#pragma pack(1)`).
 | 15-17 | Body rotation (pitch/roll/yaw) |
 | 18 | Body twist motion |
 
+**Failsafe:** the robot returns to standby if no UDP packet arrives for 500 ms
+(`MOTION_TIMEOUT_MS`), so keep resending the command while it should move.
+
+Gaits change only at the start or midpoint of a cycle, and always pass through
+the standby posture on the way to the next gait.
+
 #### Example (Python)
 
 ```python
@@ -172,13 +186,17 @@ for LUT playback. Ticks are clamped on arrival to the window that stays within
 `SERVOMIN`…`SERVOMAX` after that offset, so calibration never costs a joint any
 travel.
 
-Receiving a pose packet implicitly enters real-time mode from the standby
-posture. Each control cycle every joint moves toward its target by at most
-`max_step` ticks, so a large jump becomes a controlled slew rather than a step
-input to 18 servos at once.
+Receiving a pose packet implicitly enters real-time mode from whatever posture
+the robot holds, even mid-gait. Each control cycle every joint moves toward its
+target by at most `max_step` ticks, so a large jump becomes a controlled slew
+rather than a step input to 18 servos at once.
 
-**Failsafe:** if no packet arrives for 1 s the robot eases back to standby at
-the slew limit and returns to LUT control. Send a keep-alive (below) while idle.
+**Ordering:** UDP can reorder packets. A pose whose `seq_num` is up to 63 behind
+the newest one received is dropped. A bigger step back is taken as a client
+restart and accepted. The window resets on `RT_ENTER`.
+
+**Failsafe:** if no packet arrives for 1 s the robot eases back to standby and
+returns to LUT control. Send a keep-alive (below) while idle.
 
 ### Session control (`0xA7`)
 
@@ -191,8 +209,8 @@ the slew limit and returns to LUT control. Send a keep-alive (below) while idle.
 | Action | Name | Effect |
 |--------|------|--------|
 | 0 | Exit | Leave real-time mode, resume LUT playback from standby |
-| 1 | Enter | Enter real-time mode, holding the standby posture |
-| 2 | Relax | Disable both PWM drivers so the servos go limp |
+| 1 | Enter | Enter real-time mode, holding the current posture |
+| 2 | Relax | Disable both PWM drivers so the servos go limp; any motion command, pose or Enter wakes them |
 | 3 | Ping | Keep-alive; resets the failsafe timer |
 
 Sending a motion command (`0xA5`) also leaves real-time mode, so the two control
@@ -215,28 +233,32 @@ ticks = [307, 239, 273] * 3 + [307, 375, 341] * 3
 sock.sendto(struct.pack("<BBHI" + "h" * 18, 0xA6, 0, 8, 1, *ticks), addr)
 ```
 
-> **Note:** unlike motion commands, pose packets are not echoed or logged to
-> serial. At 50 Hz the logging would saturate the serial port and stall the UDP
-> task.
+> **Note:** packets are not echoed or logged to serial by default. Build with
+> `HEXAPOD_DEBUG` set to 1 in `config.h` to log and echo motion and session
+> packets. Pose packets are never logged: at 50 Hz the logging would saturate
+> the serial port and stall the UDP task.
 
 ## OTA Updates
 
 After initial USB upload, use OTA for wireless updates:
 
 1. Power on robot and connect to its WiFi
-2. In Arduino IDE: **Tools → Port → Network Ports**, then select the ESP32
-3. Upload as normal
-4. Note: OTA is disabled after first motion command (reboot to re-enable)
+2. In Arduino IDE: **Tools → Port → Network Ports**, then select `hexapod-<robot>` (e.g. `hexapod-macaroon`)
+3. Upload as normal. The servos go limp while the new firmware is written
+4. Note: OTA is disabled after the first motion command or real-time session (reboot to re-enable)
+
+OTA has no password by default, so anyone who joins the robot's access point
+can flash it. Define `OTA_PASSWORD` in `config.h` to require one.
 
 ## File Structure
 
 ```text
 hexapod_esp32/
 ├── hexapod_esp32.ino    # setup() / loop() and the shared system state
-├── motion_control.ino   # PWM drivers, LUT playback, every write to a servo
+├── motion_control.ino   # PWM drivers, motion engine, every write to a servo
 ├── realtime.ino         # Real-time pose streaming and its slew limiter
 ├── network.ino          # WiFi AP, OTA, UDP endpoint and packet parsing
-├── calibration.ino      # Servo offsets loaded from / saved to EEPROM
+├── calibration.ino      # Servo offsets loaded from / saved to flash (NVS)
 ├── web_ui.ino           # HTTP routes for the calibration interface
 ├── hexapod.h            # Shared state and module interfaces
 ├── protocol.h           # UDP packet layouts and magic numbers
@@ -252,7 +274,14 @@ hexapod_esp32/
 
 The `.ino` files are Arduino sketch tabs: the build concatenates them into one
 translation unit, so the `static` tables in `config.h` and `motion.h` exist once
-and every module sees the same calibration offsets.
+and every module sees the same calibration offsets. Types used in function
+signatures belong in `hexapod.h`, because the build hoists each tab's function
+prototypes above that tab's own declarations.
+
+Only the main loop writes to the servos. The UDP task records requests
+(`next_motion_idx`, `realtime_mode`, `relax_requested`, the streamed pose) and
+`serviceMotionEngine()` acts on them at its next tick, starting every transition
+from `pose_current`, the pose last written to the servos.
 
 ## Configuration Parameters
 
@@ -262,12 +291,19 @@ Key constants in `config.h`:
 // Servo timing (DELAY_MS, the delay between LUT steps, is per robot in robot_config.h)
 const uint16_t SERVO_INIT_DELAY_MS = 50;    // Boot sequence delay
 const uint8_t TRANSITION_TICK_STEP = 6;      // Transition smoothness
+#define MOTION_TIMEOUT_MS 500                // LUT failsafe
+#define REALTIME_TIMEOUT_MS 1000             // Real-time failsafe
 
 // Hardware
 const uint8_t LEFT_PWM_ADDRESS = 0x40;       // Left PCA9685 I2C address
 const uint8_t RIGHT_PWM_ADDRESS = 0x41;      // Right PCA9685 I2C address
 const uint8_t LEFT_PWM_ENABLE_PIN = 19;      // Left driver enable (active LOW)
 const uint8_t RIGHT_PWM_ENABLE_PIN = 26;     // Right driver enable (active LOW)
+const uint32_t I2C_CLOCK_HZ = 400000;        // I2C bus speed
+const uint32_t PCA9685_OSC_HZ = 25000000;    // Tune if servo angles are off
+
+// Calibration
+const int CALIBRATION_MAX_OFFSET = 100;      // Largest accepted offset (ticks)
 ```
 
 ## Troubleshooting
@@ -296,7 +332,7 @@ const uint8_t RIGHT_PWM_ENABLE_PIN = 26;     // Right driver enable (active LOW)
 
 1. Add the path to `gen_luts()` in [`../path_tool/generate_motion.py`](../path_tool/generate_motion.py) so it is generated for every robot
 2. Regenerate the LUTs with `python generate_motion.py --all`, which rewrites each `src/robots/<name>/motion.h`
-3. Add command mapping to `motion_config[]` in `motion_control.ino`:
+3. Add a command ID before `CMD_COUNT` in `protocol.h`, then the matching entry at the same position in `motion_config[]` in `motion_control.ino` (a `static_assert` checks the counts match):
 
 ```cpp
 const MotionConfig motion_config[] = {

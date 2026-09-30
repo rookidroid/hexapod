@@ -98,10 +98,10 @@ const char index_html[] PROGMEM = R"rawliteral(
     </div>
     <div class="status" id="status"></div>
     <div class="calibration-panel" id="calibPanel">
-      <h2>Servo Offset Adjustments (Ticks, 1 tick ≈ 0.44°)</h2>
+      <h2>Servo Offset Adjustments (Ticks, 1 tick ≈ 0.44°, max ±100)</h2>
       <div class="leg-grid" id="legGrid"></div>
       <div class="reminder">
-        ⚠️ Remember to click "Save Offsets" button below to permanently save your calibration to EEPROM!
+        ⚠️ Remember to click "Save Offsets" button below to permanently save your calibration to flash!
       </div>
       <div class="controls">
         <button class="btn" onclick="saveOffsets()">Save Offsets</button>
@@ -202,26 +202,28 @@ const char index_html[] PROGMEM = R"rawliteral(
       applyOffsets();
     }
     
-    function applyOffsets() {
-      fetch('/set_offsets', {
+    // Resolves with the response text; rejects with the firmware's error message.
+    function postOffsets() {
+      return fetch('/set_offsets', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(offsets)
       })
-      .then(response => response.text())
-      .catch(error => {
-        console.error('Apply offsets error:', error);
+      .then(response => response.text().then(text => {
+        if (!response.ok) throw new Error(text);
+        return text;
+      }));
+    }
+
+    function applyOffsets() {
+      postOffsets().catch(error => {
+        document.getElementById('status').innerHTML = 'Error: ' + error.message;
       });
     }
     
     function saveOffsets() {
       document.getElementById('status').innerHTML = 'Saving offsets...';
-      fetch('/set_offsets', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(offsets)
-      })
-      .then(response => response.text())
+      postOffsets()
       .then(data => {
         return fetch('/save_offsets', {
           method: 'POST',
@@ -234,7 +236,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         document.getElementById('status').innerHTML = data;
       })
       .catch(error => {
-        document.getElementById('status').innerHTML = 'Error: ' + error;
+        document.getElementById('status').innerHTML = 'Error: ' + error.message;
       });
     }
   </script>

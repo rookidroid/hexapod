@@ -9,52 +9,49 @@
 */
 
 #include "hexapod.h"
-#include "motion.h"
 
 // Shared with the AsyncUDP task; see the notes in hexapod.h.
 portMUX_TYPE realtime_mux = portMUX_INITIALIZER_UNLOCKED;
 
-bool realtime_mode = false;
-int realtime_target[6][3];
-int realtime_current[6][3];
+volatile bool realtime_mode = false;
+volatile bool relax_requested = false;
+Pose realtime_target;
+bool realtime_target_valid = false;
 uint16_t realtime_max_step = REALTIME_DEFAULT_MAX_STEP;
 bool realtime_snap = false;
-bool realtime_returning = false;
-unsigned long realtime_last_packet_time = 0;
+volatile unsigned long realtime_last_packet_time = 0;
 
 /**
-   @brief Enter real-time pose streaming mode.
+   @brief Request real-time pose streaming mode (UDP task).
 
-   Seeds the working pose from standby so the first streamed pose is reached by
-   a rate-limited slew from a known posture instead of an unpredictable jump.
+   The motion engine picks the request up at its next call and holds the
+   current pose until a streamed pose arrives, so entering never moves the
+   robot by itself. Also clears a pending relax.
 */
 void enterRealtimeMode()
 {
+  relax_requested = false;
+  realtime_last_packet_time = millis();
+
   if (realtime_mode)
   {
     return;
   }
 
-  setPwmEnabled(true);
-
   portENTER_CRITICAL(&realtime_mux);
-  copyPose(lut_standby[0], realtime_current);
-  copyPose(lut_standby[0], realtime_target);
+  realtime_target_valid = false;
   realtime_snap = false;
-  realtime_returning = false;
   realtime_mode = true;
   portEXIT_CRITICAL(&realtime_mux);
 
-  realtime_last_packet_time = millis();
-
   // The streaming loop must not be delayed by OTA polling.
   ota_mode = false;
-
-  Serial.println("Entered real-time mode");
 }
 
 /**
-   @brief Leave real-time mode and hand control back to the motion LUT engine.
+   @brief Request a return to LUT playback (UDP task or motion engine).
+
+   The LUT engine eases from wherever the legs are back to standby.
 */
 void exitRealtimeMode()
 {
@@ -65,15 +62,11 @@ void exitRealtimeMode()
 
   portENTER_CRITICAL(&realtime_mux);
   realtime_mode = false;
-  realtime_returning = false;
+  realtime_target_valid = false;
   portEXIT_CRITICAL(&realtime_mux);
 
-  // The LUT engine resumes from standby, which is the posture we eased into.
-  current_motion_idx = CMD_STANDBY;
   next_motion_idx = CMD_STANDBY;
   last_udp_packet_time = millis();
-
-  Serial.println("Exited real-time mode");
 }
 
 /**
@@ -85,7 +78,17 @@ void exitRealtimeMode()
 */
 void serviceRealtimePose()
 {
-  int target[6][3];
+  // Stream dropped: hand back to the LUT engine, which eases to standby rather
+  // than freezing mid-pose or snapping.
+  const unsigned long last_packet = realtime_last_packet_time;
+  if ((long)(millis() - last_packet) > REALTIME_TIMEOUT_MS)
+  {
+    Serial.println("Real-time stream lost, returning to standby");
+    exitRealtimeMode();
+    return;
+  }
+
+  Pose target;
   uint16_t step;
   bool snap;
 
@@ -101,22 +104,9 @@ void serviceRealtimePose()
     step = REALTIME_DEFAULT_MAX_STEP;
   }
 
-  for (int leg_idx = 0; leg_idx < 6; leg_idx++)
-  {
-    for (int joint_idx = 0; joint_idx < 3; joint_idx++)
-    {
-      int diff = target[leg_idx][joint_idx] - realtime_current[leg_idx][joint_idx];
-
-      if (snap || abs(diff) <= (int)step)
-      {
-        realtime_current[leg_idx][joint_idx] = target[leg_idx][joint_idx];
-      }
-      else
-      {
-        realtime_current[leg_idx][joint_idx] += (diff > 0) ? (int)step : -(int)step;
-      }
-    }
-  }
-
-  setAllServos(realtime_current);
+  Pose pose;
+  copyPose(pose_current, pose);
+  // A snap moves every joint the whole way, whatever the distance.
+  slewToward(pose, target, snap ? SERVOMAX : step);
+  writePose(pose);
 }

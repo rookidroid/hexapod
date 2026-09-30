@@ -1,0 +1,44 @@
+name: ESP32 firmware
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "software/hexapod_esp32/**"
+      - "software/path_tool/**"
+      - ".github/workflows/esp32.yml"
+  pull_request:
+    paths:
+      - "software/hexapod_esp32/**"
+      - "software/path_tool/**"
+      - ".github/workflows/esp32.yml"
+
+jobs:
+  build:
+    name: Build (${{ matrix.robot }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        robot: [ROBOT_NOUGAT, ROBOT_MOCHI, ROBOT_MACAROON]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      - name: Install ESP32 core and libraries
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32@3.3.11 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli lib install "Adafruit PWM Servo Driver Library@3.0.3"
+
+      # compiler.cpp.extra_flags is empty in the ESP32 core; build.extra_flags
+      # is not, and overriding it would drop the core's own defines.
+      - name: Compile
+        run: >
+          arduino-cli compile
+          --fqbn esp32:esp32:esp32
+          --warnings all
+          --build-property "compiler.cpp.extra_flags=-D${{ matrix.robot }}"
+          software/hexapod_esp32

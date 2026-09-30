@@ -127,13 +127,13 @@ def format_motion_header(luts, config):
 
     for var_name, var in luts:
         steps = np.shape(var)[0]
-        lines.append("static int " + var_name + "_length = " + str(steps) + ";\n")
+        lines.append("static const int " + var_name + "_length = " + str(steps) + ";\n")
 
         for idx in range(0, steps):
             pwm = to_ticks(var[idx, :, :], config)
 
             if idx == 0:
-                lines.append("static int " + var_name + "[" + str(steps) + "][6][3] = {{")
+                lines.append("static const int16_t " + var_name + "[" + str(steps) + "][6][3] = {{")
             else:
                 lines.append("                                  {")
 
