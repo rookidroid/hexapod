@@ -20,9 +20,9 @@
 #define ROBOT_H
 
 #if !defined(ROBOT_NOUGAT) && !defined(ROBOT_MOCHI) && !defined(ROBOT_MACAROON)
-// #define ROBOT_NOUGAT
+#define ROBOT_NOUGAT
 // #define ROBOT_MOCHI
-#define ROBOT_MACAROON
+// #define ROBOT_MACAROON
 #endif
 
 #if (defined(ROBOT_NOUGAT) + defined(ROBOT_MOCHI) + defined(ROBOT_MACAROON)) > 1
