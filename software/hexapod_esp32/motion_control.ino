@@ -59,6 +59,7 @@ static EngineMode engine_mode = ENGINE_LUT;
 static LutPhase lut_phase = LUT_TO_STANDBY;
 static int active_motion = CMD_STANDBY;
 static int frame_idx = 0;
+static int frame_frac = 0; // Progress toward the next frame, in percent (0-99)
 static unsigned long last_tick_ms = 0;
 
 /**
@@ -221,6 +222,22 @@ bool slewToward(Pose pose, const Pose target, int step)
 }
 
 /**
+   @brief Blend two poses: `out` = `a` + (`b` - `a`) * `frac` / 100.
+   @param frac Position between `a` and `b`, in percent (0-100)
+*/
+static void lerpPose(const Pose a, const Pose b, int frac, Pose out)
+{
+  for (int leg_idx = 0; leg_idx < 6; leg_idx++)
+  {
+    for (int joint_idx = 0; joint_idx < 3; joint_idx++)
+    {
+      const int diff = b[leg_idx][joint_idx] - a[leg_idx][joint_idx];
+      out[leg_idx][joint_idx] = a[leg_idx][joint_idx] + diff * frac / 100;
+    }
+  }
+}
+
+/**
    @brief Copy a 6x3 pose.
 */
 void copyPose(const Pose src, Pose dst)
@@ -332,11 +349,30 @@ static void tickLut()
     // Leave a gait only at its start or midpoint, the stable points of the
     // cycle.
     const bool at_switch_point =
-        frame_idx == 0 || frame_idx == motion.length / 2;
+        frame_frac == 0 && (frame_idx == 0 || frame_idx == motion.length / 2);
     if (requested == active_motion || !at_switch_point)
     {
-      writePose(motion.lut[frame_idx]);
-      frame_idx = (frame_idx + 1) % motion.length;
+      // Speed sets how far each tick advances through the LUT. Below 100 %
+      // the pose is blended between adjacent frames, so the servos get a new
+      // target every tick instead of jumping and then holding still.
+      Pose pose;
+      lerpPose(motion.lut[frame_idx],
+               motion.lut[(frame_idx + 1) % motion.length], frame_frac, pose);
+      writePose(pose);
+
+      frame_frac += motion_speed_pct;
+      if (frame_frac >= 100)
+      {
+        frame_frac -= 100;
+        frame_idx = (frame_idx + 1) % motion.length;
+        // Snap onto a switch point when leaving, or the fractional phase may
+        // step over it and the gait would never stop.
+        if (requested != active_motion &&
+            (frame_idx == 0 || frame_idx == motion.length / 2))
+        {
+          frame_frac = 0;
+        }
+      }
       return;
     }
     lut_phase = LUT_TO_STANDBY;
@@ -356,6 +392,7 @@ static void tickLut()
   if (slewAndWrite(motion_config[active_motion].lut[0], TRANSITION_TICK_STEP))
   {
     frame_idx = 0;
+    frame_frac = 0;
     lut_phase = LUT_PLAYING;
   }
 }
@@ -374,10 +411,9 @@ static unsigned long tickPeriod()
   {
     return DELAY_MS / 2;
   }
-  // Only gait playback follows the speed setting; transitions keep their pace
-  // so stopping and changing gait stay responsive.
-  const unsigned long speed_pct = motion_speed_pct;
-  return (unsigned long)DELAY_MS * 100 / speed_pct;
+  // Gait playback always ticks at the tuned frame rate; the speed setting
+  // scales how far each tick advances through the LUT (see tickLut()).
+  return DELAY_MS;
 }
 
 /**

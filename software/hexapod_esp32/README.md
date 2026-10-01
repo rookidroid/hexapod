@@ -157,8 +157,10 @@ the standby posture on the way to the next gait.
 
 The 7-byte form appends a speed byte that sets how fast the gait LUTs play, as a
 percentage of the robot's tuned frame rate (`DELAY_MS`). Values are clamped to
-20-100 %; slower speeds stretch the frame period, so a gait at 50 % takes twice
-as long per cycle. `0` leaves the speed unchanged, and the 6-byte form never
+20-100 %; a gait at 50 % takes twice as long per cycle. The servos are still
+updated every `DELAY_MS`: below 100 % the firmware blends between adjacent LUT
+frames, so slow gaits stay smooth instead of stepping from frame to frame. `0`
+leaves the speed unchanged, and the 6-byte form never
 touches it. Only gait playback follows the speed: the transitions between gaits
 keep their pace so the robot still stops promptly.
 
