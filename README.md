@@ -33,6 +33,7 @@ hexapod/
     ├── hexapod_esp32/      # ESP32 firmware (Arduino sketch), shared by all robots
     │   ├── robot.h         #   Pick the robot you are building here
     │   └── src/robots/     #   Per-robot settings and generated motion tables
+    ├── package_esp32.py    # Packages the ESP32 sketch into one copy per robot
     ├── hexapod_pico/       # Legacy Raspberry Pi Pico firmware (unmaintained)
     └── path_tool/          # Gait generator that produces the motion tables
         └── robots/         #   Per-robot geometry and gait parameters (JSON)
@@ -44,6 +45,8 @@ hexapod/
 2. Open [`software/hexapod_esp32/hexapod_esp32.ino`](./software/hexapod_esp32/hexapod_esp32.ino) in the Arduino IDE.
 3. In [`robot.h`](./software/hexapod_esp32/robot.h), leave only your robot's `#define ROBOT_*` uncommented.
 4. Upload, join the robot's WiFi network and calibrate it at `http://192.168.4.1`.
+
+To skip step 3, download `hexapod_<robot>_<version>.zip` from the [releases](https://github.com/rookidroid/hexapod/releases): a copy of the sketch with your robot already selected. `python software/package_esp32.py` builds the same zips locally into `dist/`.
 
 The [ESP32 firmware README](./software/hexapod_esp32/README.md) covers setup, the UDP protocol and OTA updates. The [path tool README](./software/path_tool/README.md) explains how the motion tables are generated and how to add a new robot.
 

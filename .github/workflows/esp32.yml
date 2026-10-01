@@ -3,14 +3,18 @@ name: ESP32 firmware
 on:
   push:
     branches: [main]
+    # Path filters are not applied to tag pushes, so every v* tag packages a release
+    tags: ["v*"]
     paths:
       - "software/hexapod_esp32/**"
       - "software/path_tool/**"
+      - "software/package_esp32.py"
       - ".github/workflows/esp32.yml"
   pull_request:
     paths:
       - "software/hexapod_esp32/**"
       - "software/path_tool/**"
+      - "software/package_esp32.py"
       - ".github/workflows/esp32.yml"
 
 jobs:
@@ -20,12 +24,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        robot: [ROBOT_NOUGAT, ROBOT_MOCHI, ROBOT_MACAROON]
+        include:
+          - robot: nougat
+            define: ROBOT_NOUGAT
+          - robot: mochi
+            define: ROBOT_MOCHI
+          - robot: macaroon
+            define: ROBOT_MACAROON
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: arduino/setup-arduino-cli@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
 
       - name: Install ESP32 core and libraries
         run: |
@@ -40,5 +54,48 @@ jobs:
           arduino-cli compile
           --fqbn esp32:esp32:esp32
           --warnings all
-          --build-property "compiler.cpp.extra_flags=-D${{ matrix.robot }}"
+          --build-property "compiler.cpp.extra_flags=-D${{ matrix.define }}"
           software/hexapod_esp32
+
+      - name: Package
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME}"
+          else
+            VERSION="$(git rev-parse --short HEAD)"
+          fi
+          python software/package_esp32.py ${{ matrix.robot }} --version "$VERSION"
+
+      # No -D flag: the packaged robot.h must select the robot on its own
+      - name: Compile package
+        run: >
+          arduino-cli compile
+          --fqbn esp32:esp32:esp32
+          --warnings all
+          dist/hexapod_${{ matrix.robot }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hexapod_${{ matrix.robot }}
+          path: dist/*.zip
+
+  # One job attaches every robot's zip, so the matrix jobs never race to
+  # create the release
+  release:
+    name: Attach packages to release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: hexapod_*
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
