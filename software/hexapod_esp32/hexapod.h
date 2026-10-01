@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "protocol.h"
+#include "version.h"
 
 // A whole-body pose: servo ticks for [leg][joint], before calibration offsets.
 // Leg order is right front/middle/back, then left front/middle/back; joint order
@@ -166,6 +167,7 @@ void setupWiFi();
 void setupOta();
 void setupUdp();
 void parseCommand(char *data, size_t length);
+void replyVersion(AsyncUDPPacket &packet);
 void selectMotion(int motion_idx);
 void WiFiEvent(arduino_event_id_t event);
 

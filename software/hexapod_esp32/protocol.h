@@ -45,6 +45,7 @@ enum RobotCommand : uint8_t {
 const uint8_t MAGIC_MOTION = 0xA5;  // Pre-programmed motion command (legacy)
 const uint8_t MAGIC_POSE = 0xA6;    // Real-time 18-servo pose
 const uint8_t MAGIC_SESSION = 0xA7; // Real-time session control
+const uint8_t MAGIC_VERSION = 0xA8; // Firmware version query (answered)
 
 // Actions carried by a session packet
 enum RealtimeAction : uint8_t {
@@ -86,6 +87,25 @@ struct UdpSessionPacket {
   RealtimeAction action;
   uint32_t seq_num;
 };
+
+// Asks for the firmware version. The robot answers the sender with a
+// UdpVersionReply.
+struct UdpVersionRequest {
+  uint8_t magic;       // 0xA8
+  uint32_t seq_num;    // Echoed in the reply
+};
+
+// Answer to a version query, sent back to the requesting address and port. The
+// fixed header is followed by FIRMWARE_BUILD as UTF-8, without a terminator; it
+// runs to the end of the datagram.
+struct UdpVersionReply {
+  uint8_t magic;       // 0xA8
+  uint32_t seq_num;    // Copied from the request
+  uint8_t protocol;    // PROTOCOL_VERSION
+  uint8_t major;       // FIRMWARE_VERSION_MAJOR
+  uint8_t minor;       // FIRMWARE_VERSION_MINOR
+  uint8_t patch;       // FIRMWARE_VERSION_PATCH
+};
 #pragma pack(pop)
 
 // Bit values for UdpPosePacket::flags
@@ -98,5 +118,7 @@ static_assert(sizeof(UdpControlPacket) == 6, "control packet must be 6 bytes");
 static_assert(sizeof(UdpControlSpeedPacket) == 7, "speed control packet must be 7 bytes");
 static_assert(sizeof(UdpPosePacket) == 44, "pose packet must be 44 bytes");
 static_assert(sizeof(UdpSessionPacket) == 6, "session packet must be 6 bytes");
+static_assert(sizeof(UdpVersionRequest) == 5, "version request must be 5 bytes");
+static_assert(sizeof(UdpVersionReply) == 9, "version reply header must be 9 bytes");
 
 #endif  // PROTOCOL_H

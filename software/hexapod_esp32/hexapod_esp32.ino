@@ -81,6 +81,7 @@ void setup()
     ; // Wait for serial port to connect, timeout after 3s
   }
   Serial.println("\n=== Hexapod Robot Initializing ===");
+  Serial.println("Robot: " ROBOT_NAME ", firmware " FIRMWARE_VERSION " (" FIRMWARE_BUILD ")");
 
   setupWiFi();
   setupOta();

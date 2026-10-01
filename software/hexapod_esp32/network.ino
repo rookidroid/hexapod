@@ -117,6 +117,16 @@ void setupUdp()
     // Register callback for incoming UDP packets
     udp_socket.onPacket([](AsyncUDPPacket packet)
                         {
+      // Queries are answered here, where the sender is known. They are not
+      // control input, so they skip the failsafe refresh below: polling the
+      // version must not keep a gait running.
+      if (packet.length() == sizeof(UdpVersionRequest) &&
+          packet.data()[0] == MAGIC_VERSION)
+      {
+        replyVersion(packet);
+        return;
+      }
+
 #if HEXAPOD_DEBUG
       // Pose packets arrive at the control rate (50 Hz). Logging and echoing
       // each one would saturate the serial port and stall the UDP task, so
@@ -151,6 +161,32 @@ void setupUdp()
       // Parse command from packet
       parseCommand((char*)packet.data(), packet.length()); });
   }
+}
+
+/**
+   @brief Answer a version query with a UdpVersionReply followed by
+   FIRMWARE_BUILD (UDP task).
+   @param packet The UdpVersionRequest; the reply goes back to its sender
+*/
+void replyVersion(AsyncUDPPacket &packet)
+{
+  const UdpVersionRequest *request = (const UdpVersionRequest *)packet.data();
+
+  static const char build[] = FIRMWARE_BUILD;
+  const size_t build_len = sizeof(build) - 1; // Drop the terminator
+  uint8_t reply[sizeof(UdpVersionReply) + sizeof(build)];
+
+  UdpVersionReply header;
+  header.magic = MAGIC_VERSION;
+  header.seq_num = request->seq_num;
+  header.protocol = PROTOCOL_VERSION;
+  header.major = FIRMWARE_VERSION_MAJOR;
+  header.minor = FIRMWARE_VERSION_MINOR;
+  header.patch = FIRMWARE_VERSION_PATCH;
+
+  memcpy(reply, &header, sizeof(header));
+  memcpy(reply + sizeof(header), build, build_len);
+  packet.write(reply, sizeof(header) + build_len);
 }
 
 /**

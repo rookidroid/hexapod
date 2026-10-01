@@ -62,6 +62,8 @@ static String offsetsJson()
 static String robotConfigJson()
 {
   String json = "{\"protocol\":" + String(PROTOCOL_VERSION);
+  json += ",\"firmware\":{\"version\":\"" FIRMWARE_VERSION
+          "\",\"build\":\"" FIRMWARE_BUILD "\"}";
   json += ",\"name\":\"" ROBOT_NAME "\"";
   json += ",\"ssid\":\"" APSSID "\"";
   json += ",\"delay_ms\":" + String(DELAY_MS);

@@ -77,7 +77,8 @@ only that robot's tables are included, so you can skip this step.
 To build the packages yourself, run `python software/package_esp32.py` from
 the repository root. It writes a folder and a zip for every robot into `dist/`.
 Name robots to package only those (`python software/package_esp32.py nougat`),
-and pass `--no-zip` to write just the folders.
+and pass `--no-zip` to write just the folders. Each package's `version.h` has
+`FIRMWARE_BUILD` set to the package version (see [Firmware version](#firmware-version)).
 
 ### 3. Configure Hardware
 
@@ -127,7 +128,7 @@ The firmware includes a web-based calibration interface to easily adjust servo o
 
 ## UDP Command Reference
 
-Three binary packet types share port 1234. The **first byte selects the
+Four binary packet types share port 1234. The **first byte selects the
 protocol**, so the firmware dispatches on the magic number before it checks the
 length (the motion and session packets are both 6 bytes).
 
@@ -136,6 +137,7 @@ length (the motion and session packets are both 6 bytes).
 | `0xA5` | Motion command | 6 or 7 B | Play one of the built-in gait LUTs, optionally at a set speed |
 | `0xA6` | Real-time pose | 44 B | Stream raw servo positions for all 18 joints |
 | `0xA7` | Session control | 6 B | Enter/leave real-time mode, relax, keep-alive |
+| `0xA8` | Version query | 5 B | Ask for the firmware version; the robot replies |
 
 All packets are little-endian and unpadded (`#pragma pack(1)`).
 
@@ -264,6 +266,45 @@ ticks = [307, 239, 273] * 3 + [307, 375, 341] * 3
 sock.sendto(struct.pack("<BBHI" + "h" * 18, 0xA6, 0, 8, 1, *ticks), addr)
 ```
 
+### Version query (`0xA8`)
+
+The only packet the robot answers. The reply goes back to the address and port
+the query came from.
+
+| Offset | Type | Field |
+|--------|------|-------|
+| 0 | `uint8` | magic (`0xA8`) |
+| 1 | `uint32` | seq_num |
+
+Reply (9-byte header, then the build tag):
+
+| Offset | Type | Field | Notes |
+|--------|------|-------|-------|
+| 0 | `uint8` | magic | `0xA8` |
+| 1 | `uint32` | seq_num | Copied from the query |
+| 5 | `uint8` | protocol | `PROTOCOL_VERSION` in `protocol.h` |
+| 6 | `uint8` | major | Firmware version, see [Firmware version](#firmware-version) |
+| 7 | `uint8` | minor | |
+| 8 | `uint8` | patch | |
+| 9 | `char[]` | build | `FIRMWARE_BUILD`, UTF-8, unterminated; runs to the end of the datagram |
+
+A query is not control input: it does not reset the motion or real-time
+failsafe timers and does not disable OTA. Firmware older than this packet does
+not answer, so use a receive timeout and treat silence as "unknown version".
+
+```python
+import socket
+import struct
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.settimeout(0.5)
+sock.sendto(struct.pack("<BI", 0xA8, 7), ("192.168.4.1", 1234))
+
+data, _ = sock.recvfrom(64)
+magic, seq, protocol, major, minor, patch = struct.unpack_from("<BIBBBB", data)
+print(f"firmware {major}.{minor}.{patch} ({data[9:].decode()}), protocol {protocol}")
+```
+
 > **Note:** packets are not echoed or logged to serial by default. Build with
 > `HEXAPOD_DEBUG` set to 1 in `config.h` to log and echo motion and session
 > packets. Pose packets are never logged: at 50 Hz the logging would saturate
@@ -278,6 +319,7 @@ can model and drive it without its own copy of every robot's config:
 ```json
 {
   "protocol": 1,
+  "firmware": {"version": "3.2.0", "build": "v3.2.0"},
   "name": "nougat",
   "ssid": "hexapod_nougat",
   "delay_ms": 12,
@@ -289,6 +331,7 @@ can model and drive it without its own copy of every robot's config:
 ```
 
 - `protocol` is `PROTOCOL_VERSION` in `protocol.h`.
+- `firmware` is the [firmware version](#firmware-version) and build tag.
 - `commands` lists the motion names in `RobotCommand` order: a name's index is
   the command ID for a `0xA5` packet.
 - `geometry` is the robot's `software/path_tool/robots/<name>.json` (leg mounts,
@@ -308,6 +351,17 @@ The other HTTP routes back the calibration page and the speed slider:
 | `/save_offsets` | POST | Save the offsets to flash |
 | `/get_speed` | GET | `{"speed":N}` |
 | `/set_speed?pct=N` | POST | Set the LUT playback speed; returns `{"speed":N}` |
+
+## Firmware Version
+
+`version.h` holds the firmware version, `FIRMWARE_VERSION_MAJOR`, `_MINOR` and
+`_PATCH`. Bump it by hand when releasing: major for changes that break clients
+or saved calibrations, minor for new features, patch for fixes and tuning.
+`FIRMWARE_BUILD` is a free-form tag, `"dev"` in the repository; the release
+packages set it to the package version (the git tag, or `git describe`).
+
+The version is printed on the serial port at boot, returned by the
+[version query](#version-query-0xa8) and included in `GET /robot_config`.
 
 ## OTA Updates
 
@@ -333,6 +387,7 @@ hexapod_esp32/
 ├── web_ui.ino           # HTTP routes: calibration, speed, /robot_config
 ├── hexapod.h            # Shared state and module interfaces
 ├── protocol.h           # UDP packet layouts and magic numbers
+├── version.h            # Firmware version and build tag
 ├── web_page.h           # Calibration page served from flash
 ├── config.h             # Hardware config, pin mappings, calibration
 ├── robot.h              # Selects the robot the firmware is built for

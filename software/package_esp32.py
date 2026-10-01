@@ -8,6 +8,7 @@ which one. Each package is a copy of that sketch with:
   (Arduino requires the folder and the main tab to share a name)
 - robot.h preset to the robot, so nothing needs editing before upload
 - only the robot's own src/robots/<name>/ tables
+- FIRMWARE_BUILD in version.h set to the package version
 
 Packages are written to ../../dist/ as hexapod_<name>/ and
 hexapod_<name>_<version>.zip.
@@ -84,6 +85,17 @@ def select_robot(robot_h, robot):
     return text
 
 
+def stamp_build(version_h, version):
+    """Return version.h with the FIRMWARE_BUILD default replaced by `version`."""
+    if re.search(r'["\\\s]', version):
+        raise SystemExit(f"version {version!r} cannot go in a C string literal")
+    build = re.compile(r'^([ \t]*#define FIRMWARE_BUILD )"[^"]*"', re.M)
+    text, count = build.subn(lambda m: m.group(1) + f'"{version}"', version_h)
+    if count != 1:
+        raise SystemExit("version.h has no '#define FIRMWARE_BUILD \"...\"' line")
+    return text
+
+
 def read_ssid(robot):
     """The access point name from the robot's robot_config.h."""
     config = (ROBOTS_DIR / robot / "robot_config.h").read_text(encoding="utf-8")
@@ -122,6 +134,13 @@ def package_robot(robot, out_dir, version, make_zip=True):
     robot_h = pkg_dir / "robot.h"
     robot_h.write_text(
         select_robot(robot_h.read_text(encoding="utf-8"), robot),
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    version_h = pkg_dir / "version.h"
+    version_h.write_text(
+        stamp_build(version_h.read_text(encoding="utf-8"), version),
         encoding="utf-8",
         newline="\n",
     )
