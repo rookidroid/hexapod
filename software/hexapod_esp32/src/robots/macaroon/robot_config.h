@@ -16,7 +16,7 @@
 
 #define ROBOT_NAME "macaroon"
 
-#define DELAY_MS 25  // Servo delay between LUT steps (ms)
+#define DELAY_MS 24  // Servo delay between LUT steps (ms)
 
 /** WiFi access point name */
 #ifndef APSSID
