@@ -1,6 +1,6 @@
 /**
 
-  Calibration web interface -- HTTP routes backing web_page.h
+  Web interface -- HTTP routes backing web_page.h (drive and calibration)
 
   - Copyright (C) 2024 - PRESENT  rookidroid.com
   - E-mail: info@rookidroid.com
@@ -14,7 +14,7 @@
 #include "robot_geometry.h"
 #include "web_page.h"
 
-// Web server for calibration interface
+// Web server for the drive and calibration page
 WebServer web_server(80);
 
 /**
@@ -157,11 +157,11 @@ static void printOffsetsForConfig()
 }
 
 /**
-   @brief Setup web server routes for calibration interface.
+   @brief Setup web server routes for the drive and calibration page.
 */
 void setupWebServer()
 {
-  // Serve the calibration page. send_P streams it from flash rather than
+  // Serve the page. send_P streams it from flash rather than
   // copying it into a String on the heap first.
   web_server.on("/", HTTP_GET, []()
                 { web_server.send_P(200, "text/html", index_html); });
@@ -251,6 +251,46 @@ void setupWebServer()
     setMotionSpeed(web_server.arg("pct").toInt());
     web_server.send(200, "application/json",
                     "{\"speed\":" + String(motion_speed_pct) + "}"); });
+
+  // Play a motion from the browser: the HTTP twin of the 0xA5 UDP packet. The
+  // same failsafe applies, so the page resends it while a button is held.
+  web_server.on("/motion", HTTP_POST, []()
+                {
+    // Calibration mode outranks motion in the engine; say so instead of
+    // silently ignoring the command.
+    if (calibration_mode) {
+      web_server.send(409, "text/plain", "Exit calibration first");
+      return;
+    }
+    if (!web_server.hasArg("id")) {
+      web_server.send(400, "text/plain", "Missing id");
+      return;
+    }
+    const long id = web_server.arg("id").toInt();
+    if (id < 0 || (size_t)id >= motion_config_count) {
+      web_server.send(400, "text/plain", "Unknown motion");
+      return;
+    }
+    if (web_server.hasArg("pct")) {
+      setMotionSpeed(web_server.arg("pct").toInt());
+    }
+    last_udp_packet_time = millis();
+    selectMotion(id);
+    web_server.send(200, "application/json",
+                    "{\"motion\":" + String(id) +
+                    ",\"speed\":" + String(motion_speed_pct) + "}"); });
+
+  // Cut PWM drive so the servos go limp, like the RT_RELAX session packet. The
+  // next motion command wakes them.
+  web_server.on("/relax", HTTP_POST, []()
+                {
+    if (calibration_mode) {
+      web_server.send(409, "text/plain", "Exit calibration first");
+      return;
+    }
+    exitRealtimeMode();
+    relax_requested = true;
+    web_server.send(200, "text/plain", "Servos relaxed"); });
 
   // Start server
   web_server.begin();

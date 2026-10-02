@@ -5,7 +5,7 @@ Arduino-based firmware for the ESP32-powered hexapod robot controller, shared by
 ## Features
 
 - **WiFi Control**: Access Point mode with UDP command interface
-- **Web Calibration Interface**: Browser-based UI to adjust and save servo offsets to flash
+- **Web Controller & Calibration**: Drive the robot from any browser, and adjust and save servo offsets to flash
 - **Binary UDP Protocol**: Fast and efficient binary packet structure for motion control
 - **18-Servo Control**: Dual PCA9685 PWM drivers (I2C) for coordinated leg movement
 - **OTA Updates**: Wireless firmware updates over WiFi
@@ -105,7 +105,30 @@ static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 
 1. Connect to the robot's WiFi network (see the table above, password: `hexapod_1234`)
 2. Robot will automatically perform boot sequence when client connects
-3. Send UDP commands to `192.168.4.1:1234`
+3. Drive it from a browser at `http://192.168.4.1/` (see below), or send UDP commands to `192.168.4.1:1234`
+
+## Drive from a Browser
+
+The robot serves its own controller page, so a phone or laptop can drive it with
+nothing installed.
+
+1. Connect to the robot's WiFi network and open `http://192.168.4.1/`. The page
+   opens on the **Drive** tab.
+2. **Hold** a button to move: the direction pad walks in eight directions, the
+   side buttons turn in place, and the **Gaits** and **Body** cards play the fast
+   and climbing gaits and the body rotations. Let go and the robot settles back
+   to standby.
+3. On a keyboard, **W A S D** or the arrow keys walk (two at once for the
+   diagonals), **Q** and **E** turn, and **Space** stops.
+4. **Relax servos** cuts power to the servos so the robot sags to the ground.
+   Any move wakes them again.
+
+While a button is held the page resends the command every 150 ms over HTTP
+(`POST /motion`), and the robot's usual 500 ms failsafe applies: if the phone
+drops off the WiFi or the page goes to the background, the robot stops by
+itself. The **Gait speed** slider is sent with every move. Driving from the page
+and from a UDP remote at the same time makes them fight over the robot; the
+last command wins.
 
 ## How to Calibrate
 
@@ -116,13 +139,13 @@ The firmware includes a web-based calibration interface to easily adjust servo o
 ### Calibration Steps:
 
 1. Power on the hexapod and connect your device to its WiFi network (see [Select Your Robot](#2-select-your-robot)).
-2. Open a web browser and navigate to `http://192.168.4.1/`.
-3. Click the **Enter Calibration Mode** button. The robot will move to its neutral calibration posture.
+2. Open a web browser, navigate to `http://192.168.4.1/` and switch to the **Calibrate** tab.
+3. Click the **Enter calibration** button. The robot will move to its neutral calibration posture.
 4. Use the `+` and `-` buttons for each joint on the web interface to fine-tune the positions. Offsets are limited to ±100 ticks.
    - The goal is to align the legs such that the coxa (shoulder) is parallel to the body, the femur (thigh) is horizontal, and the tibia (calf) is vertical.
    - Adjust the offsets until all legs are perfectly aligned and the robot stands evenly.
-5. Once satisfied with the posture, click **Save Offsets**. This will permanently save the calibration values to flash.
-6. Click **Exit Calibration Mode**. The robot eases back to its standby posture.
+5. Once satisfied with the posture, click **Save to robot**. This will permanently save the calibration values to flash.
+6. Click **Exit**. The robot eases back to its standby posture.
 
 *Note: You no longer need to manually edit offsets in `config.h`. If you wish to backup your offsets, the web interface will print the configured arrays to the Serial Monitor when you click save.*
 
@@ -180,7 +203,7 @@ keep their pace so the robot still stops promptly.
 
 The speed starts at **60 %** after boot (`MOTION_SPEED_DEFAULT_PCT` in
 `config.h`), so clients that only send the 6-byte form walk at 60 % unless the
-speed is raised. It can also be set from the **Motion Speed** slider on the web
+speed is raised. It can also be set from the **Gait speed** slider on the web
 page at `http://192.168.4.1/`; a client sending 7-byte packets, such as the
 [arcade remote](https://github.com/rookidroid/remote-arcade), overrides it with
 every packet. The setting is not saved across reboots.
@@ -340,7 +363,7 @@ can model and drive it without its own copy of every robot's config:
   header with `python generate_motion.py <name>` (or `--geometry-only` to leave
   the LUTs alone).
 
-The other HTTP routes back the calibration page and the speed slider:
+The other HTTP routes back the web page's drive and calibration tabs:
 
 | Route | Method | Purpose |
 | --- | --- | --- |
@@ -351,6 +374,8 @@ The other HTTP routes back the calibration page and the speed slider:
 | `/save_offsets` | POST | Save the offsets to flash |
 | `/get_speed` | GET | `{"speed":N}` |
 | `/set_speed?pct=N` | POST | Set the LUT playback speed; returns `{"speed":N}` |
+| `/motion?id=N[&pct=S]` | POST | Play motion `N` (index into `commands`), optionally at speed `S`; same effect and 500 ms failsafe as a `0xA5` packet. Returns `{"motion":N,"speed":S}`; 409 in calibration mode |
+| `/relax` | POST | Cut PWM drive so the servos go limp, like session action Relax; 409 in calibration mode |
 
 ## Firmware Version
 
@@ -384,11 +409,11 @@ hexapod_esp32/
 ├── realtime.ino         # Real-time pose streaming and its slew limiter
 ├── network.ino          # WiFi AP, OTA, UDP endpoint and packet parsing
 ├── calibration.ino      # Servo offsets loaded from / saved to flash (NVS)
-├── web_ui.ino           # HTTP routes: calibration, speed, /robot_config
+├── web_ui.ino           # HTTP routes: drive, calibration, speed, /robot_config
 ├── hexapod.h            # Shared state and module interfaces
 ├── protocol.h           # UDP packet layouts and magic numbers
 ├── version.h            # Firmware version and build tag
-├── web_page.h           # Calibration page served from flash
+├── web_page.h           # Drive and calibration page served from flash
 ├── config.h             # Hardware config, pin mappings, calibration
 ├── robot.h              # Selects the robot the firmware is built for
 ├── motion.h             # Includes the selected robot's motion tables

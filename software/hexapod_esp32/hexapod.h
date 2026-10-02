@@ -51,8 +51,9 @@ struct MotionConfig
 // ============================================================================
 // System state (hexapod_esp32.ino)
 // ============================================================================
-// Fields marked volatile are written by the AsyncUDP task and read by the main
-// loop. They are single words, so each access is atomic on the ESP32.
+// Fields marked volatile are written by the AsyncUDP task (and the web
+// interface's drive routes, on the main loop) and read by the main loop. They
+// are single words, so each access is atomic on the ESP32.
 
 extern volatile bool ota_mode;            // OTA updates enabled until first command
 extern bool wifi_connected;               // WiFi AP connection status
@@ -60,8 +61,8 @@ extern bool boot_sequence_executed;       // Boot sequence completion flag
 extern volatile bool trigger_boot_sequence; // Boot trigger from WiFi event
 extern bool calibration_mode;             // Calibration mode flag (main loop only)
 
-extern volatile int next_motion_idx;      // Motion requested over UDP
-extern volatile unsigned long last_udp_packet_time; // Last UDP packet, for failsafe
+extern volatile int next_motion_idx;      // Motion requested over UDP or HTTP
+extern volatile unsigned long last_udp_packet_time; // Last control input, for failsafe
 extern volatile uint8_t motion_speed_pct; // LUT playback speed (percent)
 
 // Clamp `pct` to [MOTION_SPEED_MIN_PCT, 100] and make it the playback speed.
@@ -150,7 +151,7 @@ bool saveOffsets();
 int clampOffset(int offset);
 
 // ============================================================================
-// Calibration web interface (web_ui.ino)
+// Web interface: drive and calibration (web_ui.ino)
 // ============================================================================
 
 extern WebServer web_server;
