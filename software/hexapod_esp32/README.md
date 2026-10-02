@@ -109,26 +109,34 @@ static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 
 ## Drive from a Browser
 
-The robot serves its own controller page, so a phone or laptop can drive it with
-nothing installed.
+The robot serves its own controller page, so a phone, tablet or laptop can drive
+it with nothing installed.
 
 1. Connect to the robot's WiFi network and open `http://192.168.4.1/`. The page
-   opens on the **Drive** tab.
-2. **Hold** a button to move: the direction pad walks in eight directions, the
-   side buttons turn in place, and the **Gaits** and **Body** cards play the fast
-   and climbing gaits and the body rotations. Let go and the robot settles back
-   to standby.
+   opens on the **Drive** tab, a control panel that fills the whole window.
+2. **Hold** to move, and slide your finger between zones without lifting it:
+   - The **dial** (right) walks in eight directions on its inner ring. The outer
+     ring does fast forward/backward at the top and bottom, and turns in place
+     at the sides. The centre is Stop.
+   - The **grid** (left) plays the body moves (rotate X/Y/Z, twist) and the
+     climbing gait.
+   - Let go and the robot settles back to standby.
 3. On a keyboard, **W A S D** or the arrow keys walk (two at once for the
    diagonals), **Q** and **E** turn, and **Space** stops.
-4. **Relax servos** cuts power to the servos so the robot sags to the ground.
-   Any move wakes them again.
+4. **Relax** cuts power to the servos so the robot sags to the ground. **Wake**,
+   or any control, powers them again.
 
-While a button is held the page resends the command every 150 ms over HTTP
+Landscape gives the Android app's layout, with the speed slider and buttons
+between the two pads; in portrait they stack. Tap **Full screen** to hide the
+browser bars on Android, iPad and desktop. iPhone Safari has no full-screen
+mode: use **Share > Add to Home Screen** and open the page from the icon instead.
+
+While a control is held the page resends the command every 150 ms over HTTP
 (`POST /motion`), and the robot's usual 500 ms failsafe applies: if the phone
 drops off the WiFi or the page goes to the background, the robot stops by
-itself. The **Gait speed** slider is sent with every move. Driving from the page
-and from a UDP remote at the same time makes them fight over the robot; the
-last command wins.
+itself. The gait speed is sent with every move. Driving from the page and from
+a UDP remote at the same time makes them fight over the robot; the last command
+wins.
 
 ## How to Calibrate
 
