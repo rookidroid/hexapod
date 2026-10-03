@@ -111,7 +111,7 @@ body.mode-drive{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-dir
 body.mode-drive footer{display:none}
 .deck{flex:1;min-height:0;position:relative;display:grid;gap:20px;
   padding:0 var(--gutter-r) max(16px,env(safe-area-inset-bottom)) var(--gutter-l);
-  grid-template-columns:minmax(0,1fr) clamp(170px,22vw,260px) minmax(0,1.5fr);
+  grid-template-columns:minmax(0,1fr) minmax(220px,1.2fr) minmax(0,1.5fr);
   grid-template-rows:minmax(0,1fr);grid-template-areas:"moves console dial";align-items:center}
 /* Hold-to-move surfaces: no text selection, callouts, scrolling or zooming under a finger */
 .moves,.dial{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
@@ -130,15 +130,39 @@ body.mode-drive footer{display:none}
 @media (hover:hover){.cell:hover{background:var(--surface);color:var(--accent)}}
 .cell.is-held,.cell.is-held:hover{background:var(--accent);color:#fff}
 
-/* Console: speed, relax and full screen between the two pads */
-.console{grid-area:console;display:flex;flex-direction:column;gap:14px;align-self:center}
+/* Console: speed, relax and full screen between the two pads. The speed
+   readout and its slider share one plate; the buttons sit well clear of it. */
+.console{grid-area:console;justify-self:center;width:100%;max-width:340px;
+  display:flex;flex-direction:column;gap:28px}
 .gauge{background:var(--plate);border:2px solid var(--border);border-left:6px solid var(--accent);
-  box-shadow:var(--shadow);padding:8px 12px}
+  box-shadow:var(--shadow);padding:10px 14px 12px}
+.gauge-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
 .gauge .label{margin:0}
-.gauge .speed-value{display:block;text-align:left;font-size:2rem;line-height:1.1}
-.console input[type=range]{width:100%;accent-color:var(--accent);margin:0}
-.console .btn{width:100%;padding:10px 12px}
+.gauge .speed-value{font-size:2rem;line-height:1}
+/* Relax and full screen are occasional, so they stay small and quiet: a thin
+   outline that only lights up on hover. Wake stays loud while the servos are limp. */
+.actions{display:flex;gap:8px}
+.actions .btn{flex:1;padding:5px 8px;font-size:.8rem;background:transparent;color:var(--muted);
+  border-color:var(--border-light);box-shadow:none}
+.actions .btn:hover:not(:disabled){transform:none;box-shadow:none;border-color:var(--accent);color:var(--accent)}
+.actions .btn-danger:hover:not(:disabled){border-color:var(--fault);color:var(--fault)}
+.actions .btn-accent,.actions .btn-accent:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff}
 .console .hint{margin:0;text-align:center}
+
+/* Speed slider: a thick track and a big square thumb, easy to catch with a thumb */
+.slider{-webkit-appearance:none;appearance:none;display:block;width:100%;height:34px;margin:0;
+  background:transparent;cursor:pointer;touch-action:none;--fill:50%}
+.slider:focus{outline:none}
+.slider::-webkit-slider-runnable-track{height:12px;border:2px solid var(--border);
+  background:linear-gradient(to right,var(--accent) var(--fill),var(--bg) var(--fill))}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:32px;margin-top:-12px;
+  background:var(--plate);border:2px solid var(--border);box-shadow:2px 2px 0 rgba(17,24,39,.25)}
+.slider:focus-visible::-webkit-slider-thumb{border-color:var(--accent)}
+.slider::-moz-range-track{height:12px;border:2px solid var(--border);background:var(--bg)}
+.slider::-moz-range-progress{height:12px;border:2px solid var(--border);border-right:0;background:var(--accent)}
+.slider::-moz-range-thumb{width:24px;height:32px;border:2px solid var(--border);border-radius:0;
+  background:var(--plate);box-shadow:2px 2px 0 rgba(17,24,39,.25)}
+.slider:focus-visible::-moz-range-thumb{border-color:var(--accent)}
 
 /* Steering dial: walk directions on the inner ring, fast and turn on the outer */
 .dial{grid-area:dial;width:100%;height:100%;filter:drop-shadow(4px 4px 0 rgba(17,24,39,.15))}
@@ -166,11 +190,8 @@ body.mode-drive footer{display:none}
   .deck{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1.6fr) minmax(0,1fr);
     grid-template-areas:"console" "dial" "moves";gap:16px}
   .moves{grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);grid-auto-flow:row;max-width:none}
-  .console{flex-direction:row;flex-wrap:wrap;align-items:stretch}
-  .gauge{flex:0 0 auto;display:flex;align-items:center;gap:10px}
-  .gauge .speed-value{font-size:1.4rem}
-  .console input[type=range]{flex:1 1 120px;align-self:center}
-  .console .btn{width:auto;flex:1 1 90px}
+  .console{max-width:none;gap:14px}
+  .gauge .speed-value{font-size:1.5rem}
   .console .hint{display:none}
 }
 /* Short landscape screens (phones): squeeze the chrome, keep the pads big */
@@ -179,10 +200,10 @@ body.mode-drive footer{display:none}
   .brand{font-size:1.2rem}
   .robot{display:none}
   .deck{gap:14px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
-  .console{gap:8px}
-  .gauge{padding:4px 10px}
+  .console{gap:22px}
+  .gauge{padding:6px 12px 8px}
+  .gauge-head{margin-bottom:4px}
   .gauge .speed-value{font-size:1.5rem}
-  .console .btn{padding:6px 10px}
   .console .hint{display:none}
 }
 @media (hover:none){.keys{display:none}}
@@ -243,13 +264,17 @@ footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8
 
   <div class="console">
     <div class="gauge">
-      <div class="label">Gait speed</div>
-      <span class="speed-value" id="speedValue">60%</span>
+      <div class="gauge-head">
+        <span class="label">Gait speed</span>
+        <span class="speed-value" id="speedValue">60%</span>
+      </div>
+      <input type="range" class="slider" id="speedSlider" min="20" max="100" step="5" value="60"
+             aria-label="Gait speed" oninput="showSpeed(this.value)" onchange="setSpeed(this.value)">
     </div>
-    <input type="range" id="speedSlider" min="20" max="100" step="5" value="60" aria-label="Gait speed"
-           oninput="showSpeed(this.value)" onchange="setSpeed(this.value)">
-    <button class="btn btn-danger" id="relaxBtn" onclick="relax()">Relax</button>
-    <button class="btn" id="fullBtn" onclick="toggleFullscreen()" hidden>Full screen</button>
+    <div class="actions">
+      <button class="btn btn-danger" id="relaxBtn" onclick="relax()">Relax</button>
+      <button class="btn" id="fullBtn" onclick="toggleFullscreen()" hidden>Full screen</button>
+    </div>
     <p class="hint keys">W A S D walk &middot; Q E turn &middot; Space stops</p>
   </div>
 
@@ -602,8 +627,11 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function showSpeed(value) {
-  $('speedSlider').value = value;
-  $('speedValue').textContent = value + '%';
+  const slider = $('speedSlider');
+  slider.value = value;
+  // The track fills up to the thumb.
+  slider.style.setProperty('--fill', (slider.value - slider.min) / (slider.max - slider.min) * 100 + '%');
+  $('speedValue').textContent = slider.value + '%';
 }
 
 function setSpeed(value) {
@@ -739,6 +767,7 @@ function saveOffsets() {
 // ---------------------------------------------------------------------------
 
 buildDial();
+showSpeed($('speedSlider').value);
 bindPad($('dial'), dialZone);
 bindPad($('moves'), cellZone);
 renderOffsets();
