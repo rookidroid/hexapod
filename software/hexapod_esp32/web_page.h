@@ -457,9 +457,12 @@ function bindPad(pad, zoneAt) {
     if (!cmd) return;
     e.preventDefault();
     activePointer = e.pointerId;
-    // Keep receiving this pointer's events even once it leaves the pad.
-    if (pad.setPointerCapture) pad.setPointerCapture(e.pointerId);
     drive(cmd);
+    // Keep receiving this pointer's events even once it leaves the pad. A
+    // failed capture only loses that, never the press itself.
+    try {
+      pad.setPointerCapture(e.pointerId);
+    } catch (err) {}
   });
   pad.addEventListener('pointermove', e => {
     if (e.pointerId !== activePointer) return;
@@ -473,6 +476,12 @@ function bindPad(pad, zoneAt) {
   pad.addEventListener('pointercancel', release);
   pad.addEventListener('lostpointercapture', release);
   pad.addEventListener('contextmenu', e => e.preventDefault());
+  // Android Chrome buzzes when a touch is held, as it starts a long-press
+  // (context menu, text selection) gesture. Cancelling the touch itself stops
+  // that gesture from ever starting; the pointer events above still arrive.
+  pad.addEventListener('touchstart', e => {
+    if (e.cancelable) e.preventDefault();
+  }, { passive: false });
 }
 
 // ---------------------------------------------------------------------------
