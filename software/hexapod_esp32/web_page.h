@@ -10,6 +10,8 @@
   Styled after Hexapod Link (github.com/rookidroid/hexapod-link), so the robot's
   own page and the desktop app look and name things the same way: legs are
   "Right/Left Leg 1-3" front to back, joints "Joint 1-3" outward from the body.
+  It carries the app's RX-78-2 theme in both its light and dark (cockpit)
+  variants, following the device's setting until the header toggle picks one.
   The app's fonts are named first but not bundled -- the robot's access point
   has no route to the internet -- so the device's own fonts stand in for them.
 
@@ -34,74 +36,129 @@ const char index_html[] PROGMEM = R"rawliteral(
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Hexapod">
-<meta name="theme-color" content="#f9fafb">
+<meta name="theme-color" content="#f3f5f9" id="themeColor">
 <title>Hexapod</title>
+<script>
+// Set the theme before first paint: the one picked with the toggle, else the device's.
+(function () {
+  let theme = null;
+  try { theme = localStorage.getItem('theme'); } catch (e) {}
+  if (theme !== 'light' && theme !== 'dark')
+    theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+</script>
 <style>
-:root{
-  --bg:#e5e7eb;--surface:#f9fafb;--plate:#fff;--border:#4b5563;--border-light:#9ca3af;
-  --accent:#ea580c;--text:#111827;--muted:#4b5563;--ok:#16a34a;--fault:#dc2626;
-  --heading:'Rajdhani',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --mono:'Share Tech Mono',ui-monospace,Menlo,Consolas,'Courier New',monospace;
-  --shadow:4px 4px 0 rgba(17,24,39,.15);--shadow-hover:6px 6px 0 rgba(17,24,39,.2);
+/* RX-78-2 colours, as in Hexapod Link: white armour plates framed in navy,
+   Federation blue as the accent, red and V-fin yellow as trim. Dark is the
+   cockpit: the same tricolour on deep navy with a cyan HUD glow. The theme is
+   data-theme on <html>, set before first paint by the script in <head>. */
+:root{color-scheme:light;
+  --bg:#dde3ec;--surface:#f3f5f9;--plate:#fff;--border:#1b2a4a;--border-light:#a9b6cc;
+  --accent:#1d4fa3;--accent-hover:#163f84;--alt:#f2b705;--red:#d62828;--red-hover:#b51f1f;--ok:#16a34a;
+  --text:#0f1a30;--muted:#4a5875;--hover:#e8eef8;--input-bg:#eef2f8;--input-focus-bg:#fff;--outline:#0f1a30;
+  --alert-text:#9b1c1c;--alert-bg:#fdecec;--well:#1b2a4a;--well-hover:#2c3f66;
+  --glow:0 0 0 2px rgba(29,79,163,.25);
+  --shade:rgba(15,26,48,.18);--shadow:4px 4px 0 var(--shade);--shadow-soft:0 2px 10px rgba(15,26,48,.12);
+  --heading:'Chakra Petch',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --display:'Michroma',var(--heading);
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,'Courier New',monospace;
+  /* Mecha corners: top-right and bottom-left cut at 45 degrees. A clipped
+     element loses its box-shadow, so chamfered parts have none. */
+  --chamfer:8px;
+  --chamfer-clip:polygon(0 0,calc(100% - var(--chamfer)) 0,100% var(--chamfer),100% 100%,var(--chamfer) 100%,0 calc(100% - var(--chamfer)));
   --gutter-l:max(16px,env(safe-area-inset-left));--gutter-r:max(16px,env(safe-area-inset-right));
+}
+:root[data-theme=dark]{color-scheme:dark;
+  --bg:#060c18;--surface:#0c1730;--plate:#11203f;--border:#2f5fb3;--border-light:#1e3563;
+  --accent:#3d7cf0;--accent-hover:#2f68d6;--alt:#ffd23f;--red:#ff4d4d;--red-hover:#e03c3c;--ok:#22c55e;
+  --text:#e4eeff;--muted:#8aa2c8;--hover:#18294d;--input-bg:#08122a;--input-focus-bg:#050c1e;--outline:#02060f;
+  --alert-text:#ffb4b4;--alert-bg:rgba(255,77,77,.12);--well:#1a3366;--well-hover:#22407d;
+  --glow:0 0 0 1px rgba(76,201,240,.45),0 0 14px rgba(76,201,240,.25);
+  --shade:rgba(0,0,0,.5);--shadow-soft:0 2px 10px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{margin:0;font-family:var(--heading);font-weight:500;background:var(--bg);color:var(--text)}
 button,input{font:inherit}
+/* Michroma has one weight; where it is missing the stand-in is set bold instead */
+.brand,h2,.callout b{font-family:var(--display);font-weight:700;font-synthesis:none}
+/* Keyboard focus on chamfered parts: an inset ring, which the clip leaves alone */
+.btn:focus-visible,.tab:focus-visible,.theme-btn:focus-visible,.stepper button:focus-visible{
+  outline:2px solid currentColor;outline-offset:-6px}
 
-/* Header: the app's navbar, down to the hazard stripe */
+/* Header: the app's navbar, down to the chest trim */
 header{position:relative;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;
   background:var(--surface);border-bottom:4px solid var(--accent);
   padding:max(10px,env(safe-area-inset-top)) var(--gutter-r) 10px var(--gutter-l);
-  box-shadow:0 2px 10px rgba(0,0,0,.1);margin-bottom:24px}
+  box-shadow:var(--shadow-soft);margin-bottom:24px}
+/* A red block, then yellow vent slats on blue, as on the RX-78's torso */
 header::after{content:'';position:absolute;left:0;right:0;bottom:-8px;height:4px;
-  background:repeating-linear-gradient(45deg,var(--accent) 0 10px,var(--text) 10px 20px)}
-/* The stripe crawls while the robot is moving */
+  background:linear-gradient(90deg,var(--red) 0 160px,transparent 160px),
+    repeating-linear-gradient(90deg,var(--alt) 0 14px,transparent 14px 22px),var(--accent)}
+/* The slats crawl while the robot is moving */
 body.is-driving header::after{animation:crawl .5s linear infinite}
-@keyframes crawl{to{background-position:28.28px 0}}
-.brand{font-weight:700;font-size:1.6rem;letter-spacing:2px;text-transform:uppercase}
+@keyframes crawl{to{background-position:0 0,22px 0}}
+.brand{font-size:1.35rem;letter-spacing:2px;text-transform:uppercase}
 .brand::before{content:'\2699  ';color:var(--accent)}
-.robot{font-family:var(--mono);color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.robot{font-family:var(--mono);font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
 
 /* Tabs: a segmented switch between driving and calibrating */
-.tabs{display:flex;box-shadow:var(--shadow)}
-.tab{border:2px solid var(--border);background:var(--plate);color:var(--text);font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;padding:4px 14px;cursor:pointer}
+.tabs{display:flex;clip-path:var(--chamfer-clip)}
+.tab{border:2px solid var(--border);background:var(--plate);color:var(--muted);font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;padding:4px 14px;cursor:pointer;transition:background-color .1s,color .1s}
 .tab+.tab{border-left:0}
-.tab:hover{color:var(--accent)}
-.tab[aria-selected=true]{background:var(--border);color:#fff}
+.tab:hover{color:var(--text);background:var(--hover)}
+.tab[aria-selected=true]{background:var(--accent);color:#fff}
 
-/* Status chip: same plate and LED bar as the app's link readout */
-.chip{margin-left:auto;font-family:var(--mono);font-weight:700;letter-spacing:1px;text-transform:uppercase;
+/* Theme toggle: shows the icon of the theme it switches to */
+.theme-btn{margin-left:auto;align-self:stretch;min-width:2.4rem;font-size:1.1rem;line-height:1;
+  color:var(--text);background:var(--plate);border:2px solid var(--border);clip-path:var(--chamfer-clip);
+  cursor:pointer;transition:transform .1s,color .1s}
+.theme-btn:hover{color:var(--accent);transform:translate(-1px,-1px)}
+.theme-btn:active{transform:translate(1px,1px)}
+
+/* Status chip: the app's link readout, an LED and a left bar coloured by state */
+.chip{font-family:var(--mono);font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;
   background:var(--plate);border:2px solid var(--border);border-left-width:6px;border-left-color:var(--muted);
-  padding:4px 12px;box-shadow:var(--shadow)}
+  padding:4px 14px 4px 12px;clip-path:var(--chamfer-clip)}
 .chip::after{content:'\25CF';margin-left:8px;color:var(--muted)}
-.chip.is-on{border-left-color:var(--accent)}
-.chip.is-on::after{color:var(--accent);animation:pulse 1s steps(1,end) infinite}
+.chip.is-online{border-left-color:var(--ok)}
+.chip.is-online::after{color:var(--ok)}
+.chip.is-streaming{border-left-color:var(--alt)}
+.chip.is-streaming::after{color:var(--alt);animation:pulse 1s steps(1,end) infinite}
+.chip.is-fault{border-left-color:var(--red)}
+.chip.is-fault::after{color:var(--red)}
 @keyframes pulse{50%{opacity:.25}}
 
 .page{max-width:960px;margin:0 auto;padding:0 var(--gutter-r) 24px var(--gutter-l)}
 
-/* Cards: sharp plates with a hard shadow and a dark top bar */
+/* Cards: armour plates. A red/blue trim along the top ending in yellow vent
+   slats, a navy plate in the bottom-right corner and a small unit marking. */
 .card{position:relative;background:var(--plate);border:2px solid var(--border);box-shadow:var(--shadow);
-  padding:20px;margin-bottom:20px}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--border)}
-h2{display:inline-block;margin:0 0 12px;font-size:1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  border-bottom:2px solid var(--border-light);padding-bottom:4px}
+  padding:20px 20px 24px;margin-bottom:20px}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,var(--alt) 0 5px,transparent 5px 9px) right 6px top/32px 100% no-repeat,
+    linear-gradient(90deg,var(--red) 0 28px,var(--accent) 28px calc(100% - 44px),transparent calc(100% - 44px))}
+.card::after{content:'RX-78-2';position:absolute;right:0;bottom:0;padding:0 20px 3px 0;
+  font-family:var(--mono);font-size:.55rem;font-weight:600;line-height:1;letter-spacing:1.5px;
+  color:color-mix(in srgb,var(--muted) 65%,transparent);pointer-events:none;
+  background:linear-gradient(135deg,transparent 50%,var(--border) 50%) right bottom/14px 14px no-repeat}
+h2{display:inline-block;margin:0 0 12px;font-size:.9rem;letter-spacing:.5px;text-transform:uppercase;
+  border-bottom:2px solid var(--alt);padding-bottom:4px}
 .lede{color:var(--muted);line-height:1.5;margin:0 0 16px}
 
-/* Buttons */
+/* Buttons: heavy border and chamfered corners, lifting on hover */
 .btn{border:2px solid var(--border);background:var(--plate);color:var(--text);font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;box-shadow:var(--shadow);
-  transition:transform .1s,box-shadow .1s,border-color .1s}
-.btn:hover:not(:disabled){transform:translate(-2px,-2px);box-shadow:var(--shadow-hover);border-color:var(--accent)}
-.btn:active:not(:disabled){transform:none;box-shadow:none}
-.btn:disabled{opacity:.4;cursor:default;box-shadow:none}
-.btn-accent{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn-accent:hover:not(:disabled){border-color:var(--text)}
-.btn-danger{border-color:var(--fault);color:var(--fault)}
-.btn-danger:hover:not(:disabled){border-color:var(--fault)}
+  letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;clip-path:var(--chamfer-clip);
+  transition:transform .1s,background-color .1s,border-color .1s,color .1s}
+.btn:hover:not(:disabled){transform:translate(-1px,-1px);background:var(--hover);border-color:var(--text)}
+.btn:active:not(:disabled){transform:translate(1px,1px)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn-accent{background:var(--accent);border-color:var(--outline);color:#fff}
+.btn-accent:hover:not(:disabled){background:var(--accent-hover);border-color:var(--outline)}
+.btn-danger{background:var(--red);border-color:var(--outline);color:#fff}
+.btn-danger:hover:not(:disabled){background:var(--red-hover);border-color:var(--outline)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .btn{flex:1 1 140px}
 
@@ -127,7 +184,7 @@ body.mode-drive footer{display:none}
   font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:clamp(.75rem,1.8vmin,1rem);
   transition:background .08s}
 .cell b{font-size:clamp(1.5rem,6vmin,3.25rem);line-height:1}
-@media (hover:hover){.cell:hover{background:var(--surface);color:var(--accent)}}
+@media (hover:hover){.cell:hover{background:var(--hover);color:var(--accent)}}
 .cell.is-held,.cell.is-held:hover{background:var(--accent);color:#fff}
 
 /* Console: speed, relax and full screen between the two pads. The speed
@@ -143,10 +200,10 @@ body.mode-drive footer{display:none}
    outline that only lights up on hover. Wake stays loud while the servos are limp. */
 .actions{display:flex;gap:8px}
 .actions .btn{flex:1;padding:5px 8px;font-size:.8rem;background:transparent;color:var(--muted);
-  border-color:var(--border-light);box-shadow:none}
-.actions .btn:hover:not(:disabled){transform:none;box-shadow:none;border-color:var(--accent);color:var(--accent)}
-.actions .btn-danger:hover:not(:disabled){border-color:var(--fault);color:var(--fault)}
-.actions .btn-accent,.actions .btn-accent:hover:not(:disabled){background:var(--accent);border-color:var(--accent);color:#fff}
+  border-color:var(--border-light)}
+.actions .btn:hover:not(:disabled){transform:none;background:transparent;border-color:var(--accent);color:var(--accent)}
+.actions .btn-danger:hover:not(:disabled){border-color:var(--red);color:var(--red)}
+.actions .btn-accent,.actions .btn-accent:hover:not(:disabled){background:var(--accent);border-color:var(--outline);color:#fff}
 .console .hint{margin:0;text-align:center}
 
 /* Speed slider: a thick track and a big square thumb, easy to catch with a thumb */
@@ -154,27 +211,30 @@ body.mode-drive footer{display:none}
   background:transparent;cursor:pointer;touch-action:none;--fill:50%}
 .slider:focus{outline:none}
 .slider::-webkit-slider-runnable-track{height:12px;border:2px solid var(--border);
-  background:linear-gradient(to right,var(--accent) var(--fill),var(--bg) var(--fill))}
+  background:linear-gradient(to right,var(--accent) var(--fill),var(--input-bg) var(--fill))}
 .slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:32px;margin-top:-12px;
-  background:var(--plate);border:2px solid var(--border);box-shadow:2px 2px 0 rgba(17,24,39,.25)}
-.slider:focus-visible::-webkit-slider-thumb{border-color:var(--accent)}
-.slider::-moz-range-track{height:12px;border:2px solid var(--border);background:var(--bg)}
+  background:var(--plate);border:2px solid var(--border);box-shadow:2px 2px 0 var(--shade)}
+.slider:focus-visible::-webkit-slider-thumb{border-color:var(--accent);box-shadow:var(--glow)}
+.slider::-moz-range-track{height:12px;border:2px solid var(--border);background:var(--input-bg)}
 .slider::-moz-range-progress{height:12px;border:2px solid var(--border);border-right:0;background:var(--accent)}
 .slider::-moz-range-thumb{width:24px;height:32px;border:2px solid var(--border);border-radius:0;
-  background:var(--plate);box-shadow:2px 2px 0 rgba(17,24,39,.25)}
-.slider:focus-visible::-moz-range-thumb{border-color:var(--accent)}
+  background:var(--plate);box-shadow:2px 2px 0 var(--shade)}
+.slider:focus-visible::-moz-range-thumb{border-color:var(--accent);box-shadow:var(--glow)}
 
-/* Steering dial: walk directions on the inner ring, fast and turn on the outer */
-.dial{grid-area:dial;width:100%;height:100%;filter:drop-shadow(4px 4px 0 rgba(17,24,39,.15))}
+/* Steering dial: walk directions on the inner ring, fast and turn on the outer,
+   the red stop button in the middle. In the cockpit it glows like the monitor. */
+.dial{grid-area:dial;width:100%;height:100%;filter:drop-shadow(4px 4px 0 var(--shade))}
+:root[data-theme=dark] .dial{filter:drop-shadow(4px 4px 0 var(--shade)) drop-shadow(0 0 12px rgba(76,201,240,.2))}
 .dial text{font-family:var(--heading);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .dial .face{transition:fill .08s}
 .ring-out .face{fill:var(--plate);stroke:var(--border);stroke-width:2}
 .ring-out .glyph{fill:var(--text)}
-.ring-in .face{fill:var(--border);stroke:var(--plate);stroke-width:2}
+.ring-in .face{fill:var(--well);stroke:var(--plate);stroke-width:2}
 .ring-in .glyph{fill:#fff}
-.hub .face{fill:var(--text);stroke:var(--plate);stroke-width:3}
+.hub .face{fill:var(--red);stroke:var(--plate);stroke-width:3}
 .hub .glyph{fill:#fff}
-@media (hover:hover){.ring-out:hover .face{fill:var(--surface)}.ring-in:hover .face{fill:var(--muted)}}
+@media (hover:hover){.ring-out:hover .face{fill:var(--hover)}.ring-in:hover .face{fill:var(--well-hover)}
+  .hub:hover .face{fill:var(--red-hover)}}
 .dial .is-held .face,.dial .is-held:hover .face{fill:var(--accent)}
 .dial .is-held .glyph{fill:#fff}
 
@@ -183,7 +243,7 @@ body.mode-drive footer{display:none}
   max-width:calc(100% - 32px);background:var(--plate);border:2px solid var(--border);box-shadow:var(--shadow);
   padding:6px 14px;margin:0;pointer-events:none}
 .toast:empty{display:none}
-.toast.is-error{border-color:var(--fault)}
+.toast.is-error{border-left:6px solid var(--red)}
 
 /* Portrait: console on top, then the dial, then the moves three across */
 @media (orientation:portrait){
@@ -197,7 +257,7 @@ body.mode-drive footer{display:none}
 /* Short landscape screens (phones): squeeze the chrome, keep the pads big */
 @media (orientation:landscape) and (max-height:520px){
   header{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:6px;margin-bottom:16px}
-  .brand{font-size:1.2rem}
+  .brand{font-size:1.05rem;letter-spacing:1px}
   .robot{display:none}
   .deck{gap:14px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
   .console{gap:22px}
@@ -206,6 +266,16 @@ body.mode-drive footer{display:none}
   .gauge .speed-value{font-size:1.5rem}
   .console .hint{display:none}
 }
+/* Phones: brand, theme and status on the first row, the tabs and a truncated
+   robot name on the second, so the header leaves the pads their room */
+@media (max-width:575px){
+  .brand{font-size:1.1rem;letter-spacing:1px}
+  .theme-btn{order:1}
+  .chip{order:2;padding:4px 10px}
+  .tabs{order:3}
+  .tab{padding:4px 10px}
+  .robot{order:4;flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
 @media (hover:none){.keys{display:none}}
 
 /* Offsets: one block per leg, the leg header styled like the app's */
@@ -213,32 +283,38 @@ body.mode-drive footer{display:none}
 .legs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,auto);grid-auto-flow:column;
   gap:16px 24px;margin:20px 0}
 @media (max-width:720px){.legs{grid-template-columns:1fr;grid-template-rows:none;grid-auto-flow:row}}
-.leg-head{font-family:var(--mono);font-weight:700;text-transform:uppercase;background:var(--bg);
+.leg-head{font-family:var(--mono);font-size:.85rem;font-weight:700;text-transform:uppercase;background:var(--bg);
   border-left:4px solid var(--accent);padding:4px 8px;margin-bottom:8px}
 .joints{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.label{font-family:var(--mono);font-size:.75rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.label{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
 .stepper{display:flex}
-.stepper button{width:30px;flex:none;border:2px solid var(--border-light);background:var(--surface);
+.stepper button{width:30px;flex:none;border:2px solid var(--border-light);background:var(--surface);color:var(--text);
   font-family:var(--mono);font-weight:700;cursor:pointer;padding:0}
 .stepper button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
-input[type=number]{width:100%;min-width:0;font-family:var(--mono);font-size:.95rem;text-align:center;
-  background:#f3f4f6;border:2px solid var(--border-light);border-left:0;border-right:0;color:var(--text);
+input[type=number]{width:100%;min-width:0;font-family:var(--mono);font-size:.95rem;font-weight:600;text-align:center;
+  background:var(--input-bg);border:2px solid var(--border-light);border-left:0;border-right:0;color:var(--text);
   padding:6px 2px;border-radius:0;box-shadow:inset 2px 2px 0 rgba(0,0,0,.05);-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-input[type=number]:focus{outline:none;background:#fff;border-color:var(--accent)}
+input[type=number]:focus{outline:none;background:var(--input-focus-bg);border-color:var(--accent);
+  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05),var(--glow)}
 .legs.is-idle{opacity:.4;filter:grayscale(1);pointer-events:none}
 
-.speed-value{font-family:var(--mono);font-size:1.3rem;min-width:4ch;text-align:right}
+.speed-value{font-family:var(--mono);font-weight:700;font-size:1.3rem;min-width:4ch;text-align:right}
 .hint{color:var(--muted);font-size:.9rem;margin-top:8px}
 
 /* Messages and the safety callout */
-.message{font-family:var(--mono);text-align:center;min-height:1.4em;margin-top:14px}
-.message.is-error{color:var(--fault)}
+.message{font-family:var(--mono);font-weight:600;text-align:center;min-height:1.4em;margin-top:14px}
+.message.is-error{color:var(--alert-text)}
 .message.is-ok{color:var(--ok)}
-.callout{border-left:6px solid var(--accent);background:var(--surface);padding:10px 14px;margin:0 0 16px;
+.callout{border-left:6px solid var(--red);background:var(--surface);padding:10px 14px;margin:0 0 16px;
   color:var(--muted);line-height:1.5}
-.callout b{color:var(--accent);text-transform:uppercase;letter-spacing:1px}
+.callout b{color:var(--red);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
 footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8rem;padding:8px 0 24px}
+
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--bg);border-left:1px solid var(--border-light)}
+::-webkit-scrollbar-thumb{background:var(--border);border:1px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
 </style>
 </head>
 <body class="mode-drive">
@@ -249,6 +325,7 @@ footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8
     <button class="tab" role="tab" id="tabDrive" aria-selected="true" onclick="showTab('drive')">Drive</button>
     <button class="tab" role="tab" id="tabCalibrate" aria-selected="false" onclick="showTab('calibrate')">Calibrate</button>
   </div>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"></button>
   <div class="chip" id="chip">Idle</div>
 </header>
 
@@ -326,6 +403,7 @@ let driveTimer = 0;
 let inFlight = false; // One request at a time: the robot serves them in turn
 let resend = false;
 let relaxed = false;
+let linked = null;  // Whether /robot_config answered: null until it does
 let activePointer = null;
 const heldKeys = new Set();
 
@@ -345,18 +423,62 @@ function request(url, options) {
   }));
 }
 
+// The chip's state names are the app's link readout: online (green), streaming
+// (yellow, pulsing) and fault (red); a relaxed or not yet linked robot is grey.
 function updateChip() {
   const moving = !!driving && driving !== 'standby';
-  let text = 'Idle';
-  if (calibrating) text = 'Calibrating';
-  else if (moving) text = 'Driving';
-  else if (relaxed) text = 'Relaxed';
+  let text = 'Idle', state = linked ? 'online' : '';
+  if (linked === false) {
+    text = 'Offline';
+    state = 'fault';
+  } else if (calibrating) {
+    text = 'Calibrating';
+    state = 'streaming';
+  } else if (moving) {
+    text = 'Driving';
+    state = 'streaming';
+  } else if (relaxed) {
+    text = 'Relaxed';
+    state = '';
+  }
   $('chip').textContent = text;
-  $('chip').className = 'chip' + (calibrating || moving ? ' is-on' : '');
+  $('chip').className = 'chip' + (state ? ' is-' + state : '');
   document.body.classList.toggle('is-driving', moving);
   $('relaxBtn').textContent = relaxed ? 'Wake' : 'Relax';
   $('relaxBtn').className = 'btn ' + (relaxed ? 'btn-accent' : 'btn-danger');
 }
+
+// ---------------------------------------------------------------------------
+// Theme
+// ---------------------------------------------------------------------------
+
+// The button offers the other theme, so it shows that one's icon. U+FE0E keeps
+// the sun a text glyph rather than an emoji.
+const THEME_ICON = { light: '☾', dark: '☀︎' };
+const THEME_TITLE = { light: 'Switch to dark theme', dark: 'Switch to light theme' };
+const THEME_BAR = { light: '#f3f5f9', dark: '#0c1730' };
+const darkQuery = matchMedia('(prefers-color-scheme: dark)');
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  $('themeColor').content = THEME_BAR[theme];
+  $('themeBtn').textContent = THEME_ICON[theme];
+  $('themeBtn').title = THEME_TITLE[theme];
+  $('themeBtn').setAttribute('aria-label', THEME_TITLE[theme]);
+}
+
+function toggleTheme() {
+  const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('theme', theme); } catch (e) {}
+  applyTheme(theme);
+}
+
+// Follow the device's setting until a theme is picked with the toggle.
+darkQuery.addEventListener('change', e => {
+  let saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (err) {}
+  if (!saved) applyTheme(e.matches ? 'dark' : 'light');
+});
 
 // ---------------------------------------------------------------------------
 // Tabs
@@ -775,6 +897,7 @@ function saveOffsets() {
 // Startup
 // ---------------------------------------------------------------------------
 
+applyTheme(document.documentElement.getAttribute('data-theme'));
 buildDial();
 showSpeed($('speedSlider').value);
 bindPad($('dial'), dialZone);
@@ -794,8 +917,14 @@ request('/robot_config').then(text => {
   document.querySelectorAll('[data-cmd]').forEach(el =>
     el.classList.toggle('is-missing', commands.indexOf(el.dataset.cmd) < 0));
   $('drive').classList.remove('drive-off');
+  linked = true;
+  updateChip();
   say('', '', 'driveMessage');
-}).catch(e => say(e.message, 'error', 'driveMessage'));
+}).catch(e => {
+  linked = false;
+  updateChip();
+  say(e.message, 'error', 'driveMessage');
+});
 </script>
 </body>
 </html>
