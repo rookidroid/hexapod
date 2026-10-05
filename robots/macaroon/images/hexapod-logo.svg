@@ -26,32 +26,46 @@
   <!-- Badge: navy plate chamfered top-right and bottom-left, like the UI's panels -->
   <path d="M10,10 H430 L502,82 V502 H82 L10,430 Z" fill="#1b2a4a"/>
 
-  <g id="robot" transform="translate(256,256) rotate(45) scale(1.05) translate(-256,-262)">
-  <!-- Right legs: front, middle, back; the knee bends the tibia away from the middle -->
-  <g id="legs-right">
-    <g transform="translate(314,204) rotate(-40)">
-      <use xlink:href="#femur"/>
-      <g transform="translate(72,0) rotate(-20)"><use xlink:href="#tibia"/></g>
-      <use xlink:href="#knee" x="72"/>
-    </g>
-    <g transform="translate(320,262)">
+  <!-- Robot, seen from above, centred on the badge and turned 45 degrees -->
+  <g id="robot" transform="translate(256,256) rotate(45) scale(0.94)">
+  <!-- Six legs, one from each corner of the body, 60 degrees apart -->
+  <g id="legs">
+    <g transform="rotate(0) translate(100,0)">
       <use xlink:href="#femur"/>
       <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
       <use xlink:href="#knee" x="72"/>
     </g>
-    <g transform="translate(314,320) rotate(40)">
+    <g transform="rotate(60) translate(100,0)">
       <use xlink:href="#femur"/>
-      <g transform="translate(72,0) rotate(20)"><use xlink:href="#tibia"/></g>
+      <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
+      <use xlink:href="#knee" x="72"/>
+    </g>
+    <g transform="rotate(120) translate(100,0)">
+      <use xlink:href="#femur"/>
+      <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
+      <use xlink:href="#knee" x="72"/>
+    </g>
+    <g transform="rotate(180) translate(100,0)">
+      <use xlink:href="#femur"/>
+      <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
+      <use xlink:href="#knee" x="72"/>
+    </g>
+    <g transform="rotate(240) translate(100,0)">
+      <use xlink:href="#femur"/>
+      <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
+      <use xlink:href="#knee" x="72"/>
+    </g>
+    <g transform="rotate(300) translate(100,0)">
+      <use xlink:href="#femur"/>
+      <g transform="translate(72,0)"><use xlink:href="#tibia"/></g>
       <use xlink:href="#knee" x="72"/>
     </g>
   </g>
-  <!-- Left legs mirror the right -->
-  <use xlink:href="#legs-right" transform="translate(512,0) scale(-1,1)"/>
 
-  <!-- Torso, seen from above: a white hexagonal shell with a blue chest
-       and a yellow waist band -->
-  <path class="armor ink" d="M220,150 H292 L336,262 L292,374 H220 L176,262 Z"/>
-  <path class="blue ink" d="M230,174 H282 L306,236 V262 H206 V236 Z"/>
-  <rect class="yellow ink" x="206" y="284" width="100" height="20"/>
+  <!-- Torso: a regular hexagon of white armour with a blue deck
+       and a yellow hub -->
+  <polygon class="armor ink" points="106.0,0.0 53.0,91.8 -53.0,91.8 -106.0,0.0 -53.0,-91.8 53.0,-91.8"/>
+  <polygon class="blue ink" points="70.0,0.0 35.0,60.6 -35.0,60.6 -70.0,0.0 -35.0,-60.6 35.0,-60.6"/>
+  <circle class="yellow ink" r="24"/>
   </g>
 </svg>
