@@ -26,7 +26,7 @@
   <!-- Badge: navy plate chamfered top-right and bottom-left, like the UI's panels -->
   <path d="M10,10 H430 L502,82 V502 H82 L10,430 Z" fill="#1b2a4a"/>
 
-  <g id="robot" transform="translate(256,244) scale(1.05) translate(-256,-250)">
+  <g id="robot" transform="translate(256,256) rotate(45) scale(1.05) translate(-256,-262)">
   <!-- Right legs: front, middle, back; the knee bends the tibia away from the middle -->
   <g id="legs-right">
     <g transform="translate(314,204) rotate(-40)">
@@ -48,11 +48,10 @@
   <!-- Left legs mirror the right -->
   <use xlink:href="#legs-right" transform="translate(512,0) scale(-1,1)"/>
 
-  <!-- Torso, seen from above: white armour with a red head plate,
-       a blue chest and a yellow waist band -->
-  <path class="red ink" d="M234,114 H278 L292,130 V156 H220 V130 Z"/>
-  <path class="armor ink" d="M222,146 H290 L324,192 V330 L290,374 H222 L188,330 V192 Z"/>
-  <path class="blue ink" d="M228,172 H284 L302,194 V262 H210 V194 Z"/>
-  <rect class="yellow ink" x="210" y="284" width="92" height="20"/>
+  <!-- Torso, seen from above: a white hexagonal shell with a blue chest
+       and a yellow waist band -->
+  <path class="armor ink" d="M220,150 H292 L336,262 L292,374 H220 L176,262 Z"/>
+  <path class="blue ink" d="M230,174 H282 L306,236 V262 H206 V236 Z"/>
+  <rect class="yellow ink" x="206" y="284" width="100" height="20"/>
   </g>
 </svg>
