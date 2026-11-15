@@ -47,7 +47,9 @@
 // Declared in hexapod.h; the modules read and write these through that header.
 
 volatile bool ota_mode = true;       // OTA updates enabled until first command
-bool wifi_connected = false;         // WiFi AP connection status
+bool wifi_connected = false;         // WiFi up, as AP or station
+bool wifi_sta_mode = false;          // Joined a saved network (else AP)
+volatile bool restart_requested = false; // Reboot to apply new WiFi settings
 bool boot_sequence_executed = false; // Boot sequence completion flag
 volatile bool trigger_boot_sequence =
     false;                     // Boot trigger from WiFi event (volatile for ISR)
@@ -70,7 +72,7 @@ void setMotionSpeed(int pct)
 }
 
 /**
-   @brief Initialize system: WiFi AP, OTA, calibration, PWM drivers, UDP and
+   @brief Initialize system: WiFi (station or AP), OTA, calibration, PWM drivers, UDP and
    the web interface.
 */
 void setup()
@@ -113,6 +115,15 @@ void loop()
   }
 
   web_server.handleClient();
+
+  // WiFi settings changed: reboot to apply them. The short wait lets the HTTP
+  // reply reach the browser first.
+  if (restart_requested)
+  {
+    delay(500);
+    Serial.println("Restarting to apply WiFi settings");
+    ESP.restart();
+  }
 
   if (ota_mode)
   {

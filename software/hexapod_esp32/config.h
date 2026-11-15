@@ -133,6 +133,17 @@ const uint16_t EEPROM_ADDR_RIGHT = 20;  // Address for right offsets (after 18 b
 
 #define UDP_PORT 1234  // local port to listen on
 
+// Station mode: the robot joins an existing network saved from the web page's
+// WiFi tab. If none is saved, or it cannot connect within this window (ms) at
+// boot, the robot falls back to its own access point.
+#define WIFI_STA_TIMEOUT_MS 10000
+#define WIFI_NVS_NAMESPACE "wifi"
+#define WIFI_NVS_KEY_SSID "ssid"
+#define WIFI_NVS_KEY_PASS "pass"
+
+// Network hostname, also used for OTA and mDNS (http://hexapod-<robot>.local/)
+#define WIFI_HOSTNAME "hexapod-" ROBOT_NAME
+
 /** OTA */
 // Uncomment (or pass -DOTA_PASSWORD=...) to require a password for OTA uploads.
 // Without it, anyone who joins the robot's access point can flash firmware.

@@ -56,7 +56,9 @@ struct MotionConfig
 // are single words, so each access is atomic on the ESP32.
 
 extern volatile bool ota_mode;            // OTA updates enabled until first command
-extern bool wifi_connected;               // WiFi AP connection status
+extern bool wifi_connected;               // WiFi up, as AP or station
+extern bool wifi_sta_mode;                // Joined a saved network (else AP)
+extern volatile bool restart_requested;   // Reboot from the main loop (new WiFi)
 extern bool boot_sequence_executed;       // Boot sequence completion flag
 extern volatile bool trigger_boot_sequence; // Boot trigger from WiFi event
 extern bool calibration_mode;             // Calibration mode flag (main loop only)
@@ -165,6 +167,11 @@ void setupWebServer();
 extern AsyncUDP udp_socket;
 
 void setupWiFi();
+bool loadWifiCredentials(String &sta_ssid, String &sta_pass);
+bool saveWifiCredentials(const String &sta_ssid, const String &sta_pass);
+bool clearWifiCredentials();
+IPAddress wifiIp();
+void noteClientSeen();
 void setupOta();
 void setupUdp();
 void parseCommand(char *data, size_t length);
