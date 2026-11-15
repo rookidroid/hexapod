@@ -4,14 +4,14 @@ Arduino-based firmware for the ESP32-powered hexapod robot controller, shared by
 
 ## Features
 
-- **WiFi Control**: Access Point mode with UDP command interface
+- **WiFi Control**: Joins your WiFi network, or falls back to its own access point, with a UDP command interface
 - **Web Controller & Calibration**: Drive the robot from any browser, and adjust and save servo offsets to flash
 - **Binary UDP Protocol**: Fast and efficient binary packet structure for motion control
 - **18-Servo Control**: Dual PCA9685 PWM drivers (I2C) for coordinated leg movement
 - **OTA Updates**: Wireless firmware updates over WiFi
 - **Motion Library**: Pre-programmed gaits and movements
 - **Non-blocking Motion Engine**: Gaits, streamed poses and every transition between them run from one tick-driven engine, so the web UI, OTA and failsafes stay responsive while walking
-- **Event-Driven Boot**: Automatic boot sequence when client connects
+- **Event-Driven Boot**: Automatic boot sequence when a client connects (or, on your network, first talks to the robot)
 
 ## Hardware Requirements
 
@@ -107,12 +107,44 @@ static int right_legs[3][3] = { { 10, 9, 8 }, { 13, 14, 15 }, { 7, 6, 5 } };
 2. Robot will automatically perform boot sequence when client connects
 3. Drive it from a browser at `http://192.168.4.1/` (see below), or send UDP commands to `192.168.4.1:1234`
 
+The addresses here are for the robot's own access point. To put the robot on
+your home network instead, see [Join a WiFi Network](#join-a-wifi-network).
+
+## Join a WiFi Network
+
+Out of the box the robot is its own access point. It can join an existing WiFi
+network instead, so your phone or laptop stays on that network while driving it:
+
+1. Open the robot's page and switch to the **WiFi** tab.
+2. **Scan for networks** and pick yours, or type its name. Enter the password
+   (blank for an open network) and press **Save and reboot**.
+3. The robot restarts and joins the network. Reconnect your device to that
+   network and open `http://hexapod-<robot>.local/` (e.g.
+   `http://hexapod-nougat.local/`), or the address your router gave the robot.
+   The serial monitor also prints it.
+
+At every boot the robot tries the saved network for `WIFI_STA_TIMEOUT_MS`
+(10 s). If it cannot connect (wrong password, router off, out of range) it
+starts its own access point as usual, so a mistake never locks you out: join
+the access point, open `http://192.168.4.1/` and fix the settings. **Forget
+network** on the WiFi tab clears the saved network and reboots into access
+point mode.
+
+On your network the robot stands up when a client first talks to it (the page
+loads or a UDP packet arrives) rather than when a device joins its access point.
+UDP commands go to the robot's address on that network, port 1234.
+
+> Only 2.4 GHz networks work: the ESP32 has no 5 GHz radio. `.local` names
+> need mDNS, which Windows, macOS, iOS and recent Android resolve; otherwise use
+> the IP address.
+
 ## Drive from a Browser
 
 The robot serves its own controller page, so a phone, tablet or laptop can drive
 it with nothing installed.
 
-1. Connect to the robot's WiFi network and open `http://192.168.4.1/`. The page
+1. Connect to the robot's WiFi network and open `http://192.168.4.1/` (or the
+   robot's address on [your network](#join-a-wifi-network)). The page
    opens on the **Drive** tab, a control panel that fills the whole window.
 2. **Hold** to move, and slide your finger between zones without lifting it:
    - The **dial** (right) walks in eight directions on its inner ring. The outer
@@ -353,6 +385,7 @@ can model and drive it without its own copy of every robot's config:
   "firmware": {"version": "3.2.0", "build": "v3.2.0"},
   "name": "nougat",
   "ssid": "hexapod_nougat",
+  "wifi_mode": "ap",
   "delay_ms": 12,
   "servo": {"min": 102, "mid": 307, "max": 512},
   "speed": {"min": 20, "max": 100, "default": 60, "current": 60},
@@ -362,6 +395,8 @@ can model and drive it without its own copy of every robot's config:
 ```
 
 - `protocol` is `PROTOCOL_VERSION` in `protocol.h`.
+- `ssid` is the robot's own access point name; `wifi_mode` is `"ap"` when the
+  robot runs it, `"sta"` when it has joined a saved network.
 - `firmware` is the [firmware version](#firmware-version) and build tag.
 - `commands` lists the motion names in `RobotCommand` order: a name's index is
   the command ID for a `0xA5` packet.
@@ -371,7 +406,7 @@ can model and drive it without its own copy of every robot's config:
   header with `python generate_motion.py <name>` (or `--geometry-only` to leave
   the LUTs alone).
 
-The other HTTP routes back the web page's drive and calibration tabs:
+The other HTTP routes back the web page's drive, calibration and WiFi tabs:
 
 | Route | Method | Purpose |
 | --- | --- | --- |
@@ -384,6 +419,10 @@ The other HTTP routes back the web page's drive and calibration tabs:
 | `/set_speed?pct=N` | POST | Set the LUT playback speed; returns `{"speed":N}` |
 | `/motion?id=N[&pct=S]` | POST | Play motion `N` (index into `commands`), optionally at speed `S`; same effect and 500 ms failsafe as a `0xA5` packet. Returns `{"motion":N,"speed":S}`; 409 in calibration mode |
 | `/relax` | POST | Cut PWM drive so the servos go limp, like session action Relax; 409 in calibration mode |
+| `/wifi_status` | GET | `{"mode":"ap"\|"sta","ssid":..,"ip":..,"rssi":..,"saved":..,"ap_ssid":..,"hostname":..,"timeout_ms":..}`; `rssi` only when joined, the saved password is never returned |
+| `/wifi_scan` | GET | Networks in range: `[{"ssid":..,"rssi":N,"secure":bool}]`, strongest first (blocks for a few seconds) |
+| `/wifi_config` | POST | Form fields `ssid`, `password`: save the network and reboot to join it. A blank password re-saving the same SSID keeps the stored one |
+| `/wifi_forget` | POST | Clear the saved network and reboot into access point mode |
 
 ## Firmware Version
 
@@ -400,13 +439,15 @@ The version is printed on the serial port at boot, returned by the
 
 After initial USB upload, use OTA for wireless updates:
 
-1. Power on robot and connect to its WiFi
+1. Power on robot and connect to its WiFi (or the network it has joined)
 2. In Arduino IDE: **Tools → Port → Network Ports**, then select `hexapod-<robot>` (e.g. `hexapod-macaroon`)
 3. Upload as normal. The servos go limp while the new firmware is written
 4. Note: OTA is disabled after the first motion command or real-time session (reboot to re-enable)
 
-OTA has no password by default, so anyone who joins the robot's access point
-can flash it. Define `OTA_PASSWORD` in `config.h` to require one.
+OTA has no password by default, so anyone who joins the robot's access point,
+or shares the network the robot has joined, can flash it. Define `OTA_PASSWORD`
+in `config.h` to require one. The same goes for the web page, including its
+WiFi settings.
 
 ## File Structure
 
@@ -468,6 +509,9 @@ const uint32_t PCA9685_OSC_HZ = 25000000;    // Tune if servo angles are off
 
 // Calibration
 const int CALIBRATION_MAX_OFFSET = 100;      // Largest accepted offset (ticks)
+
+// WiFi
+#define WIFI_STA_TIMEOUT_MS 10000            // Wait for the saved network before starting the AP
 ```
 
 ## Troubleshooting
@@ -475,7 +519,9 @@ const int CALIBRATION_MAX_OFFSET = 100;      // Largest accepted offset (ticks)
 ### WiFi connection issues
 
 - Verify the SSID in `src/robots/<name>/robot_config.h` and the password in `config.h`
-- Check serial monitor for IP address (192.168.4.1 default)
+- Check serial monitor for IP address (192.168.4.1 in access point mode)
+- If the robot joined your network but `hexapod-<robot>.local` does not resolve, use the IP address from the serial monitor or your router
+- If it should join your network but keeps starting its access point, check the saved network and password on the **WiFi** tab and that the network is 2.4 GHz
 - Ensure client device supports 2.4GHz WiFi
 
 ### Servos not moving

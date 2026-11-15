@@ -1,6 +1,6 @@
 /**
 
-  Networking -- WiFi AP, OTA, and the UDP command endpoint
+  Networking -- WiFi (station with AP fallback), OTA, and the UDP command endpoint
 
   - Copyright (C) 2024 - PRESENT  rookidroid.com
   - E-mail: info@rookidroid.com
@@ -10,6 +10,8 @@
 
 #include <ArduinoOTA.h>
 #include <AsyncUDP.h>
+#include <ESPmDNS.h>
+#include <Preferences.h>
 #include <WiFi.h>
 
 #include "hexapod.h"
@@ -17,7 +19,7 @@
 // UDP socket for receiving commands
 AsyncUDP udp_socket;
 
-// WiFi credentials (defined in config.h)
+// Access point credentials (defined in config.h)
 static const char *ssid = APSSID;
 static const char *password = APPSK;
 
@@ -31,12 +33,151 @@ static uint32_t last_pose_seq = 0;
 static bool pose_seq_valid = false;
 
 /**
-   @brief Start the WiFi access point clients connect to.
+   @brief Read the network saved from the web page's WiFi tab.
+   @return true if an SSID is saved
+*/
+bool loadWifiCredentials(String &sta_ssid, String &sta_pass)
+{
+  Preferences prefs;
+  if (!prefs.begin(WIFI_NVS_NAMESPACE, true))
+  {
+    // The namespace does not exist until the first save
+    sta_ssid = "";
+    sta_pass = "";
+    return false;
+  }
+  sta_ssid = prefs.getString(WIFI_NVS_KEY_SSID, "");
+  sta_pass = prefs.getString(WIFI_NVS_KEY_PASS, "");
+  prefs.end();
+  return sta_ssid.length() > 0;
+}
+
+/**
+   @brief Save the network to join at the next boot.
+   @return true on success
+*/
+bool saveWifiCredentials(const String &sta_ssid, const String &sta_pass)
+{
+  Preferences prefs;
+  bool ok = prefs.begin(WIFI_NVS_NAMESPACE, false);
+  // putString() returns 0 on failure. An open network stores no password.
+  ok = ok && prefs.putString(WIFI_NVS_KEY_SSID, sta_ssid) > 0;
+  if (sta_pass.length() == 0)
+  {
+    prefs.remove(WIFI_NVS_KEY_PASS); // Fails harmlessly if there was none
+  }
+  else
+  {
+    ok = ok && prefs.putString(WIFI_NVS_KEY_PASS, sta_pass) > 0;
+  }
+  prefs.end();
+
+  Serial.println(ok ? "WiFi network saved" : "ERROR: Failed to save WiFi network");
+  return ok;
+}
+
+/**
+   @brief Forget the saved network, so the robot starts its own AP.
+   @return true on success
+*/
+bool clearWifiCredentials()
+{
+  Preferences prefs;
+  bool ok = prefs.begin(WIFI_NVS_NAMESPACE, false);
+  ok = ok && prefs.clear();
+  prefs.end();
+
+  Serial.println(ok ? "WiFi network forgotten" : "ERROR: Failed to forget WiFi network");
+  return ok;
+}
+
+/**
+   @brief The robot's own address: on the joined network, or on its AP.
+*/
+IPAddress wifiIp()
+{
+  return wifi_sta_mode ? WiFi.localIP() : WiFi.softAPIP();
+}
+
+/**
+   @brief A client talked to the robot (UDP packet or page load): stand up if
+   that has not happened yet.
+
+   On its own AP the robot stands up when a device joins. On a shared network
+   devices join the router instead, so the first contact is the cue.
+*/
+void noteClientSeen()
+{
+  if (!boot_sequence_executed)
+  {
+    trigger_boot_sequence = true; // Flag checked in main loop
+  }
+}
+
+/**
+   @brief Try to join the saved network.
+   @return true once connected, false if none is saved or it timed out
+*/
+static bool connectStation()
+{
+  String sta_ssid;
+  String sta_pass;
+  if (!loadWifiCredentials(sta_ssid, sta_pass))
+  {
+    Serial.println("No saved WiFi network");
+    return false;
+  }
+
+  Serial.print("Joining WiFi network ");
+  Serial.print(sta_ssid);
+
+  // The credentials live in our own NVS namespace; stop the core keeping a
+  // second copy that it would rewrite on every boot.
+  WiFi.persistent(false);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(sta_ssid.c_str(), sta_pass.c_str());
+
+  const unsigned long start = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - start < WIFI_STA_TIMEOUT_MS)
+  {
+    delay(250);
+    Serial.print(".");
+  }
+  Serial.println();
+
+  if (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.println("Could not join the network, falling back to AP");
+    // Stop retrying, or the station would keep hopping channels under the AP
+    WiFi.setAutoReconnect(false);
+    WiFi.disconnect(true);
+    return false;
+  }
+
+  // A router blip later on reconnects on its own
+  WiFi.setAutoReconnect(true);
+  Serial.print("Station IP address: ");
+  Serial.println(WiFi.localIP());
+  return true;
+}
+
+/**
+   @brief Join the saved WiFi network, or start the robot's own access point
+   if there is none or it cannot be reached.
 */
 void setupWiFi()
 {
   // Register WiFi event handler
   WiFi.onEvent(WiFiEvent);
+  WiFi.setHostname(WIFI_HOSTNAME);
+
+  if (connectStation())
+  {
+    wifi_sta_mode = true;
+    wifi_connected = true;
+    return;
+  }
+  wifi_sta_mode = false;
 
   // Initialize WiFi Access Point
   WiFi.mode(WIFI_AP);
@@ -60,7 +201,7 @@ void setupWiFi()
 */
 void setupOta()
 {
-  ArduinoOTA.setHostname("hexapod-" ROBOT_NAME);
+  ArduinoOTA.setHostname(WIFI_HOSTNAME);
 #ifdef OTA_PASSWORD
   ArduinoOTA.setPassword(OTA_PASSWORD);
 #endif
@@ -100,9 +241,12 @@ void setupOta()
         Serial.println("End Failed");
       } });
 
+  // Also starts mDNS under the hostname
   ArduinoOTA.begin();
-  Serial.print("OTA update enabled, hostname: hexapod-");
-  Serial.println(ROBOT_NAME);
+  // Advertise the web page, so http://<hostname>.local/ finds the robot on a
+  // shared network
+  MDNS.addService("http", "tcp", 80);
+  Serial.println("OTA update enabled, hostname: " WIFI_HOSTNAME);
 }
 
 /**
@@ -113,10 +257,13 @@ void setupUdp()
   if (udp_socket.listen(UDP_PORT))
   {
     Serial.print("UDP Listening on IP: ");
-    Serial.println(WiFi.softAPIP());
+    Serial.println(wifiIp());
     // Register callback for incoming UDP packets
     udp_socket.onPacket([](AsyncUDPPacket packet)
                         {
+      // Any packet means a client has found the robot
+      noteClientSeen();
+
       // Queries are answered here, where the sender is known. They are not
       // control input, so they skip the failsafe refresh below: polling the
       // version must not keep a gait running.
@@ -368,8 +515,8 @@ void parseCommand(char *data, size_t length)
 }
 
 /**
-   @brief Handle WiFi events: trigger boot on connect, disable servos on
-   disconnect.
+   @brief Handle WiFi events: trigger boot when a device joins the AP, log
+   station connection changes.
    @param event WiFi event ID
 */
 void WiFiEvent(arduino_event_id_t event)
@@ -379,10 +526,7 @@ void WiFiEvent(arduino_event_id_t event)
   case ARDUINO_EVENT_WIFI_AP_STACONNECTED:
     // Client connected - trigger boot sequence if not already done
     Serial.println("Station connected to AP");
-    if (!boot_sequence_executed)
-    {
-      trigger_boot_sequence = true; // Flag checked in main loop
-    }
+    noteClientSeen();
     break;
   case ARDUINO_EVENT_WIFI_AP_STADISCONNECTED:
     // Client disconnected - servos remain in last position
@@ -391,6 +535,17 @@ void WiFiEvent(arduino_event_id_t event)
   case ARDUINO_EVENT_WIFI_AP_START:
     // Access point initialized and ready
     Serial.println("AP Started");
+    break;
+  case ARDUINO_EVENT_WIFI_STA_GOT_IP:
+    Serial.print("Station got IP: ");
+    Serial.println(WiFi.localIP());
+    break;
+  case ARDUINO_EVENT_WIFI_STA_DISCONNECTED:
+    // Only worth noting once connected; auto-reconnect handles the rest
+    if (wifi_sta_mode)
+    {
+      Serial.println("Lost the WiFi network, reconnecting");
+    }
     break;
   default:
     break;

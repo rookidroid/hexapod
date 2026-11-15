@@ -1,6 +1,6 @@
 /**
 
-  Robot web page -- drive and calibration, served verbatim from flash by
+  Robot web page -- drive, calibration and WiFi setup, served verbatim from flash by
   web_ui.ino
 
   - Copyright (C) 2024 - PRESENT  rookidroid.com
@@ -26,7 +26,7 @@
 
 #include <Arduino.h>
 
-// HTML page for the drive and calibration interface
+// HTML page for the drive, calibration and WiFi interface
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
@@ -84,7 +84,7 @@ button,input{font:inherit}
 /* Michroma has one weight; where it is missing the stand-in is set bold instead */
 .brand,h2,.callout b{font-family:var(--display);font-weight:700;font-synthesis:none}
 /* Keyboard focus on chamfered parts: an inset ring, which the clip leaves alone */
-.btn:focus-visible,.tab:focus-visible,.theme-btn:focus-visible,.stepper button:focus-visible{
+.btn:focus-visible,.tab:focus-visible,.theme-btn:focus-visible,.stepper button:focus-visible,.net:focus-visible{
   outline:2px solid currentColor;outline-offset:-6px}
 
 /* Header: the app's navbar, down to the chest trim */
@@ -299,6 +299,30 @@ input[type=number]:focus{outline:none;background:var(--input-focus-bg);border-co
   box-shadow:inset 2px 2px 0 rgba(0,0,0,.05),var(--glow)}
 .legs.is-idle{opacity:.4;filter:grayscale(1);pointer-events:none}
 
+/* WiFi: a status readout, the networks in range and the join form */
+.status{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0 0 20px}
+.status dt{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;
+  align-self:center}
+.status dd{margin:0;font-family:var(--mono);font-weight:600;overflow-wrap:anywhere}
+.nets{display:flex;flex-direction:column;gap:6px;margin:12px 0 20px}
+.nets:empty{display:none}
+.net{display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;color:var(--text);
+  background:var(--surface);border:2px solid var(--border-light);padding:8px 12px;font-weight:600}
+.net:hover{border-color:var(--accent);color:var(--accent)}
+.net[aria-pressed=true]{border-color:var(--accent);background:var(--hover)}
+.net-name{flex:1;min-width:0;overflow-wrap:anywhere}
+.net-meta{font-family:var(--mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin:0 0 16px}
+@media (max-width:575px){.fields{grid-template-columns:1fr}}
+.field label{display:block}
+.field-input{display:flex}
+input.text{width:100%;min-width:0;font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--text);
+  background:var(--input-bg);border:2px solid var(--border-light);border-radius:0;padding:8px 10px;
+  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05)}
+input.text:focus{outline:none;background:var(--input-focus-bg);border-color:var(--accent);
+  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05),var(--glow)}
+.field-input .btn{flex:none;padding:6px 12px;font-size:.8rem;clip-path:none;border-left:0}
+
 .speed-value{font-family:var(--mono);font-weight:700;font-size:1.3rem;min-width:4ch;text-align:right}
 .hint{color:var(--muted);font-size:.9rem;margin-top:8px}
 
@@ -324,6 +348,7 @@ footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tabDrive" aria-selected="true" onclick="showTab('drive')">Drive</button>
     <button class="tab" role="tab" id="tabCalibrate" aria-selected="false" onclick="showTab('calibrate')">Calibrate</button>
+    <button class="tab" role="tab" id="tabWifi" aria-selected="false" onclick="showTab('wifi')">WiFi</button>
   </div>
   <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"></button>
   <div class="chip" id="chip">Idle</div>
@@ -380,6 +405,42 @@ footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8
     <div class="message" id="message"></div>
   </section>
 </main>
+
+<main id="wifi" class="page" hidden>
+  <section class="card">
+    <h2>WiFi network</h2>
+    <p class="lede">Join an existing WiFi network instead of the robot's own access point. At
+      boot the robot tries the saved network first; if it cannot connect, it starts its access
+      point as usual.</p>
+    <dl class="status" id="wifiStatus"></dl>
+    <div class="row">
+      <button class="btn" id="scanBtn" onclick="scanWifi()">Scan for networks</button>
+    </div>
+    <div class="nets" id="nets"></div>
+    <form class="fields" id="wifiForm" onsubmit="event.preventDefault(); saveWifi()">
+      <div class="field">
+        <label class="label" for="wifiSsid">Network name (SSID)</label>
+        <input class="text" id="wifiSsid" maxlength="32" autocomplete="off" autocapitalize="none"
+               spellcheck="false" oninput="updatePasswordHint()">
+      </div>
+      <div class="field">
+        <label class="label" for="wifiPass">Password</label>
+        <div class="field-input">
+          <input class="text" id="wifiPass" type="password" maxlength="63" autocomplete="off">
+          <button type="button" class="btn" id="showPassBtn" onclick="togglePassword()">Show</button>
+        </div>
+      </div>
+    </form>
+    <div class="callout" id="wifiCallout"><b>Save and reboot</b> restarts the robot to join the
+      network. Find it there by its hostname or the address your router gives it. If it cannot
+      join, it comes back as its own access point.</div>
+    <div class="row">
+      <button class="btn" id="forgetBtn" onclick="forgetWifi()" disabled>Forget network</button>
+      <button class="btn btn-accent" id="saveWifiBtn" onclick="saveWifi()">Save and reboot</button>
+    </div>
+    <div class="message" id="wifiMessage"></div>
+  </section>
+</main>
 <footer>&copy; 2024 - PRESENT rookidroid.com</footer>
 
 <script>
@@ -404,6 +465,9 @@ let inFlight = false; // One request at a time: the robot serves them in turn
 let resend = false;
 let relaxed = false;
 let linked = null;  // Whether /robot_config answered: null until it does
+let robotLabel = ''; // Robot name for the header, from /robot_config
+let wifi = null;     // Last /wifi_status reply
+let wifiBusy = false; // Saved or forgotten: the robot is rebooting
 let activePointer = null;
 const heldKeys = new Set();
 
@@ -495,10 +559,11 @@ function showTab(name) {
     stop();
   }
   document.body.classList.toggle('mode-drive', name === 'drive');
-  $('drive').hidden = name !== 'drive';
-  $('calibrate').hidden = name !== 'calibrate';
-  $('tabDrive').setAttribute('aria-selected', name === 'drive');
-  $('tabCalibrate').setAttribute('aria-selected', name === 'calibrate');
+  [['drive', 'tabDrive'], ['calibrate', 'tabCalibrate'], ['wifi', 'tabWifi']].forEach(([page, tab]) => {
+    $(page).hidden = name !== page;
+    $(tab).setAttribute('aria-selected', name === page);
+  });
+  if (name === 'wifi' && !wifiBusy) loadWifi();
 }
 
 // ---------------------------------------------------------------------------
@@ -894,6 +959,140 @@ function saveOffsets() {
 }
 
 // ---------------------------------------------------------------------------
+// WiFi
+// ---------------------------------------------------------------------------
+
+// The header names the robot and the network it is on.
+function updateHeader() {
+  const ssid = wifi ? wifi.ssid : '';
+  $('robot').textContent = robotLabel + (robotLabel && ssid ? ' · ' : '') + ssid;
+  if (robotLabel) document.title = $('robot').textContent + ' — Hexapod';
+}
+
+function renderWifi() {
+  const dl = $('wifiStatus');
+  dl.innerHTML = '';
+  const rows = [['Mode', wifi.mode === 'sta' ? 'Joined network' : 'Access point'],
+                ['Network', wifi.ssid],
+                ['Address', wifi.ip],
+                ['Hostname', wifi.hostname + '.local']];
+  if (wifi.mode === 'sta' && wifi.rssi !== undefined) rows.push(['Signal', wifi.rssi + ' dBm']);
+  rows.push(['Saved', wifi.saved || 'None (access point only)']);
+  rows.forEach(([key, value]) => {
+    const dt = document.createElement('dt');
+    const dd = document.createElement('dd');
+    dt.textContent = key;
+    dd.textContent = value;
+    dl.append(dt, dd);
+  });
+  if (!$('wifiSsid').value && wifi.saved) $('wifiSsid').value = wifi.saved;
+  $('forgetBtn').disabled = !wifi.saved;
+  $('wifiCallout').innerHTML = '<b>Save and reboot</b> restarts the robot to join the network. Find it ' +
+    'there at <b></b> or the address your router gives it. If it cannot join within ' +
+    Math.round((wifi.timeout_ms || 10000) / 1000) + ' s, it comes back as access point <b></b> ' +
+    'at 192.168.4.1.';
+  const marks = $('wifiCallout').querySelectorAll('b');
+  marks[1].textContent = 'http://' + wifi.hostname + '.local/';
+  marks[2].textContent = wifi.ap_ssid;
+  updatePasswordHint();
+  updateHeader();
+}
+
+function loadWifi() {
+  return request('/wifi_status').then(text => {
+    wifi = JSON.parse(text);
+    renderWifi();
+  }).catch(e => say(e.message, 'error', 'wifiMessage'));
+}
+
+// A blank password keeps the saved one when re-saving the same network.
+function updatePasswordHint() {
+  const same = wifi && wifi.saved && $('wifiSsid').value === wifi.saved;
+  $('wifiPass').placeholder = same ? 'Blank keeps the saved password' : 'Blank for an open network';
+  document.querySelectorAll('.net').forEach(el =>
+    el.setAttribute('aria-pressed', el.dataset.ssid === $('wifiSsid').value));
+}
+
+function togglePassword() {
+  const show = $('wifiPass').type === 'password';
+  $('wifiPass').type = show ? 'text' : 'password';
+  $('showPassBtn').textContent = show ? 'Hide' : 'Show';
+}
+
+// Signal strength as a word, from the RSSI in dBm
+function signalWord(rssi) {
+  return rssi >= -55 ? 'Strong' : rssi >= -70 ? 'Good' : rssi >= -80 ? 'Weak' : 'Poor';
+}
+
+function scanWifi() {
+  $('scanBtn').disabled = true;
+  $('scanBtn').textContent = 'Scanning...';
+  say('', '', 'wifiMessage');
+  request('/wifi_scan').then(text => {
+    const nets = JSON.parse(text);
+    const list = $('nets');
+    list.innerHTML = '';
+    nets.forEach(net => {
+      const btn = document.createElement('button');
+      btn.className = 'net';
+      btn.type = 'button';
+      btn.dataset.ssid = net.ssid;
+      const name = document.createElement('span');
+      name.className = 'net-name';
+      name.textContent = net.ssid;
+      const meta = document.createElement('span');
+      meta.className = 'net-meta';
+      meta.textContent = (net.secure ? '🔒︎ ' : 'Open · ') + signalWord(net.rssi) + ' ' + net.rssi + ' dBm';
+      btn.append(name, meta);
+      btn.onclick = () => {
+        $('wifiSsid').value = net.ssid;
+        $('wifiPass').value = '';
+        updatePasswordHint();
+        if (net.secure) $('wifiPass').focus();
+      };
+      list.appendChild(btn);
+    });
+    updatePasswordHint();
+    say(nets.length ? 'Pick a network, or type its name.' : 'No networks found.', nets.length ? 'ok' : 'error', 'wifiMessage');
+  }).catch(e => say(e.message, 'error', 'wifiMessage')).finally(() => {
+    $('scanBtn').disabled = wifiBusy;
+    $('scanBtn').textContent = 'Scan for networks';
+  });
+}
+
+// The robot reboots after a save or forget, so the page has nothing left to do.
+function wifiRebooting(text) {
+  wifiBusy = true;
+  ['scanBtn', 'saveWifiBtn', 'forgetBtn', 'wifiSsid', 'wifiPass', 'showPassBtn'].forEach(id => $(id).disabled = true);
+  say(text, 'ok', 'wifiMessage');
+}
+
+function saveWifi() {
+  if (wifiBusy) return;
+  const ssid = $('wifiSsid').value;
+  const pass = $('wifiPass').value;
+  const keepsSaved = wifi && ssid === wifi.saved;
+  if (!ssid || ssid.length > 32) return say('Enter a network name of 1-32 characters.', 'error', 'wifiMessage');
+  if (pass && (pass.length < 8 || pass.length > 63)) {
+    return say('WiFi passwords are 8-63 characters.', 'error', 'wifiMessage');
+  }
+  if (!pass && !keepsSaved && !confirm(`Join "${ssid}" as an open network, with no password?`)) return;
+  say('Saving...', '', 'wifiMessage');
+  request('/wifi_config', { method: 'POST', body: new URLSearchParams({ ssid: ssid, password: pass }) })
+    .then(text => wifiRebooting(text + ' Reconnect to that network, then open http://' +
+      (wifi ? wifi.hostname : 'hexapod') + '.local/'))
+    .catch(e => say(e.message, 'error', 'wifiMessage'));
+}
+
+function forgetWifi() {
+  if (wifiBusy || !confirm('Forget the saved network and reboot as an access point?')) return;
+  request('/wifi_forget', { method: 'POST' })
+    .then(text => wifiRebooting(text + ' Join ' + (wifi ? wifi.ap_ssid : "the robot's WiFi") +
+      ', then open http://192.168.4.1/'))
+    .catch(e => say(e.message, 'error', 'wifiMessage'));
+}
+
+// ---------------------------------------------------------------------------
 // Startup
 // ---------------------------------------------------------------------------
 
@@ -906,9 +1105,8 @@ renderOffsets();
 request('/robot_config').then(text => {
   const config = JSON.parse(text);
   const speed = config.speed || {};
-  $('robot').textContent = ((config.geometry && config.geometry.label) || config.name) +
-    (config.ssid ? ' · ' + config.ssid : '');
-  document.title = $('robot').textContent + ' — Hexapod';
+  robotLabel = (config.geometry && config.geometry.label) || config.name;
+  updateHeader();
   if (speed.min) $('speedSlider').min = speed.min;
   if (speed.max) $('speedSlider').max = speed.max;
   if (speed.current) showSpeed(speed.current);
@@ -925,6 +1123,7 @@ request('/robot_config').then(text => {
   updateChip();
   say(e.message, 'error', 'driveMessage');
 });
+loadWifi();
 </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /**
 
-  Web interface -- HTTP routes backing web_page.h (drive and calibration)
+  Web interface -- HTTP routes backing web_page.h (drive, calibration, WiFi)
 
   - Copyright (C) 2024 - PRESENT  rookidroid.com
   - E-mail: info@rookidroid.com
@@ -40,6 +40,113 @@ static void appendOffsetArray(String &out, const int offsets[3][3])
 }
 
 /**
+   @brief Append `text` to `out` as a quoted JSON string. SSIDs are arbitrary
+   bytes, so quotes, backslashes and control characters are escaped.
+*/
+static void appendJsonString(String &out, const String &text)
+{
+  out += '"';
+  for (size_t i = 0; i < text.length(); i++)
+  {
+    const char c = text[i];
+    if (c == '"' || c == '\\')
+    {
+      out += '\\';
+      out += c;
+    }
+    else if ((uint8_t)c < 0x20)
+    {
+      char escaped[7];
+      snprintf(escaped, sizeof(escaped), "\\u%04x", (uint8_t)c);
+      out += escaped;
+    }
+    else
+    {
+      out += c;
+    }
+  }
+  out += '"';
+}
+
+/**
+   @brief The network the robot is on, and the one saved for the next boot.
+   The saved password is never sent back.
+*/
+static String wifiStatusJson()
+{
+  String saved_ssid;
+  String saved_pass;
+  loadWifiCredentials(saved_ssid, saved_pass);
+
+  String json = "{\"mode\":\"";
+  json += wifi_sta_mode ? "sta" : "ap";
+  json += "\",\"ssid\":";
+  appendJsonString(json, wifi_sta_mode ? WiFi.SSID() : String(APSSID));
+  json += ",\"ip\":\"" + wifiIp().toString() + "\"";
+  if (wifi_sta_mode)
+  {
+    json += ",\"rssi\":" + String(WiFi.RSSI());
+  }
+  json += ",\"saved\":";
+  appendJsonString(json, saved_ssid);
+  json += ",\"ap_ssid\":\"" APSSID "\"";
+  json += ",\"hostname\":\"" WIFI_HOSTNAME "\"";
+  json += ",\"timeout_ms\":" + String(WIFI_STA_TIMEOUT_MS);
+  json += "}";
+  return json;
+}
+
+/**
+   @brief Scan for networks to join, as [{"ssid","rssi","secure"}], one entry
+   per SSID (its strongest access point), strongest first.
+
+   Blocks for a couple of seconds while the radio scans.
+*/
+static String wifiScanJson()
+{
+  // A pure access point cannot scan; add the station side. The AP stays up.
+  if (WiFi.getMode() == WIFI_AP)
+  {
+    WiFi.mode(WIFI_AP_STA);
+  }
+
+  const int count = WiFi.scanNetworks();
+  String json = "[";
+  bool first = true;
+  if (count > 0)
+  {
+    // Results come back strongest first, so the first sighting of an SSID is
+    // its best access point.
+    for (int i = 0; i < count; i++)
+    {
+      const String name = WiFi.SSID(i);
+      if (name.length() == 0)
+        continue; // Hidden network
+      bool seen = false;
+      for (int j = 0; j < i && !seen; j++)
+      {
+        seen = WiFi.SSID(j) == name;
+      }
+      if (seen)
+        continue;
+
+      if (!first)
+        json += ",";
+      first = false;
+      json += "{\"ssid\":";
+      appendJsonString(json, name);
+      json += ",\"rssi\":" + String(WiFi.RSSI(i));
+      json += ",\"secure\":";
+      json += WiFi.encryptionType(i) == WIFI_AUTH_OPEN ? "false" : "true";
+      json += "}";
+    }
+  }
+  WiFi.scanDelete();
+  json += "]";
+  return json;
+}
+
+/**
    @brief Current offsets as {"left":[[...]],"right":[[...]]}.
 */
 static String offsetsJson()
@@ -66,6 +173,9 @@ static String robotConfigJson()
           "\",\"build\":\"" FIRMWARE_BUILD "\"}";
   json += ",\"name\":\"" ROBOT_NAME "\"";
   json += ",\"ssid\":\"" APSSID "\"";
+  json += ",\"wifi_mode\":\"";
+  json += wifi_sta_mode ? "sta" : "ap";
+  json += "\"";
   json += ",\"delay_ms\":" + String(DELAY_MS);
   json += ",\"servo\":{\"min\":" + String(SERVOMIN) +
           ",\"mid\":" + String(SERVOMID) +
@@ -164,7 +274,9 @@ void setupWebServer()
   // Serve the page. send_P streams it from flash rather than
   // copying it into a String on the heap first.
   web_server.on("/", HTTP_GET, []()
-                { web_server.send_P(200, "text/html", index_html); });
+                {
+    noteClientSeen();
+    web_server.send_P(200, "text/html", index_html); });
   // Enter calibration mode and get current offset values
   web_server.on("/enter_calibration", HTTP_GET, []()
                 {
@@ -234,7 +346,9 @@ void setupWebServer()
 
   // Describe this robot: identity, geometry, servo range, speed and commands
   web_server.on("/robot_config", HTTP_GET, []()
-                { web_server.send(200, "application/json", robotConfigJson()); });
+                {
+    noteClientSeen();
+    web_server.send(200, "application/json", robotConfigJson()); });
 
   // Get the LUT playback speed
   web_server.on("/get_speed", HTTP_GET, []()
@@ -291,6 +405,55 @@ void setupWebServer()
     exitRealtimeMode();
     relax_requested = true;
     web_server.send(200, "text/plain", "Servos relaxed"); });
+
+  // Which network the robot is on, and the one saved for the next boot
+  web_server.on("/wifi_status", HTTP_GET, []()
+                { web_server.send(200, "application/json", wifiStatusJson()); });
+
+  // Networks in range, for the WiFi tab's picker
+  web_server.on("/wifi_scan", HTTP_GET, []()
+                { web_server.send(200, "application/json", wifiScanJson()); });
+
+  // Save a network to join, then reboot to join it. If it cannot be reached
+  // the robot falls back to its own AP, so a typo cannot lock anyone out.
+  web_server.on("/wifi_config", HTTP_POST, []()
+                {
+    const String new_ssid = web_server.arg("ssid");
+    String new_pass = web_server.arg("password");
+    if (new_ssid.length() == 0 || new_ssid.length() > 32) {
+      web_server.send(400, "text/plain", "SSID must be 1-32 characters");
+      return;
+    }
+
+    // A blank password re-saving the same network keeps the stored one, so
+    // the page never needs to know it.
+    String saved_ssid;
+    String saved_pass;
+    if (new_pass.length() == 0 && loadWifiCredentials(saved_ssid, saved_pass) &&
+        saved_ssid == new_ssid) {
+      new_pass = saved_pass;
+    }
+    if (new_pass.length() != 0 && (new_pass.length() < 8 || new_pass.length() > 63)) {
+      web_server.send(400, "text/plain", "Password must be 8-63 characters, or blank for an open network");
+      return;
+    }
+
+    if (!saveWifiCredentials(new_ssid, new_pass)) {
+      web_server.send(500, "text/plain", "Failed to save WiFi settings");
+      return;
+    }
+    web_server.send(200, "text/plain", "Saved. Rebooting to join " + new_ssid + "...");
+    restart_requested = true; });
+
+  // Forget the saved network and reboot into AP mode
+  web_server.on("/wifi_forget", HTTP_POST, []()
+                {
+    if (!clearWifiCredentials()) {
+      web_server.send(500, "text/plain", "Failed to forget the WiFi network");
+      return;
+    }
+    web_server.send(200, "text/plain", "Network forgotten. Rebooting into access point mode...");
+    restart_requested = true; });
 
   // Start server
   web_server.begin();
