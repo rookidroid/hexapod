@@ -10,8 +10,10 @@
   Styled after Hexapod Link (github.com/rookidroid/hexapod-link), so the robot's
   own page and the desktop app look and name things the same way: legs are
   "Right/Left Leg 1-3" front to back, joints "Joint 1-3" outward from the body.
-  It carries the app's RX-78-2 theme in both its light and dark (cockpit)
-  variants, following the device's setting until the header toggle picks one.
+  It carries the app's workstation theme -- RX-78-2 colours, thin navy frames,
+  filled-in plate corners, the chest trim and the LED status pill -- in both its
+  light and dark (cockpit) variants, following the device's setting until the
+  header toggle picks one.
   The app's fonts are named first but not bundled -- the robot's access point
   has no route to the internet -- so the device's own fonts stand in for them.
 
@@ -49,116 +51,114 @@ const char index_html[] PROGMEM = R"rawliteral(
 })();
 </script>
 <style>
-/* RX-78-2 colours, as in Hexapod Link: white armour plates framed in navy,
+/* Hexapod Link's workstation theme (src/renderer/src/styles/industrial.css in
+   that repo), after the RX-78-2: white armour plates framed in navy,
    Federation blue as the accent, red and V-fin yellow as trim. Dark is the
-   cockpit: the same tricolour on deep navy with a cyan HUD glow. The theme is
-   data-theme on <html>, set before first paint by the script in <head>. */
+   cockpit, navy plates with a cyan HUD glow on focus. The markings are kept
+   to the app's few: the chest trim under the top bar, the filled-in corners
+   on plates, and the display face on headings. The tokens carry the app's
+   values under shorter names (--plate is its --ind-surface-alt, --hairline
+   its --ind-border, --frame its --ind-frame). The theme is data-theme on
+   <html>, set before first paint by the script in <head>. */
 :root{color-scheme:light;
-  --bg:#dde3ec;--surface:#f3f5f9;--plate:#fff;--border:#1b2a4a;--border-light:#a9b6cc;
-  --accent:#1d4fa3;--accent-hover:#163f84;--alt:#f2b705;--red:#d62828;--red-hover:#b51f1f;--ok:#16a34a;
-  --text:#0f1a30;--muted:#4a5875;--hover:#e8eef8;--input-bg:#eef2f8;--input-focus-bg:#fff;--outline:#0f1a30;
+  --bg:#dde3ec;--surface:#f3f5f9;--plate:#fff;--hairline:#c9d2e0;--border-strong:#a9b6cc;--frame:#1b2a4a;
+  --accent:#1d4fa3;--accent-hover:#163f84;--accent-active:#10306a;--alt:#f2b705;--red:#d62828;--ok:#16a34a;
+  --outline:#0f1a30;--text:#0f1a30;--muted:#4a5875;--hover:#e8eef8;--input-bg:#eef2f8;--track:#c9d2e0;
   --alert-text:#9b1c1c;--alert-bg:#fdecec;--well:#1b2a4a;--well-hover:#2c3f66;
-  --glow:0 0 0 2px rgba(29,79,163,.25);
-  --shade:rgba(15,26,48,.18);--shadow:4px 4px 0 var(--shade);--shadow-soft:0 2px 10px rgba(15,26,48,.12);
-  --heading:'Chakra Petch',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-  --display:'Michroma',var(--heading);
-  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,'Courier New',monospace;
-  /* Mecha corners: top-right and bottom-left cut at 45 degrees. A clipped
-     element loses its box-shadow, so chamfered parts have none. */
-  --chamfer:8px;
-  --chamfer-clip:polygon(0 0,calc(100% - var(--chamfer)) 0,100% var(--chamfer),100% 100%,var(--chamfer) 100%,0 calc(100% - var(--chamfer)));
+  --hud-rgb:29,79,163;--hud-bg:rgba(246,248,251,.88);--hud-border:rgba(var(--hud-rgb),.3);
+  --glow:0 0 0 2px rgba(29,79,163,.28);--glow-inset:inset 0 0 0 2px rgba(29,79,163,.55);
+  --shadow-soft:0 2px 10px rgba(15,26,48,.12);
+  --font-ui:'Chakra Petch',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-display:'Michroma',var(--font-ui);
+  --font-mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,'Courier New',monospace;
+  --topbar-h:52px;--trim-w:68px;--chamfer:7px;
   --gutter-l:max(16px,env(safe-area-inset-left));--gutter-r:max(16px,env(safe-area-inset-right));
 }
 :root[data-theme=dark]{color-scheme:dark;
-  --bg:#060c18;--surface:#0c1730;--plate:#11203f;--border:#2f5fb3;--border-light:#1e3563;
-  --accent:#3d7cf0;--accent-hover:#2f68d6;--alt:#ffd23f;--red:#ff4d4d;--red-hover:#e03c3c;--ok:#22c55e;
-  --text:#e4eeff;--muted:#8aa2c8;--hover:#18294d;--input-bg:#08122a;--input-focus-bg:#050c1e;--outline:#02060f;
+  --bg:#060c18;--surface:#0c1730;--plate:#11203f;--hairline:#1a2b4d;--border-strong:#2c4475;--frame:#2f5fb3;
+  --accent:#3d7cf0;--accent-hover:#2f68d6;--accent-active:#2455b4;--alt:#ffd23f;--red:#ff4d4d;--ok:#22c55e;
+  --outline:#02060f;--text:#e4eeff;--muted:#8aa2c8;--hover:#18294d;--input-bg:#08122a;--track:#24396a;
   --alert-text:#ffb4b4;--alert-bg:rgba(255,77,77,.12);--well:#1a3366;--well-hover:#22407d;
-  --glow:0 0 0 1px rgba(76,201,240,.45),0 0 14px rgba(76,201,240,.25);
-  --shade:rgba(0,0,0,.5);--shadow-soft:0 2px 10px rgba(0,0,0,.55);
+  --hud-rgb:76,201,240;--hud-bg:rgba(8,16,34,.84);--hud-border:rgba(var(--hud-rgb),.28);
+  --glow:0 0 0 1px rgba(76,201,240,.45),0 0 14px rgba(76,201,240,.25);--glow-inset:inset 0 0 0 2px rgba(76,201,240,.7);
+  --shadow-soft:0 2px 10px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;font-family:var(--heading);font-weight:500;background:var(--bg);color:var(--text)}
+body{margin:0;font-family:var(--font-ui);background:var(--bg);color:var(--text)}
 button,input{font:inherit}
 /* Michroma has one weight; where it is missing the stand-in is set bold instead */
-.brand,h2,.callout b{font-family:var(--display);font-weight:700;font-synthesis:none}
-/* Keyboard focus on chamfered parts: an inset ring, which the clip leaves alone */
-.btn:focus-visible,.tab:focus-visible,.theme-btn:focus-visible,.stepper button:focus-visible,.net:focus-visible{
-  outline:2px solid currentColor;outline-offset:-6px}
+.brand,h2{font-family:var(--font-display);font-weight:700;font-synthesis:none}
 
-/* Header: the app's navbar, down to the chest trim */
-header{position:relative;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;
-  background:var(--surface);border-bottom:4px solid var(--accent);
-  padding:max(10px,env(safe-area-inset-top)) var(--gutter-r) 10px var(--gutter-l);
-  box-shadow:var(--shadow-soft);margin-bottom:24px}
-/* A red block, then yellow vent slats on blue, as on the RX-78's torso */
-header::after{content:'';position:absolute;left:0;right:0;bottom:-8px;height:4px;
-  background:linear-gradient(90deg,var(--red) 0 160px,transparent 160px),
-    repeating-linear-gradient(90deg,var(--alt) 0 14px,transparent 14px 22px),var(--accent)}
-/* The slats crawl while the robot is moving */
-body.is-driving header::after{animation:crawl .5s linear infinite}
-@keyframes crawl{to{background-position:0 0,22px 0}}
-.brand{font-size:1.35rem;letter-spacing:2px;text-transform:uppercase}
-.brand::before{content:'\2699  ';color:var(--accent)}
-.robot{font-family:var(--mono);font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+/* ---- Top bar: the app's, down to the chest trim along its bottom edge ---- */
+header{position:relative;z-index:5;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;
+  min-height:var(--topbar-h);background:var(--surface);box-shadow:var(--shadow-soft);
+  padding:max(8px,env(safe-area-inset-top)) var(--gutter-r) 12px var(--gutter-l);margin-bottom:20px}
+/* A red block, a few yellow vent slats, then Federation blue, as on the RX-78's torso */
+header::after{content:'';position:absolute;left:0;right:0;bottom:0;height:4px;pointer-events:none;
+  background:linear-gradient(90deg,var(--red) 0 var(--trim-w),transparent var(--trim-w)),
+    repeating-linear-gradient(90deg,var(--alt) 0 10px,transparent 10px 16px) calc(var(--trim-w) + 6px) 0/76px 100% no-repeat,
+    var(--accent)}
+.brand{font-size:1.05rem;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+/* The robot's name, and the network it is on, as the app's release stamp: a small stencilled plate */
+.robot{padding:1px 6px;font-family:var(--font-mono);font-size:.68rem;font-weight:600;color:var(--muted);
+  border:1px solid var(--border-strong);white-space:nowrap}
+.robot:empty{display:none}
 
-/* Tabs: a segmented switch between driving and calibrating */
-.tabs{display:flex;clip-path:var(--chamfer-clip)}
-.tab{border:2px solid var(--border);background:var(--plate);color:var(--muted);font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;padding:4px 14px;cursor:pointer;transition:background-color .1s,color .1s}
+/* Tabs: one segmented plate, the one picked filled in the accent */
+.tabs{display:flex}
+.tab{height:31px;padding:0 12px;font-size:.82rem;font-weight:600;letter-spacing:.4px;color:var(--muted);
+  background-color:var(--plate);border:1px solid var(--border-strong);cursor:pointer;
+  transition:color .15s,background-color .15s}
 .tab+.tab{border-left:0}
-.tab:hover{color:var(--text);background:var(--hover)}
-.tab[aria-selected=true]{background:var(--accent);color:#fff}
+.tab:hover{color:var(--text);background-color:var(--hover)}
+.tab[aria-selected=true]{color:#fff;background-color:var(--accent);border-color:var(--accent)}
+
+/* Status pill: the app's link readout, an LED coloured by state */
+.chip{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:31px;padding:0 13px 0 11px;
+  font-family:var(--font-mono);font-size:.78rem;font-weight:600;white-space:nowrap;
+  color:var(--text);background-color:var(--plate);border:1px solid var(--frame)}
+.chip::before{content:'';flex:none;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.chip.is-online::before{background:var(--ok)}
+.chip.is-fault{border-color:var(--red)}
+.chip.is-fault::before{background:var(--red)}
+.chip.is-streaming::before{background:var(--alt);box-shadow:0 0 0 3px color-mix(in srgb,var(--alt) 30%,transparent);
+  animation:led 1s ease-in-out infinite}
+@keyframes led{50%{opacity:.35}}
 
 /* Theme toggle: shows the icon of the theme it switches to */
-.theme-btn{margin-left:auto;align-self:stretch;min-width:2.4rem;font-size:1.1rem;line-height:1;
-  color:var(--text);background:var(--plate);border:2px solid var(--border);clip-path:var(--chamfer-clip);
-  cursor:pointer;transition:transform .1s,color .1s}
-.theme-btn:hover{color:var(--accent);transform:translate(-1px,-1px)}
-.theme-btn:active{transform:translate(1px,1px)}
+.theme-btn{width:31px;height:31px;display:inline-flex;align-items:center;justify-content:center;padding:0;
+  font-size:1rem;line-height:1;color:var(--text);background:transparent;border:1px solid transparent;cursor:pointer;
+  transition:background-color .15s}
+.theme-btn:hover{background:var(--hover)}
 
-/* Status chip: the app's link readout, an LED and a left bar coloured by state */
-.chip{font-family:var(--mono);font-weight:700;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;
-  background:var(--plate);border:2px solid var(--border);border-left-width:6px;border-left-color:var(--muted);
-  padding:4px 14px 4px 12px;clip-path:var(--chamfer-clip)}
-.chip::after{content:'\25CF';margin-left:8px;color:var(--muted)}
-.chip.is-online{border-left-color:var(--ok)}
-.chip.is-online::after{color:var(--ok)}
-.chip.is-streaming{border-left-color:var(--alt)}
-.chip.is-streaming::after{color:var(--alt);animation:pulse 1s steps(1,end) infinite}
-.chip.is-fault{border-left-color:var(--red)}
-.chip.is-fault::after{color:var(--red)}
-@keyframes pulse{50%{opacity:.25}}
+/* Keyboard focus: the app's ring, drawn inside, as the controls sit edge to edge */
+.btn:focus-visible,.tab:focus-visible,.theme-btn:focus-visible,.stepper button:focus-visible,.net:focus-visible,.cell:focus-visible{
+  outline:none;box-shadow:var(--glow-inset)}
 
 .page{max-width:960px;margin:0 auto;padding:0 var(--gutter-r) 24px var(--gutter-l)}
 
-/* Cards: armour plates. A red/blue trim along the top ending in yellow vent
-   slats, a navy plate in the bottom-right corner and a small unit marking. */
-.card{position:relative;background:var(--plate);border:2px solid var(--border);box-shadow:var(--shadow);
-  padding:20px 20px 24px;margin-bottom:20px}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;pointer-events:none;
-  background:repeating-linear-gradient(90deg,var(--alt) 0 5px,transparent 5px 9px) right 6px top/32px 100% no-repeat,
-    linear-gradient(90deg,var(--red) 0 28px,var(--accent) 28px calc(100% - 44px),transparent calc(100% - 44px))}
-.card::after{content:'RX-78-2';position:absolute;right:0;bottom:0;padding:0 20px 3px 0;
-  font-family:var(--mono);font-size:.55rem;font-weight:600;line-height:1;letter-spacing:1.5px;
-  color:color-mix(in srgb,var(--muted) 65%,transparent);pointer-events:none;
-  background:linear-gradient(135deg,transparent 50%,var(--border) 50%) right bottom/14px 14px no-repeat}
-h2{display:inline-block;margin:0 0 12px;font-size:.9rem;letter-spacing:.5px;text-transform:uppercase;
-  border-bottom:2px solid var(--alt);padding-bottom:4px}
+/* Cards: plates on the panel-line grey, framed in navy */
+.card{position:relative;background-color:var(--surface);border:1px solid var(--frame);box-shadow:var(--shadow-soft);
+  padding:16px 18px 20px;margin-bottom:20px;--chamfer:10px}
+/* A section's title, in the display face, underlined in V-fin yellow */
+h2{display:inline-block;margin:0 0 12px;padding-bottom:3px;font-size:.74rem;letter-spacing:.08em;
+  text-transform:uppercase;border-bottom:2px solid var(--alt)}
 .lede{color:var(--muted);line-height:1.5;margin:0 0 16px}
 
-/* Buttons: heavy border and chamfered corners, lifting on hover */
-.btn{border:2px solid var(--border);background:var(--plate);color:var(--text);font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;clip-path:var(--chamfer-clip);
-  transition:transform .1s,background-color .1s,border-color .1s,color .1s}
-.btn:hover:not(:disabled){transform:translate(-1px,-1px);background:var(--hover);border-color:var(--text)}
-.btn:active:not(:disabled){transform:translate(1px,1px)}
-.btn:disabled{opacity:.4;cursor:default}
-.btn-accent{background:var(--accent);border-color:var(--outline);color:#fff}
-.btn-accent:hover:not(:disabled){background:var(--accent-hover);border-color:var(--outline)}
-.btn-danger{background:var(--red);border-color:var(--outline);color:#fff}
-.btn-danger:hover:not(:disabled){background:var(--red-hover);border-color:var(--outline)}
+/* Buttons: armour plates, a navy border with two corners filled in */
+.btn{--chamfer:10px;min-height:36px;padding:6px 16px;font-weight:700;letter-spacing:.4px;white-space:nowrap;
+  color:var(--text);background-color:var(--plate);border:1px solid var(--frame);cursor:pointer;
+  transition:filter .1s,background-color .1s,border-color .1s,color .1s}
+.btn:hover:not(:disabled){background-color:var(--hover);filter:brightness(1.06)}
+.btn:disabled{color:var(--muted);border-color:var(--border-strong);cursor:default}
+.btn-accent{color:#fff;background-color:var(--accent);border-color:var(--outline)}
+.btn-accent:hover:not(:disabled){background-color:var(--accent-hover)}
+.btn-accent:active:not(:disabled){background-color:var(--accent-active)}
+.btn-accent:disabled{color:#fff;border-color:var(--outline);opacity:.55}
+/* Danger is drawn in outline, and fills red under the pointer */
+.btn-danger{color:var(--red);background-color:transparent;border-color:color-mix(in srgb,var(--red) 55%,transparent)}
+.btn-danger:hover:not(:disabled){color:#fff;background-color:var(--red);border-color:var(--red)}
 .row{display:flex;gap:10px;flex-wrap:wrap}
 .row .btn{flex:1 1 140px}
 
@@ -166,84 +166,89 @@ h2{display:inline-block;margin:0 0 12px;font-size:.9rem;letter-spacing:.5px;text
 body.mode-drive{height:100vh;height:100dvh;overflow:hidden;display:flex;flex-direction:column;
   overscroll-behavior:none;touch-action:manipulation}
 body.mode-drive footer{display:none}
+/* While the robot moves, the app's streaming glow round the edge of the window */
+body.mode-drive::after{content:'';position:fixed;inset:0;z-index:10;pointer-events:none;opacity:0;
+  transition:opacity .3s;box-shadow:inset 0 0 0 3px var(--alt),inset 0 0 60px 10px color-mix(in srgb,var(--alt) 45%,transparent)}
+body.mode-drive.is-driving::after{opacity:1;animation:glow 2s ease-in-out infinite}
+@keyframes glow{50%{box-shadow:inset 0 0 0 3px var(--alt),inset 0 0 34px 4px color-mix(in srgb,var(--alt) 45%,transparent)}}
+@media (prefers-reduced-motion:reduce){body.mode-drive.is-driving::after,.chip.is-streaming::before{animation:none}}
 .deck{flex:1;min-height:0;position:relative;display:grid;gap:20px;
   padding:0 var(--gutter-r) max(16px,env(safe-area-inset-bottom)) var(--gutter-l);
   grid-template-columns:minmax(0,1fr) minmax(220px,1.2fr) minmax(0,1.5fr);
   grid-template-rows:minmax(0,1fr);grid-template-areas:"moves console dial";align-items:center}
 /* Hold-to-move surfaces: no text selection, callouts, scrolling or zooming under a finger */
 .moves,.dial{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.drive-off .moves,.drive-off .dial{opacity:.4;pointer-events:none}
+.drive-off .moves,.drive-off .dial{opacity:.45;filter:grayscale(1);pointer-events:none}
 .is-missing{opacity:.25}
 
-/* Body moves: one plate split into cells, two columns under the left thumb */
+/* Body moves: one plate split into cells by hairlines, two columns under the left thumb */
 .moves{grid-area:moves;justify-self:center;width:100%;height:100%;max-width:420px;max-height:560px;
   display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);grid-auto-flow:column;
-  gap:2px;background:var(--border-light);border:2px solid var(--border);box-shadow:var(--shadow)}
+  gap:1px;background:var(--hairline);border:1px solid var(--frame);box-shadow:var(--shadow-soft)}
 .cell{border:0;background:var(--plate);color:var(--text);cursor:pointer;padding:6px;min-width:0;min-height:0;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:clamp(.75rem,1.8vmin,1rem);
-  transition:background .08s}
-.cell b{font-size:clamp(1.5rem,6vmin,3.25rem);line-height:1}
-@media (hover:hover){.cell:hover{background:var(--hover);color:var(--accent)}}
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  font-weight:700;letter-spacing:.4px;font-size:clamp(.75rem,1.8vmin,1rem);transition:background-color .08s}
+.cell b{font-size:clamp(1.5rem,6vmin,3.25rem);font-weight:400;line-height:1;color:var(--accent)}
+@media (hover:hover){.cell:hover{background:var(--hover)}}
 .cell.is-held,.cell.is-held:hover{background:var(--accent);color:#fff}
+.cell.is-held b{color:#fff}
 
 /* Console: speed, relax and full screen between the two pads. The speed
    readout and its slider share one plate; the buttons sit well clear of it. */
 .console{grid-area:console;justify-self:center;width:100%;max-width:340px;
   display:flex;flex-direction:column;gap:28px}
-.gauge{background:var(--plate);border:2px solid var(--border);border-left:6px solid var(--accent);
-  box-shadow:var(--shadow);padding:10px 14px 12px}
-.gauge-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+.gauge{--chamfer:10px;background-color:var(--plate);border:1px solid var(--frame);box-shadow:var(--shadow-soft);
+  padding:10px 14px 8px}
+.gauge-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
 .gauge .label{margin:0}
 .gauge .speed-value{font-size:2rem;line-height:1}
 /* Relax and full screen are occasional, so they stay small and quiet: a thin
    outline that only lights up on hover. Wake stays loud while the servos are limp. */
 .actions{display:flex;gap:8px}
-.actions .btn{flex:1;padding:5px 8px;font-size:.8rem;background:transparent;color:var(--muted);
-  border-color:var(--border-light)}
-.actions .btn:hover:not(:disabled){transform:none;background:transparent;border-color:var(--accent);color:var(--accent)}
-.actions .btn-danger:hover:not(:disabled){border-color:var(--red);color:var(--red)}
-.actions .btn-accent,.actions .btn-accent:hover:not(:disabled){background:var(--accent);border-color:var(--outline);color:#fff}
-.console .hint{margin:0;text-align:center}
+.actions .btn{flex:1;min-height:30px;padding:4px 8px;font-size:.8rem}
+.actions .btn:not(.btn-danger):not(.btn-accent){color:var(--muted);background-color:transparent;border-color:var(--border-strong)}
+.actions .btn:not(.btn-danger):not(.btn-accent):hover{color:var(--accent);border-color:var(--accent);filter:none}
+.console .hint{margin:0;text-align:center;font-family:var(--font-mono);font-size:.72rem}
 
-/* Speed slider: a thick track and a big square thumb, easy to catch with a thumb */
-.slider{-webkit-appearance:none;appearance:none;display:block;width:100%;height:34px;margin:0;
+/* Speed slider: the app's track filled up to a round thumb, sized for a thumb */
+.slider{-webkit-appearance:none;appearance:none;display:block;width:100%;height:36px;margin:0;
   background:transparent;cursor:pointer;touch-action:none;--fill:50%}
 .slider:focus{outline:none}
-.slider::-webkit-slider-runnable-track{height:12px;border:2px solid var(--border);
-  background:linear-gradient(to right,var(--accent) var(--fill),var(--input-bg) var(--fill))}
-.slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:32px;margin-top:-12px;
-  background:var(--plate);border:2px solid var(--border);box-shadow:2px 2px 0 var(--shade)}
-.slider:focus-visible::-webkit-slider-thumb{border-color:var(--accent);box-shadow:var(--glow)}
-.slider::-moz-range-track{height:12px;border:2px solid var(--border);background:var(--input-bg)}
-.slider::-moz-range-progress{height:12px;border:2px solid var(--border);border-right:0;background:var(--accent)}
-.slider::-moz-range-thumb{width:24px;height:32px;border:2px solid var(--border);border-radius:0;
-  background:var(--plate);box-shadow:2px 2px 0 var(--shade)}
-.slider:focus-visible::-moz-range-thumb{border-color:var(--accent);box-shadow:var(--glow)}
+.slider::-webkit-slider-runnable-track{height:4px;border-radius:9999px;
+  background:linear-gradient(to right,var(--accent) var(--fill),var(--track) var(--fill))}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-9px;border-radius:50%;
+  background:var(--accent);border:3px solid var(--plate);box-shadow:0 0 0 1px var(--accent);transition:transform .15s}
+.slider:active::-webkit-slider-thumb{transform:scale(1.125)}
+.slider:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 1px var(--accent),var(--glow)}
+.slider::-moz-range-track{height:4px;border-radius:9999px;background:var(--track)}
+.slider::-moz-range-progress{height:4px;border-radius:9999px;background:var(--accent)}
+.slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--accent);
+  border:3px solid var(--plate);box-shadow:0 0 0 1px var(--accent)}
+.slider:focus-visible::-moz-range-thumb{box-shadow:0 0 0 1px var(--accent),var(--glow)}
 
 /* Steering dial: walk directions on the inner ring, fast and turn on the outer,
    the red stop button in the middle. In the cockpit it glows like the monitor. */
-.dial{grid-area:dial;width:100%;height:100%;filter:drop-shadow(4px 4px 0 var(--shade))}
-:root[data-theme=dark] .dial{filter:drop-shadow(4px 4px 0 var(--shade)) drop-shadow(0 0 12px rgba(76,201,240,.2))}
-.dial text{font-family:var(--heading);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.dial{grid-area:dial;width:100%;height:100%;filter:drop-shadow(0 2px 8px rgba(15,26,48,.18))}
+:root[data-theme=dark] .dial{filter:drop-shadow(0 2px 8px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(76,201,240,.18))}
+.dial text{font-family:var(--font-ui);font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .dial .face{transition:fill .08s}
-.ring-out .face{fill:var(--plate);stroke:var(--border);stroke-width:2}
+.ring-out .face{fill:var(--plate);stroke:var(--frame);stroke-width:1.5}
 .ring-out .glyph{fill:var(--text)}
-.ring-in .face{fill:var(--well);stroke:var(--plate);stroke-width:2}
+.ring-in .face{fill:var(--well);stroke:var(--plate);stroke-width:1.5}
 .ring-in .glyph{fill:#fff}
 .hub .face{fill:var(--red);stroke:var(--plate);stroke-width:3}
 .hub .glyph{fill:#fff}
 @media (hover:hover){.ring-out:hover .face{fill:var(--hover)}.ring-in:hover .face{fill:var(--well-hover)}
-  .hub:hover .face{fill:var(--red-hover)}}
+  .hub:hover .face{fill:color-mix(in srgb,var(--red) 85%,#000)}}
 .dial .is-held .face,.dial .is-held:hover .face{fill:var(--accent)}
 .dial .is-held .glyph{fill:#fff}
 
-/* Drive messages float over the deck instead of taking room from it */
-.toast{position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);
-  max-width:calc(100% - 32px);background:var(--plate);border:2px solid var(--border);box-shadow:var(--shadow);
-  padding:6px 14px;margin:0;pointer-events:none}
+/* Drive messages float over the deck as a HUD card instead of taking room from it */
+.toast{--chamfer:9px;position:absolute;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);
+  max-width:calc(100% - 32px);color:var(--text);background-color:var(--hud-bg);border:1px solid var(--hud-border);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:6px 14px;margin:0;pointer-events:none}
 .toast:empty{display:none}
-.toast.is-error{border-left:6px solid var(--red)}
+.toast.is-error{color:var(--alert-text);border-left:3px solid var(--red)}
 
 /* Portrait: console on top, then the dial, then the moves three across */
 @media (orientation:portrait){
@@ -256,89 +261,123 @@ body.mode-drive footer{display:none}
 }
 /* Short landscape screens (phones): squeeze the chrome, keep the pads big */
 @media (orientation:landscape) and (max-height:520px){
-  header{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:6px;margin-bottom:16px}
-  .brand{font-size:1.05rem;letter-spacing:1px}
+  header{min-height:0;padding-top:max(6px,env(safe-area-inset-top));padding-bottom:10px;margin-bottom:14px}
   .robot{display:none}
   .deck{gap:14px;padding-bottom:max(10px,env(safe-area-inset-bottom))}
   .console{gap:22px}
-  .gauge{padding:6px 12px 8px}
-  .gauge-head{margin-bottom:4px}
+  .gauge{padding:6px 12px 4px}
   .gauge .speed-value{font-size:1.5rem}
   .console .hint{display:none}
 }
-/* Phones: brand, theme and status on the first row, the tabs and a truncated
-   robot name on the second, so the header leaves the pads their room */
+/* Phones: brand, status and theme on the first row, the tabs and the robot's
+   plate on the second, so the header leaves the pads their room */
 @media (max-width:575px){
-  .brand{font-size:1.1rem;letter-spacing:1px}
-  .theme-btn{order:1}
-  .chip{order:2;padding:4px 10px}
+  header{column-gap:8px}
+  .brand{font-size:.82rem;letter-spacing:1px}
+  .chip{order:1;max-width:11rem;padding:0 10px}
+  .theme-btn{order:2}
   .tabs{order:3}
-  .tab{padding:4px 10px}
-  .robot{order:4;flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tab{padding:0 10px}
+  .robot{order:4;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 }
 @media (hover:none){.keys{display:none}}
 
-/* Offsets: one block per leg, the leg header styled like the app's */
+/* ---- Offsets: one block per leg, titled like the app's field groups ---- */
 /* Two columns fill top to bottom: left legs on the left, right legs on the right */
 .legs{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,auto);grid-auto-flow:column;
-  gap:16px 24px;margin:20px 0}
+  gap:14px 28px;margin:20px 0;transition:opacity .15s}
 @media (max-width:720px){.legs{grid-template-columns:1fr;grid-template-rows:none;grid-auto-flow:row}}
-.leg-head{font-family:var(--mono);font-size:.85rem;font-weight:700;text-transform:uppercase;background:var(--bg);
-  border-left:4px solid var(--accent);padding:4px 8px;margin-bottom:8px}
+.leg-head{font-size:.78rem;font-weight:700;letter-spacing:.4px;color:var(--text);
+  padding-bottom:4px;margin-bottom:8px;border-bottom:1px dashed var(--hairline)}
 .joints{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.label{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.label{display:block;font-family:var(--font-mono);font-size:.72rem;font-weight:500;color:var(--muted);margin-bottom:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* A field between its - and + is one plate: the - has the bottom-left corner, the + the top-right */
 .stepper{display:flex}
-.stepper button{width:30px;flex:none;border:2px solid var(--border-light);background:var(--surface);color:var(--text);
-  font-family:var(--mono);font-weight:700;cursor:pointer;padding:0}
-.stepper button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
-input[type=number]{width:100%;min-width:0;font-family:var(--mono);font-size:.95rem;font-weight:600;text-align:center;
-  background:var(--input-bg);border:2px solid var(--border-light);border-left:0;border-right:0;color:var(--text);
-  padding:6px 2px;border-radius:0;box-shadow:inset 2px 2px 0 rgba(0,0,0,.05);-moz-appearance:textfield}
+.stepper button{--chamfer:6px;width:30px;flex:none;padding:0;font-family:var(--font-mono);font-weight:700;cursor:pointer;
+  color:var(--text);background-color:var(--plate);border:1px solid var(--border-strong);transition:color .1s,border-color .1s}
+.stepper button:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+input[type=number],input.text{min-width:0;font-family:var(--font-mono);font-size:.85rem;font-weight:500;color:var(--text);
+  background-color:var(--input-bg);border:1px solid var(--border-strong);border-radius:0}
+input[type=number]{width:100%;text-align:center;border-left:0;border-right:0;padding:6px 2px;-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-input[type=number]:focus{outline:none;background:var(--input-focus-bg);border-color:var(--accent);
-  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05),var(--glow)}
-.legs.is-idle{opacity:.4;filter:grayscale(1);pointer-events:none}
+input[type=number]:focus,input.text:focus{outline:none;border-color:var(--accent);box-shadow:var(--glow-inset)}
+input.text:disabled{color:var(--muted);background-color:var(--surface)}
+.legs.is-idle{opacity:.45;filter:grayscale(1);pointer-events:none}
 
-/* WiFi: a status readout, the networks in range and the join form */
+/* ---- WiFi: a status readout, the networks in range and the join form ---- */
 .status{display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;margin:0 0 20px}
-.status dt{font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;
-  align-self:center}
-.status dd{margin:0;font-family:var(--mono);font-weight:600;overflow-wrap:anywhere}
+.status dt{font-family:var(--font-mono);font-size:.72rem;font-weight:500;color:var(--muted);align-self:center}
+.status dd{margin:0;font-family:var(--font-mono);font-size:.85rem;font-weight:600;overflow-wrap:anywhere}
 .nets{display:flex;flex-direction:column;gap:6px;margin:12px 0 20px}
 .nets:empty{display:none}
-.net{display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;color:var(--text);
-  background:var(--surface);border:2px solid var(--border-light);padding:8px 12px;font-weight:600}
+.net{--chamfer:6px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer;color:var(--text);
+  background-color:var(--plate);border:1px solid var(--border-strong);padding:8px 12px;font-weight:600;
+  transition:color .1s,border-color .1s,background-color .1s}
 .net:hover{border-color:var(--accent);color:var(--accent)}
-.net[aria-pressed=true]{border-color:var(--accent);background:var(--hover)}
+.net[aria-pressed=true]{border-color:var(--accent);background-color:var(--hover)}
 .net-name{flex:1;min-width:0;overflow-wrap:anywhere}
-.net-meta{font-family:var(--mono);font-size:.8rem;color:var(--muted);white-space:nowrap}
+.net-meta{font-family:var(--font-mono);font-size:.74rem;font-weight:500;color:var(--muted);white-space:nowrap}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin:0 0 16px}
 @media (max-width:575px){.fields{grid-template-columns:1fr}}
-.field label{display:block}
 .field-input{display:flex}
-input.text{width:100%;min-width:0;font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--text);
-  background:var(--input-bg);border:2px solid var(--border-light);border-radius:0;padding:8px 10px;
-  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05)}
-input.text:focus{outline:none;background:var(--input-focus-bg);border-color:var(--accent);
-  box-shadow:inset 2px 2px 0 rgba(0,0,0,.05),var(--glow)}
-.field-input .btn{flex:none;padding:6px 12px;font-size:.8rem;clip-path:none;border-left:0}
+input.text{width:100%;padding:8px 10px}
+/* A field with its button after it is one plate: the field has the bottom-left corner, the button the top-right */
+.field-input .btn{--chamfer:6px;flex:none;min-height:0;padding:4px 12px;font-size:.8rem;margin-left:-1px}
 
-.speed-value{font-family:var(--mono);font-weight:700;font-size:1.3rem;min-width:4ch;text-align:right}
+.speed-value{font-family:var(--font-mono);font-weight:700;font-size:1.3rem;min-width:4ch;text-align:right;
+  font-variant-numeric:tabular-nums}
 .hint{color:var(--muted);font-size:.9rem;margin-top:8px}
 
-/* Messages and the safety callout */
-.message{font-family:var(--mono);font-weight:600;text-align:center;min-height:1.4em;margin-top:14px}
+/* Messages, and the app's alert strip for the warnings */
+.message{font-family:var(--font-mono);font-size:.8rem;font-weight:500;text-align:center;min-height:1.4em;margin-top:14px}
 .message.is-error{color:var(--alert-text)}
 .message.is-ok{color:var(--ok)}
-.callout{border-left:6px solid var(--red);background:var(--surface);padding:10px 14px;margin:0 0 16px;
-  color:var(--muted);line-height:1.5}
-.callout b{color:var(--red);font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
-footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8rem;padding:8px 0 24px}
+.callout{font-size:.9rem;line-height:1.5;color:var(--alert-text);background:var(--alert-bg);
+  border-left:3px solid var(--red);padding:8px 12px;margin:0 0 16px}
+.callout b{font-weight:700}
+footer{text-align:center;color:var(--muted);font-family:var(--font-mono);font-size:.72rem;padding:8px 0 24px}
 
-::-webkit-scrollbar{width:10px}
-::-webkit-scrollbar-track{background:var(--bg);border-left:1px solid var(--border-light)}
-::-webkit-scrollbar-thumb{background:var(--border);border:1px solid var(--bg)}
-::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+/* ---- Corners ----
+   As in the app: the top-right and bottom-left corners of the plates are
+   filled in at 45 degrees with --corner, in the plate's border colour. Laid
+   as background images, so these plates set background-color, never the
+   background shorthand. */
+.btn,.chip,.card,.gauge,.toast,.tab,.net,.stepper button,input.text{
+  background-image:linear-gradient(to bottom left,var(--corner,transparent) 50%,transparent calc(50% + .75px)),
+    linear-gradient(to top right,var(--corner,transparent) 50%,transparent calc(50% + .75px));
+  background-size:var(--chamfer) var(--chamfer);background-position:top right,bottom left;
+  background-repeat:no-repeat;background-origin:border-box}
+.btn,.chip,.card,.gauge{--corner:var(--frame)}
+.btn:disabled{--corner:var(--border-strong)}
+.chip.is-fault{--corner:var(--red)}
+.toast{--corner:var(--hud-border)}
+.toast.is-error{--corner:var(--red)}
+.net,.stepper button,input.text{--chamfer:6px;--corner:var(--border-strong)}
+.net:hover,.net[aria-pressed=true],.stepper button:hover:not(:disabled),input.text:focus{--corner:var(--accent)}
+/* Solid plates show a light tint of their fill along the edge instead */
+.btn-accent,.btn-accent:disabled{--corner:color-mix(in srgb,var(--accent) 50%,#fff)}
+.btn-danger{--corner:color-mix(in srgb,var(--red) 55%,transparent)}
+.btn-danger:hover:not(:disabled){--corner:color-mix(in srgb,var(--red) 45%,#fff)}
+/* Joined plates keep only their outer corners: the tabs' first and last, the
+   stepper's - and +, a field and the button after it */
+.tab{--chamfer:6px;--corner:var(--border-strong);background-size:0 0}
+.tab:first-child{background-size:0 0,var(--chamfer) var(--chamfer)}
+.tab:last-child{background-size:var(--chamfer) var(--chamfer),0 0}
+.tab[aria-selected=true]{--corner:color-mix(in srgb,var(--accent) 50%,#fff)}
+.stepper button:first-child{background-size:0 0,var(--chamfer) var(--chamfer)}
+.stepper button:last-child{background-size:var(--chamfer) var(--chamfer),0 0}
+.field-input input.text{background-size:0 0,var(--chamfer) var(--chamfer)}
+.field-input .btn{background-size:var(--chamfer) var(--chamfer),0 0}
+
+/* Scrollbars: a thin line that widens to a grip under the pointer */
+::-webkit-scrollbar{width:10px;height:10px;background:transparent}
+::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+::-webkit-scrollbar-thumb{min-height:24px;background-color:var(--border-strong);background-clip:padding-box;
+  border:3.5px solid transparent;border-radius:10px}
+::-webkit-scrollbar-thumb:hover{border-width:1px}
+::-webkit-scrollbar-thumb:active{border-width:1px;background-color:var(--accent)}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}}
 </style>
 </head>
 <body class="mode-drive">
@@ -350,8 +389,8 @@ footer{text-align:center;color:var(--muted);font-family:var(--mono);font-size:.8
     <button class="tab" role="tab" id="tabCalibrate" aria-selected="false" onclick="showTab('calibrate')">Calibrate</button>
     <button class="tab" role="tab" id="tabWifi" aria-selected="false" onclick="showTab('wifi')">WiFi</button>
   </div>
-  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"></button>
   <div class="chip" id="chip">Idle</div>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()"></button>
 </header>
 
 <main id="drive" class="deck drive-off">
